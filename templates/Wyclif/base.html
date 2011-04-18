@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+
+<body>
+
+<div id="main">
+	<div id="header">
+		<h1>The Latin Works of John Wyclif</h1>
+		<h2>{{title}}</h2>
+		
+		<div id="search"> 
+			<img src="/static/img/magnifying_glass.jpg" height="25" width="30"> 
+			<input name='q' id='q'></input> 
+			<input type="submit" value="Go"></input> 
+		</div>		
+		
+		<a class="navbutton" href="/">Home</a>
+		<a class="navbutton" href="/works/">Works</a>
+		<a class="navbutton" href="/about/">About</a>
+		<a class="navbutton" href="/contact/">Contact</a>
+		<a class="navbutton" href="/terms/">Terms of Service</a>
+	</div>
+
+	<div id="content">
+		{% block content %}
+		{% endblock content %}
+	</div>
+
+	<div id="footer">
+		<hr/>
+		Copyright &copy; ???
+	</div>
+</div>
+
+</body>
+
+</html>
