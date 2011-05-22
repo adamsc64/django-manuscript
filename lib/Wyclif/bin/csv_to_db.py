@@ -44,7 +44,9 @@ def _db_import_all(PATH_TO_FILES):
 	wy.name = "John Wyclif"
 	wy.save()
 
-	# import rows.
+	# import rows from csv files.
+
+	# Import book titles.
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblTitles.csv",
 		model = Title,
@@ -60,6 +62,8 @@ def _db_import_all(PATH_TO_FILES):
 			"author"      :   wy ,  #assign wyclif as author to all.
 		},
 	)
+	
+	#import chapters.
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblChapters.csv",
 		model = Chapter,
@@ -80,17 +84,49 @@ def _db_import_all(PATH_TO_FILES):
 			},
 		},
 	)
-	_db_import(
-		csv_path = PATH_TO_FILES+"tblParagraphs.csv",
-		model = Page,
-		conversion = {
-			# djangofield <-  csv
-			"number"      : "pageNo" 
-		},
-		ignore_these_exceptions = (
-			IntegrityError,
-		)
+
+	#autopopulate the Page model with dummy pages for each Title object.
+
+	def _db_assign_foreach( item_in, set_field, in_model, assign_range, to_field ):
+		for item in item_in:
+			for i in assign_range:
+				args = {
+					set_field : item,
+					to_field : i,
+				}
+				print "Creating new %s with %s" % (in_model, args)
+				in_model(**args).save()		
+
+	_db_assign_foreach(
+		item_in = Title.objects.all(),
+		set_field = "title", in_model = Page, 
+		assign_range = range(0,1000),
+		to_field = "number",
 	)
+
+	#import pages (get from paragraphs data.)
+	#_db_import(
+	#	csv_path = PATH_TO_FILES+"tblParagraphs.csv",
+	#	model = Page,
+	#	conversion = {
+	#		# djangofield <-  csv
+	#		"number"      : "pageNo" 
+	#	},
+	#	query_assign = {
+	#		# djangofield <- { use value for csvfield in csv to get an object from model's modelfield }
+	#		# 		(effectively links models together)
+	#		"title" : {
+	#			"csvfield" : "chapterID",
+	#			"get_model" : Chapter,
+	#			"get_modelfield" : "old_id",
+	#		},
+	#	},
+		
+
+		#ignore_these_exceptions = (
+		#	IntegrityError,
+		#)
+	#)
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblParagraphs.csv",
 		model = Paragraph,
@@ -116,8 +152,7 @@ def _db_import_all(PATH_TO_FILES):
 			},
 		},
 	)
-
-
+	
 def _db_import(csv_path, model, conversion, object_assign=None, query_assign=None, ignore_these_exceptions=None):
 	"""Import data from csv file at csv_path into django model according to conversion map."""
 	
