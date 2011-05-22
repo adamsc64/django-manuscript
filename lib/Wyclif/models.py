@@ -42,12 +42,15 @@ class Chapter(WyclifModel):
 
 class Page(WyclifModel):
 	title = models.ForeignKey("Wyclif.Title", verbose_name="In Title")
-	number = models.IntegerField(unique=True, verbose_name="Page number")
+	number = models.IntegerField(verbose_name="Page number")
 	scan = models.ImageField(upload_to='pages')
 	
 	def __unicode__(self):
 		return u"Page number %s" % (str(self.number))
 	
+	class Meta:
+		unique_together = ('title','number')
+		
 
 class Paragraph(WyclifModel):
 	SPLIT_CHOICES = (
