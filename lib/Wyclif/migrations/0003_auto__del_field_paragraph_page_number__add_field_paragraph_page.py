@@ -8,72 +8,20 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'Profile'
-        db.create_table('Wyclif_profile', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
-        ))
-        db.send_create_signal('Wyclif', ['Profile'])
+        # Deleting field 'Paragraph.page_number'
+        db.delete_column('Wyclif_paragraph', 'page_number')
 
-        # Adding model 'Chapter'
-        db.create_table('Wyclif_chapter', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Wyclif.Title'])),
-            ('xml_chapter_id', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('heading', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('start_page_no', self.gf('django.db.models.fields.IntegerField')()),
-            ('old_id', self.gf('django.db.models.fields.IntegerField')(null=True)),
-        ))
-        db.send_create_signal('Wyclif', ['Chapter'])
-
-        # Adding model 'Paragraph'
-        db.create_table('Wyclif_paragraph', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('chapter', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Wyclif.Chapter'])),
-            ('number', self.gf('django.db.models.fields.IntegerField')()),
-            ('page_number', self.gf('django.db.models.fields.IntegerField')()),
-            ('split', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('text', self.gf('django.db.models.fields.TextField')()),
-            ('old_id', self.gf('django.db.models.fields.IntegerField')(null=True)),
-        ))
-        db.send_create_signal('Wyclif', ['Paragraph'])
-
-        # Adding model 'Title'
-        db.create_table('Wyclif_title', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('text', self.gf('django.db.models.fields.CharField')(max_length=70)),
-            ('author', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['Wyclif.Author'])),
-            ('volume', self.gf('django.db.models.fields.IntegerField')()),
-            ('pages', self.gf('django.db.models.fields.IntegerField')()),
-            ('old_id', self.gf('django.db.models.fields.IntegerField')(null=True)),
-        ))
-        db.send_create_signal('Wyclif', ['Title'])
-
-        # Adding model 'Author'
-        db.create_table('Wyclif_author', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=70)),
-            ('old_id', self.gf('django.db.models.fields.IntegerField')(null=True)),
-        ))
-        db.send_create_signal('Wyclif', ['Author'])
+        # Adding field 'Paragraph.page'
+        db.add_column('Wyclif_paragraph', 'page', self.gf('django.db.models.fields.related.ForeignKey')(default=0, to=orm['Wyclif.Page']), keep_default=False)
 
 
     def backwards(self, orm):
         
-        # Deleting model 'Profile'
-        db.delete_table('Wyclif_profile')
+        # Adding field 'Paragraph.page_number'
+        db.add_column('Wyclif_paragraph', 'page_number', self.gf('django.db.models.fields.IntegerField')(default=0), keep_default=False)
 
-        # Deleting model 'Chapter'
-        db.delete_table('Wyclif_chapter')
-
-        # Deleting model 'Paragraph'
-        db.delete_table('Wyclif_paragraph')
-
-        # Deleting model 'Title'
-        db.delete_table('Wyclif_title')
-
-        # Deleting model 'Author'
-        db.delete_table('Wyclif_author')
+        # Deleting field 'Paragraph.page'
+        db.delete_column('Wyclif_paragraph', 'page_id')
 
 
     models = {
@@ -92,13 +40,19 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Wyclif.Title']"}),
             'xml_chapter_id': ('django.db.models.fields.CharField', [], {'max_length': '10'})
         },
+        'Wyclif.page': {
+            'Meta': {'object_name': 'Page'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'number': ('django.db.models.fields.IntegerField', [], {}),
+            'scan': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'})
+        },
         'Wyclif.paragraph': {
             'Meta': {'object_name': 'Paragraph'},
             'chapter': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Wyclif.Chapter']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'number': ('django.db.models.fields.IntegerField', [], {}),
             'old_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
-            'page_number': ('django.db.models.fields.IntegerField', [], {}),
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['Wyclif.Page']"}),
             'split': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
             'text': ('django.db.models.fields.TextField', [], {})
         },
