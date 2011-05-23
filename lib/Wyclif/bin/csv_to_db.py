@@ -13,8 +13,14 @@ from Wyclif.models import Chapter, Paragraph, Title, Author, Page
 
 def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep): # "/Users/chris/coding/wyclif_project/Wyclif/lib/Wyclif/bin/"
 	"""Flushes the database and inserts all records from csv files."""
+
+	print "Going to run flush and import all processes."
+
 	_db_flush()
 	_db_import_all(PATH_TO_FILES)
+	
+	print "Done with run."
+	
 	return
 
 
@@ -27,30 +33,37 @@ def run_view(request):
 def _db_flush():
 	"""Deletes data from all Wyclif models."""
 	
+	print "Deleting data from all Wyclif models."
+	
 	# set the models to reset.
 	models = [Chapter, Paragraph, Title, Author, Page]
 
 	# flush models.
 	for m in models:
-		for el in m.objects.all():
-			el.delete()
+		m.objects.all().delete()
+
+	print "Done deleting data from all Wyclif models."
 
 
 def _db_import_all(PATH_TO_FILES):
 	"""Inserts data into all Wyclif models. Calls _db_import() sequentially."""
 
 	# assign John Wyclif to an author id.
+	print "Creating database object for Author John Wylif..."
 	wy = Author()
 	wy.name = "John Wyclif"
 	wy.save()
+	print "...done."
+
 
 	# import rows from csv files.
 
 	# Import book titles.
+	print "Importing book titles..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblTitles.csv",
 		model = Title,
-		conversion = {
+		field_conversion = {
 			# djangofield <- csv
 			"text"   : "title"   ,
             "volume" : "volume"  ,
@@ -62,12 +75,15 @@ def _db_import_all(PATH_TO_FILES):
 			"author"      :   wy ,  #assign wyclif as author to all.
 		},
 	)
+	print "...Done importing book titles."
+	
 	
 	#import chapters.
+	print "Importing chapter information..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblChapters.csv",
 		model = Chapter,
-		conversion = {
+		field_conversion = {
 			# djangofield    <-  csv
 			"old_id"          : "chapterID"    ,
             "xml_chapter_id"  : "xmlChapterID" ,
@@ -84,56 +100,23 @@ def _db_import_all(PATH_TO_FILES):
 			},
 		},
 	)
-
-	#autopopulate the Page model with dummy pages for each Title object.
-
-	def _db_assign_foreach( item_in, set_field, in_model, assign_range, to_field ):
-		for item in item_in:
-			for i in assign_range:
-				args = {
-					set_field : item,
-					to_field : i,
-				}
-				print "Creating new %s with %s" % (in_model, args)
-				in_model(**args).save()		
-
-	_db_assign_foreach(
-		item_in = Title.objects.all(),
-		set_field = "title", in_model = Page, 
-		assign_range = range(0,1000),
-		to_field = "number",
-	)
-
-	#import pages (get from paragraphs data.)
-	#_db_import(
-	#	csv_path = PATH_TO_FILES+"tblParagraphs.csv",
-	#	model = Page,
-	#	conversion = {
-	#		# djangofield <-  csv
-	#		"number"      : "pageNo" 
-	#	},
-	#	query_assign = {
-	#		# djangofield <- { use value for csvfield in csv to get an object from model's modelfield }
-	#		# 		(effectively links models together)
-	#		"title" : {
-	#			"csvfield" : "chapterID",
-	#			"get_model" : Chapter,
-	#			"get_modelfield" : "old_id",
-	#		},
-	#	},
-		
-
-		#ignore_these_exceptions = (
-		#	IntegrityError,
-		#)
-	#)
+	print "...Done importing chapter information."	
+	
+	dummy_title = Title(author=wy, volume=0, pages=0)
+	dummy_title.save()
+	
+	dummy_page = Page(title=dummy_title)
+	dummy_page.save()
+	
+	print "Importing Paragraphs..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblParagraphs.csv",
 		model = Paragraph,
-		conversion = {
+		field_conversion = {
 			# djangofield <-  csv
 			"old_id"      : "paragraphID"   ,
             "number"      : "paragraphNo"   ,
+			"old_page_number" : "pageNo"    ,
 			"split"       : "split"         ,
 			"text"        : "paragraphText" ,
 		},
@@ -145,18 +128,49 @@ def _db_import_all(PATH_TO_FILES):
 				"get_model" : Chapter,
 				"get_modelfield" : "old_id",
 			},
-			"page" : {
-				"csvfield" : "pageNo",
-				"get_model" : Page,
-				"get_modelfield" : "number",
-			},
+		},
+		object_assign = {
+			#django field :   assign object
+			"page"      :   dummy_page ,  #assign wyclif as author to all.
 		},
 	)
+	print "...Done importing Paragraphs."
 	
-def _db_import(csv_path, model, conversion, object_assign=None, query_assign=None, ignore_these_exceptions=None):
-	"""Import data from csv file at csv_path into django model according to conversion map."""
 	
-	print "_db_import(%s, %s, %s, %s, %s)" % (str(csv_path), str(model), str(conversion), str(object_assign), str(query_assign))
+	print "Generating new Page information..."
+	for paragraph in Paragraph.objects.all():
+		model = Page
+		newdata = {
+			"title"  : paragraph.chapter.title,
+			"number" : paragraph.old_page_number,
+			"scan" : None,
+		}
+
+		run_silently = False
+		try:
+			page = model(**newdata)
+			page.save()		
+
+			if not run_silently:
+				print "%s -> %s" % (newdata,model)
+				
+		except IntegrityError:
+			# duplicate rows should be skipped.
+			pass
+		else:				
+			paragraph.page = page
+			paragraph.save()
+			print "page %s -> paragraph %s" % (page.pk,paragraph.pk)
+			
+	dummy_page.delete()
+	dummy_title.delete()
+	print "...done generating new Page information."
+	
+	
+def _db_import(csv_path, model, field_conversion, object_assign=None, query_assign=None, ignore_these_exceptions=None, run_silently=False):
+	"""Import data from csv file at csv_path into django model according to field_conversion map."""
+	
+	#print "_db_import(%s, %s, %s, %s, %s)" % (str(csv_path), str(model), str(field_conversion), str(object_assign), str(query_assign))
 	
 	dictreader = csv.DictReader(open(csv_path,"r"))
 	fieldnames = dictreader.fieldnames
@@ -165,8 +179,8 @@ def _db_import(csv_path, model, conversion, object_assign=None, query_assign=Non
 		# Get an array of (newkey, value) pairs.
 		# Derive newkey from old fieldnames.
 		ar = []
-		for djangofield in conversion:
-			ar.append( (djangofield, unicode( data[conversion[djangofield]], errors="replace" )))
+		for djangofield in field_conversion:
+			ar.append( (djangofield, unicode( data[field_conversion[djangofield]], errors="ignore" )))
 				#errors:
 				#1. {'chapterID': '182', 'pageNo': '47', 'paragraphID': '1690', 'paragraphNo': '3', 'paragraphText': 'Similiter talis claustralis ex declinacione a lege domini est sibi valde ingratus, et ut sic indispositus ad orandum. Unde proverb 28o sic scribitur: qui declinat aurem suam ne audiat legem, oracio ejus fiet execrabilis. Similiter ut hic supponitur, justorum sunt omnia et specialiter pauperum spiritu, quantumcunque sint abhominabiles apud mundum: sed clerus dotatus defraudat hos pauperes de sua substancia; igitur propter istam injuriam necesse est deum oracionem illorum repellere, nisi quis blasfemet quod deo ingratus, propter hoc quod est mundo dicior sive excellencior, est pocius in precibus exauditus. Unde in confirmacione istius assumpte sentencie eccci 34o scribitur: qui offert sacrificium de substancia pauperum, quasi qui victimat filium in conspectu patris. Talia sunt multa testimonia in scriptura, ut prov po, ys. po, Malac po, cum aliis. Ex quibus motus fuit beatus gregorius dicere pro prelatis indignis: \xe2\x80\x98Cuncti liquido \xe2\x80\x98novimus cum is qui displicet ad intercedendum mittitur \xe2\x80\x98irati animus proculdubio ad deterius provocatur,\xe2\x80\x99 ut patet in suo pastorali. Et in canone 3a questio 7a si quis in ', 'split': 'top'}
 				#     i.e. "\xe2\x80\x98"
@@ -190,6 +204,8 @@ def _db_import(csv_path, model, conversion, object_assign=None, query_assign=Non
 
 		try:
 			model(**newdata).save()
+			if not run_silently:
+				print "%s -> %s" % (newdata,model)
 		except ignore_these_exceptions:
 			pass
 			
