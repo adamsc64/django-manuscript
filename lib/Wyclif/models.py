@@ -16,7 +16,7 @@ def create_profile(sender, **kw):
     if kw["created"]:
         profile = Profile()
         profile.user = user
-        profile.save()
+       	profile.save()
 post_save.connect(create_profile, sender=User)
 
 
@@ -46,7 +46,7 @@ class Page(WyclifModel):
 	scan = models.ImageField(upload_to='pages')
 	
 	def __unicode__(self):
-		return u"Page number %s" % (str(self.number))
+		return u"%s, p. %s" % (unicode(self.title), unicode(self.number))
 	
 	class Meta:
 		unique_together = ('title','number')
@@ -64,7 +64,8 @@ class Paragraph(WyclifModel):
 	page = models.ForeignKey('Wyclif.Page')
 	split = models.CharField(max_length=10, choices=SPLIT_CHOICES)
 	text = models.TextField()
-	old_id = models.IntegerField(null=True) # import field
+	old_page_number = models.IntegerField(null=True) # import field only
+	old_id = models.IntegerField(null=True) # import field only
 
 	def __unicode__(self):
 		return u"[%s] '%s...'" % (self.pk,self.text[:20])
@@ -78,7 +79,7 @@ class Title(WyclifModel):
 	old_id = models.IntegerField(null=True) # import field
 
 	def __unicode__(self):
-		return u"%s" % (self.text,)
+		return u"%s" % self.text
 
 	
 class Author(WyclifModel):
