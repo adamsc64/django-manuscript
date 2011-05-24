@@ -1,4 +1,4 @@
-# Django settings for Wyclif project.
+# Django settings for wyclif project.
 
 # I have split django settings into two files.
 #  1. [settings.py] This file. Includes settings common to the server and localhost.
@@ -47,7 +47,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'Wyclif.urls'
+ROOT_URLCONF = 'wyclif.urls'
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -68,7 +68,7 @@ INSTALLED_APPS = (
 	#sentry error reporting system.
 	'indexer', 'paging', 'sentry', 'sentry.client',
 	
-	#Wyclif apps.
+	#wyclif apps.
 	'wyclif',
 
 	#Other apps.
@@ -76,7 +76,7 @@ INSTALLED_APPS = (
 	'south',
 )
 
-#AUTH_PROFILE_MODULE = 'Wyclif.Profile'
+#AUTH_PROFILE_MODULE = 'wyclif.Profile'
 
 LOGIN_URL = "/accounts/login/"
 
