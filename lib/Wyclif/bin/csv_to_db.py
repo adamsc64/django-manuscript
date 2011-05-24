@@ -105,7 +105,7 @@ def _db_import_all(PATH_TO_FILES):
 	dummy_title = Title(author=wy, volume=0, pages=0)
 	dummy_title.save()
 	
-	dummy_page = Page(title=dummy_title)
+	dummy_page = Page(title=dummy_title, number=0)
 	dummy_page.save()
 	
 	print "Importing Paragraphs..."
