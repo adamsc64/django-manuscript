@@ -69,7 +69,7 @@ INSTALLED_APPS = (
 	'indexer', 'paging', 'sentry', 'sentry.client',
 	
 	#Wyclif apps.
-	'Wyclif',
+	'wyclif',
 
 	#Other apps.
 	'tastypie',
