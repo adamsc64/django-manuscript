@@ -6,8 +6,8 @@ from tastypie.authorization import Authorization
 from tastypie.constants import ALL
 
 from django.contrib.auth.models import User
-#from Wyclif.models import Profile
-from Wyclif.models import Chapter, Paragraph, Title
+#from wyclif.models import Profile
+from wyclif.models import Chapter, Paragraph, Title
 
 class UserResource(ModelResource):
 	class Meta:

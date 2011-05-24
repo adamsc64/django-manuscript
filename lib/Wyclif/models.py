@@ -20,7 +20,7 @@ from django.db.models.signals import post_save
 #post_save.connect(create_profile, sender=User)
 
 
-class WyclifModel(models.Model):
+class wyclifModel(models.Model):
 	class Meta:
 		abstract = True
 
@@ -28,9 +28,9 @@ class WyclifModel(models.Model):
 		return [(field.name, field.value_to_string(self)) for field in self._meta.fields]
 
 
-class Chapter(WyclifModel):
+class Chapter(wyclifModel):
 	heading = models.CharField(max_length=50)
-	title = models.ForeignKey("Wyclif.Title", verbose_name="In Title")
+	title = models.ForeignKey("wyclif.Title", verbose_name="In Title")
 	start_page_no = models.IntegerField()
 	old_id = models.IntegerField(null=True, editable=False) # import field
 	xml_chapter_id = models.CharField(max_length=10, null=True, editable=False) # import field
@@ -40,8 +40,8 @@ class Chapter(WyclifModel):
 		return u"(%s) '%s'" % (self.title , self.heading)
 
 
-class Page(WyclifModel):
-	title = models.ForeignKey("Wyclif.Title", verbose_name="In Title")
+class Page(wyclifModel):
+	title = models.ForeignKey("wyclif.Title", verbose_name="In Title")
 	number = models.IntegerField(verbose_name="Page number")
 	scan = models.ImageField(upload_to='pages')
 	
@@ -52,16 +52,16 @@ class Page(WyclifModel):
 		unique_together = ('title','number')
 		
 
-class Paragraph(WyclifModel):
+class Paragraph(wyclifModel):
 	SPLIT_CHOICES = (
 		("bottom", "Bottom of page to top of next page"),
 		("no", "Not split across pages"),
 		("top", "Top of page from bottom of last page"),
 	)
 	
-	chapter = models.ForeignKey('Wyclif.Chapter', verbose_name="In Chapter")
+	chapter = models.ForeignKey('wyclif.Chapter', verbose_name="In Chapter")
 	number = models.IntegerField(verbose_name="Order in Chapter")
-	page = models.ForeignKey('Wyclif.Page')
+	page = models.ForeignKey('wyclif.Page')
 	split = models.CharField(max_length=10, choices=SPLIT_CHOICES)
 	text = models.TextField()
 	old_page_number = models.IntegerField(null=True, editable=False) # import field only
@@ -71,9 +71,9 @@ class Paragraph(WyclifModel):
 		return u"[%s] '%s...'" % (self.pk,self.text[:20])
 	
 
-class Title(WyclifModel):
+class Title(wyclifModel):
 	text = models.CharField(verbose_name = "Title Text", max_length=70)
-	author = models.ForeignKey("Wyclif.Author")
+	author = models.ForeignKey("wyclif.Author")
 	volume = models.IntegerField()
 	pages = models.IntegerField()
 	old_id = models.IntegerField(null=True, editable=False) # import field
@@ -82,7 +82,7 @@ class Title(WyclifModel):
 		return u"%s" % self.text
 
 	
-class Author(WyclifModel):
+class Author(wyclifModel):
 	name = models.CharField(max_length=70)
 	old_id = models.IntegerField(null=True, editable=False) # import field
 

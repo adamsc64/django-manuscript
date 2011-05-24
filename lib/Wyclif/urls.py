@@ -5,8 +5,8 @@ from django.http import HttpResponse
 urlpatterns = patterns('')
 
 urlpatterns += patterns('',
-	(r'^/?$', 'Wyclif.views.index'),
-	(r'^input/?$', 'Wyclif.views.input'),
+	(r'^/?$', 'wyclif.views.index'),
+	(r'^input/?$', 'wyclif.views.input'),
 )
 
 urlpatterns += patterns('',
@@ -33,7 +33,7 @@ urlpatterns += patterns('',
 
 # implementing tastypie api.
 from tastypie.api import Api
-from Wyclif.api import ParagraphResource, ChapterResource, TitleResource
+from wyclif.api import ParagraphResource, ChapterResource, TitleResource
 
 v1_api = Api(api_name='v1')
 v1_api.register(ParagraphResource())
@@ -57,24 +57,24 @@ urlpatterns += patterns('',
 
 # implementing /db/ views.
 
-from Wyclif.bin.csv_to_db import run_view
-from Wyclif.models import Paragraph, Title, Author
+from wyclif.bin.csv_to_db import run_view
+from wyclif.models import Paragraph, Title, Author
 
 urlpatterns += patterns('',
 
 	(r'^db/runimport/$', run_view),
 	(r'^db/paragraphs/$', 'django.views.generic.list_detail.object_list', {
 		'queryset' : Paragraph.objects.all(),
-		'template_name' : 'Wyclif/object_list.html'
+		'template_name' : 'wyclif/object_list.html'
 	}),
 #		'extra_context' : { 'fieldnames' : Paragraph._meta.get_all_field_names() }
 	(r'^db/titles/$', 'django.views.generic.list_detail.object_list', {
 		'queryset' : Title.objects.all(),
-		'template_name' : 'Wyclif/object_list.html'
+		'template_name' : 'wyclif/object_list.html'
 	}),
 	(r'^db/authors/$', 'django.views.generic.list_detail.object_list', {
 		'queryset' : Author.objects.all(),
-		'template_name' : 'Wyclif/object_list.html'
+		'template_name' : 'wyclif/object_list.html'
 	}),
 
 )

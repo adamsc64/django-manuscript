@@ -8,10 +8,10 @@ from django.db import IntegrityError
 from django.conf import settings
 from django.http import HttpResponse
 
-from Wyclif.models import Chapter, Paragraph, Title, Author, Page
+from wyclif.models import Chapter, Paragraph, Title, Author, Page
 
 
-def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep): # "/Users/chris/coding/wyclif_project/Wyclif/lib/Wyclif/bin/"
+def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyclif/bin/"
 	"""Flushes the database and inserts all records from csv files."""
 
 	print "Going to run flush and import all processes."
@@ -31,9 +31,9 @@ def run_view(request):
 
 
 def _db_flush():
-	"""Deletes data from all Wyclif models."""
+	"""Deletes data from all wyclif models."""
 	
-	print "Deleting data from all Wyclif models."
+	print "Deleting data from all wyclif models."
 	
 	# set the models to reset.
 	models = [Chapter, Paragraph, Title, Author, Page]
@@ -42,14 +42,14 @@ def _db_flush():
 	for m in models:
 		m.objects.all().delete()
 
-	print "Done deleting data from all Wyclif models."
+	print "Done deleting data from all wyclif models."
 
 
 def _db_import_all(PATH_TO_FILES):
-	"""Inserts data into all Wyclif models. Calls _db_import() sequentially."""
+	"""Inserts data into all wyclif models. Calls _db_import() sequentially."""
 
 	# assign John Wyclif to an author id.
-	print "Creating database object for Author John Wylif..."
+	print "Creating database object for Author John Wyclif..."
 	wy = Author()
 	wy.name = "John Wyclif"
 	wy.save()
