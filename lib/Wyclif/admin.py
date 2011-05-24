@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from Wyclif.models import Profile,Chapter,Paragraph,Title,Author,Page
+from Wyclif.models import Chapter,Paragraph,Title,Author,Page
 
-admin.site.register(Profile)
+#admin.site.register(Profile)
 admin.site.register(Chapter)
 admin.site.register(Paragraph)
 admin.site.register(Title)

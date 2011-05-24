@@ -6,7 +6,7 @@ from tastypie.authorization import Authorization
 from tastypie.constants import ALL
 
 from django.contrib.auth.models import User
-from Wyclif.models import Profile
+#from Wyclif.models import Profile
 from Wyclif.models import Chapter, Paragraph, Title
 
 class UserResource(ModelResource):
@@ -31,14 +31,14 @@ class UserResource(ModelResource):
 			"is_active"
 		]
 
-class ProfileResource(ModelResource):
-	class Meta:
-		queryset = Profile.objects.all()
-		resource_name = 'profile'
-
-		list_allowed_methods = ['get']
-
-		authentication = Authentication()
+#class ProfileResource(ModelResource):
+#	class Meta:
+#		queryset = Profile.objects.all()
+#		resource_name = 'profile'
+#
+#		list_allowed_methods = ['get']
+#
+#		authentication = Authentication()
 
 class ChapterResource(ModelResource):
 	class Meta:

@@ -76,6 +76,10 @@ INSTALLED_APPS = (
 	'south',
 )
 
-AUTH_PROFILE_MODULE = 'Wyclif.Profile'
+#AUTH_PROFILE_MODULE = 'Wyclif.Profile'
 
 LOGIN_URL = "/accounts/login/"
+
+# These two settings should be left as True in order for sentry to catch as much information as possible.
+TEMPLATE_DEBUG = True
+SENTRY_TESTING = True
