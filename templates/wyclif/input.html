@@ -1,0 +1,88 @@
+<html>
+<head>
+	<title>Wyclif Project Input Tool</title>
+
+	<style>
+		* {
+			margin:10px;
+		}
+		h1 {
+			
+		}
+		input {
+		}
+		body {
+			background-color:EEEEEE;
+		}
+		#main {
+			margin:auto;
+			width:800px;
+			border:1px solid;
+		}
+	</style>
+</head>
+<body>
+	<div id="main">
+		<div style="text-align:center;">
+			<img src="http://www9.georgetown.edu/faculty/szittyap/wyclif/imgs/jw.jpg">
+			<h1>
+				Wyclif Project Input Tool
+			</h1>
+		</div>
+		<hr>
+		Welcome to the Wyclif project input tool.<br>
+		<br>
+		What would you like to do?<br>
+		<br>
+		Data entry >><br>
+		Create a new Book Title.<br>
+		Create a new Book Chapter.<br>
+		Enter a scanned page.<br>
+		<br>
+		Data edit >><br>
+		Edit a Book Title Information.<br>
+		Edit Book Chapter Information.<br>
+		Edit scanned page information.<br>
+		
+		<center>ADD NEW TITLE</center>
+		<div>
+			{{title_form}}
+		</div>
+		<hr>
+		<center>ADD NEW SCANNED PAGE</center>
+		<div>
+			{{page_form}}
+		</div>
+		<hr>
+		<center>ADD CHAPTER</center>
+		<div>
+			{{chapter_form}}
+		</div>
+		<hr>
+		<center>ADD PARAGRAPHS</center>
+		<div>
+			{{paragraph_form}}
+		</div>
+		<hr>
+		<div>
+			<i>The following is a very basic sample of what the input tool may turn out to look like. This section is currently under development.</i>
+		</div>
+		<hr>
+		<div>
+			Volume Name <input />
+			Volume Number <input />
+			Page Number <input />
+		</div>
+		<hr>
+		<div>
+			Latin Source Text:<br>
+			<textarea style="margin-left:50px; font-family:'Courier'; width:500px; height:200px" ></textarea>
+		</div>
+		<hr>
+		<div>
+			Your scanned jpg file: <input type="file">
+		</div>
+		<input type="submit" />
+	</div>
+</body>
+</html>
