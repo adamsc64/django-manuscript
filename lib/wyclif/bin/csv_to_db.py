@@ -11,13 +11,13 @@ from django.http import HttpResponse
 from wyclif.models import Chapter, Paragraph, Title, Author, Page
 
 
-def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyclif/bin/"
+def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep, run_silently=False): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyclif/bin/"
 	"""Flushes the database and inserts all records from csv files."""
 
 	print "Going to run flush and import all processes."
 
-	_db_flush()
-	_db_import_all(PATH_TO_FILES)
+	_db_flush(run_silently=run_silently)
+	_db_import_all(PATH_TO_FILES,run_silently=run_silently)
 	
 	print "Done with run."
 	
@@ -26,40 +26,46 @@ def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep): # 
 
 def run_view(request):
 	"""A wrapper view to be used in urls.py for the run() function."""
-	run()
+	run(run_silently=True)
 	return HttpResponse("The import seems to have run without failing! %s" % (time.ctime()))
 
 
-def _db_flush():
+def _db_flush(run_silently=False):
 	"""Deletes data from all wyclif models."""
 	
-	print "Deleting data from all wyclif models."
+	if run_silently==False:
+		print "Deleting data from all wyclif models."
 	
 	# set the models to reset.
 	models = [Chapter, Paragraph, Title, Author, Page]
 
 	# flush models.
 	for m in models:
-		m.objects.all().delete()
+		for o in m.objects.all():
+			o.delete()
 
-	print "Done deleting data from all wyclif models."
+	if run_silently==False:
+		print "Done deleting data from all wyclif models."
 
 
-def _db_import_all(PATH_TO_FILES):
+def _db_import_all(PATH_TO_FILES, run_silently=False):
 	"""Inserts data into all wyclif models. Calls _db_import() sequentially."""
 
 	# assign John Wyclif to an author id.
-	print "Creating database object for Author John Wyclif..."
+	if run_silently==False:
+		print "Creating database object for Author John Wyclif..."
 	wy = Author()
 	wy.name = "John Wyclif"
 	wy.save()
-	print "...done."
+	if run_silently==False:
+		print "...done."
 
 
 	# import rows from csv files.
 
 	# Import book titles.
-	print "Importing book titles..."
+	if run_silently==False:
+		print "Importing book titles..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblTitles.csv",
 		model = Title,
@@ -75,11 +81,13 @@ def _db_import_all(PATH_TO_FILES):
 			"author"      :   wy ,  #assign wyclif as author to all.
 		},
 	)
-	print "...Done importing book titles."
+	if run_silently==False:
+		print "...Done importing book titles."
 	
 	
 	#import chapters.
-	print "Importing chapter information..."
+	if run_silently==False:
+		print "Importing chapter information..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblChapters.csv",
 		model = Chapter,
@@ -100,7 +108,8 @@ def _db_import_all(PATH_TO_FILES):
 			},
 		},
 	)
-	print "...Done importing chapter information."	
+	if run_silently==False:
+		print "...Done importing chapter information."	
 	
 	dummy_title = Title(author=wy, volume=0, pages=0)
 	dummy_title.save()
@@ -108,7 +117,8 @@ def _db_import_all(PATH_TO_FILES):
 	dummy_page = Page(title=dummy_title, number=0)
 	dummy_page.save()
 	
-	print "Importing Paragraphs..."
+	if run_silently==False:
+		print "Importing Paragraphs..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblParagraphs.csv",
 		model = Paragraph,
@@ -134,37 +144,42 @@ def _db_import_all(PATH_TO_FILES):
 			"page"      :   dummy_page ,  #assign wyclif as author to all.
 		},
 	)
-	print "...Done importing Paragraphs."
-	
-	
-	print "Generating new Page information..."
+	if run_silently==False:
+		print "...Done importing Paragraphs."
+		
+	if run_silently==False:
+		print "Generating new Page information..."
 	for paragraph in Paragraph.objects.all():
 		model = Page
-		newdata = {
-			"title"  : paragraph.chapter.title,
-			"number" : paragraph.old_page_number,
-			"scan" : None,
-		}
-
-		run_silently = False
+		
 		try:
+			page = Page.objects.get(title=paragraph.chapter.title, number=paragraph.old_page_number)
+		except Page.DoesNotExist:
+			newdata = {
+				"title"  : paragraph.chapter.title,
+				"number" : paragraph.old_page_number,
+				"scan" : None,
+			}
 			page = model(**newdata)
-			page.save()		
+			page.save()	
 
-			if not run_silently:
-				print "%s -> %s" % (newdata,model)
-				
-		except IntegrityError:
-			# duplicate rows should be skipped.
-			pass
-		else:				
-			paragraph.page = page
-			paragraph.save()
-			print "page %s -> paragraph %s" % (page.pk,paragraph.pk)
+		if not run_silently:
+			print "%s -> %s" % (newdata,model)
 			
-	dummy_page.delete()
+		paragraph.page = page
+		paragraph.save()
+		if run_silently==False:
+			print "page %s -> paragraph %s" % (page.pk,paragraph.pk)
+	
+	if run_silently==False:
+		print "...done generating new Page information."
+	
 	dummy_title.delete()
-	print "...done generating new Page information."
+	dummy_page.delete()
+
+	#_random_check(dummy_page,dummy_title)
+	
+	return
 	
 	
 def _db_import(csv_path, model, field_conversion, object_assign=None, query_assign=None, ignore_these_exceptions=None, run_silently=False):
@@ -203,10 +218,25 @@ def _db_import(csv_path, model, field_conversion, object_assign=None, query_assi
 				newdata[djangofield] = el
 
 		try:
-			model(**newdata).save()
+			n = model(**newdata)
+			n.save()
+			nd = n.__dict__
+
 			if not run_silently:
 				print "%s -> %s" % (newdata,model)
 		except ignore_these_exceptions:
 			pass
 			
 	return
+
+
+def _random_check(dummy_page, dummy_title):
+	
+	nc2 = Paragraph.objects.get(chapter__title=dummy_title)
+	ncd2 = nc2.__dict__
+
+	nc1 = Paragraph.objects.get(page=dummy_page)
+	ncd1 = nc1.__dict__
+
+	raise Exception
+
