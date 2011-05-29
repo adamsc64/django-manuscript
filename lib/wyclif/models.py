@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-
+from django.template.defaultfilters import slugify
+from django.core.exceptions import ObjectDoesNotExist
 
 #class Profile(models.Model):
 #	# This field connects each profile with a user.
@@ -68,7 +69,7 @@ class Paragraph(WyclifModel):
 	old_id = models.IntegerField(null=True, editable=False) # import field only
 
 	def __unicode__(self):
-		return u"[%s] %s: '%s...'" % (self.page, self.number,self.text[:20])
+		return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
 	
 
 class Title(WyclifModel):
@@ -76,10 +77,29 @@ class Title(WyclifModel):
 	author = models.ForeignKey("wyclif.Author")
 	volume = models.IntegerField()
 	pages = models.IntegerField()
+	slug = models.SlugField(max_length=70, null=True, unique=True)
+
 	old_id = models.IntegerField(null=True, editable=False) # import field
 
 	def __unicode__(self):
 		return u"%s" % self.text
+	
+	def save(self, *args, **kwargs):
+		if not self.slug:  #execute only if there is not one already.
+			slug = slugify( self.text )
+			try:
+				slug_double = Title.objects.get(slug__iexact = slug)
+			except ObjectDoesNotExist:
+				#there is no slug by that title in the database.
+				pass
+			else:
+				#there is a slug already by that title in the database.
+				slug = slug + "-" + slugify(str(datetime.now()))
+
+			self.slug = slug
+
+		super( Title, self ).save(*args, **kwargs)
+
 
 	
 class Author(WyclifModel):
