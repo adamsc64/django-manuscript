@@ -9,8 +9,8 @@ def index(request):
 	
 def input(request):
 	#request_variables = dict(request.REQUEST.items())
-	
-	return render_to_response('wyclif/input.html')
+	return HttpResponseRedirect('/admin/wyclif/paragraph/add/')
+	#return render_to_response('wyclif/input.html')
 
 def input_title(request):
 	title_form = TitleForm()
