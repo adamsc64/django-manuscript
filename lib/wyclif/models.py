@@ -77,7 +77,7 @@ class Title(WyclifModel):
 	author = models.ForeignKey("wyclif.Author")
 	volume = models.IntegerField()
 	pages = models.IntegerField()
-	slug = models.SlugField(max_length=70, unique=True, blank=True)
+	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Slug: leave empty to auto-generate.")
 
 	old_id = models.IntegerField(null=True, editable=False) # import field
 
