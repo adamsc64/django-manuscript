@@ -9,6 +9,13 @@ urlpatterns += patterns('',
 	(r'^input/?$', 'wyclif.views.input'),
 )
 
+urlpatterns += patterns('wyclif.work.views',
+	(r'^work/?$', 											'all_works'),
+	(r'^work/(?P<work>.*)/?$', 								'one_work'),
+	(r'^work/(?P<work>.*)/(?P<model>.*)/?$', 				'model_by_work'),
+	(r'^work/(?P<work>.*)/(?P<model>.*)/(?P<id>\d*)/?$', 	'element_by_id'),
+)
+
 urlpatterns += patterns('',
 	(r'^sentry/', include('sentry.urls')),
 )
