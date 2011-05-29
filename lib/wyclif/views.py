@@ -75,3 +75,5 @@ def edit_page(request, id):
 		'paragraph_forms' : paragraph_forms,
 		'page_form' : page_form,
 	})
+
+

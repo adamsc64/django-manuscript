@@ -8,21 +8,21 @@
 <div id="main">
 	<div id="header">
 		<h1>The Latin Works of John Wyclif</h1>
+		A searchable database of the primary texts
 		<h2>{{title}}</h2>
-		
 		<div id="search"> 
 			<img src="/static/img/magnifying_glass.jpg" height="25" width="30"> 
 			<input name='q' id='q'></input> 
 			<input type="submit" value="Go"></input> 
 		</div>		
-		
-		<a class="navbutton" href="/">Home</a>
-		<a class="navbutton" href="/works/">Works</a>
-		<a class="navbutton" href="/about/">About</a>
-		<a class="navbutton" href="/contact/">Contact</a>
+		<hr>
+		<a class="navbutton" href="/">Home</a> |
+		<a class="navbutton" href="/work/">Works</a> |
+		<a class="navbutton" href="/about/">About</a> |
+		<a class="navbutton" href="/contact/">Contact</a> |
 		<a class="navbutton" href="/terms/">Terms of Service</a>
 	</div>
-
+	<hr>
 	<div id="content">
 		{% block content %}
 		{% endblock content %}

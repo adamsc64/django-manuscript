@@ -1,0 +1,14 @@
+{% extends "wyclif/base.html" %}
+
+{% block content %}
+	{% for dataobj in works_by_author %}
+		{{dataobj.author}}
+		<ul>
+		{% for work in dataobj.works %}
+			<li>{{work}}</li>
+		{% endfor %}
+		</ul>
+	{% endfor %}
+
+
+{% endblock %}
