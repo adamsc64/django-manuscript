@@ -11,15 +11,17 @@ from django.http import HttpResponse
 from wyclif.models import Chapter, Paragraph, Title, Author, Page
 
 
-def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep, run_silently=False): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyclif/bin/"
+def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep, run_silently=True): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyclif/bin/"
 	"""Flushes the database and inserts all records from csv files."""
 
-	print "Going to run flush and import all processes."
+	if not run_silently:
+		print "Going to run flush and import all processes."
 
 	_db_flush(run_silently=run_silently)
 	_db_import_all(PATH_TO_FILES,run_silently=run_silently)
 	
-	print "Done with run."
+	if not run_silently:
+		print "Done with run."
 	
 	return
 
@@ -30,10 +32,10 @@ def run_view(request):
 	return HttpResponse("The import seems to have run without failing! %s" % (time.ctime()))
 
 
-def _db_flush(run_silently=False):
+def _db_flush(run_silently=True):
 	"""Deletes data from all wyclif models."""
 	
-	if run_silently==False:
+	if not run_silently:
 		print "Deleting data from all wyclif models."
 	
 	# set the models to reset.
@@ -44,27 +46,27 @@ def _db_flush(run_silently=False):
 		for o in m.objects.all():
 			o.delete()
 
-	if run_silently==False:
+	if not run_silently:
 		print "Done deleting data from all wyclif models."
 
 
-def _db_import_all(PATH_TO_FILES, run_silently=False):
+def _db_import_all(PATH_TO_FILES, run_silently=True):
 	"""Inserts data into all wyclif models. Calls _db_import() sequentially."""
 
 	# assign John Wyclif to an author id.
-	if run_silently==False:
+	if not run_silently:
 		print "Creating database object for Author John Wyclif..."
 	wy = Author()
 	wy.name = "John Wyclif"
 	wy.save()
-	if run_silently==False:
+	if not run_silently:
 		print "...done."
 
 
 	# import rows from csv files.
 
 	# Import book titles.
-	if run_silently==False:
+	if not run_silently:
 		print "Importing book titles..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblTitles.csv",
@@ -80,13 +82,14 @@ def _db_import_all(PATH_TO_FILES, run_silently=False):
 			#django field :   assign object
 			"author"      :   wy ,  #assign wyclif as author to all.
 		},
+		run_silently=run_silently,
 	)
-	if run_silently==False:
+	if not run_silently:
 		print "...Done importing book titles."
 	
 	
 	#import chapters.
-	if run_silently==False:
+	if not run_silently:
 		print "Importing chapter information..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblChapters.csv",
@@ -107,8 +110,9 @@ def _db_import_all(PATH_TO_FILES, run_silently=False):
 				"get_modelfield" : "old_id",
 			},
 		},
+		run_silently=run_silently,
 	)
-	if run_silently==False:
+	if not run_silently:
 		print "...Done importing chapter information."	
 	
 	dummy_title = Title(author=wy, volume=0, pages=0)
@@ -117,7 +121,7 @@ def _db_import_all(PATH_TO_FILES, run_silently=False):
 	dummy_page = Page(title=dummy_title, number=0)
 	dummy_page.save()
 	
-	if run_silently==False:
+	if not run_silently:
 		print "Importing Paragraphs..."
 	_db_import(
 		csv_path = PATH_TO_FILES+"tblParagraphs.csv",
@@ -143,11 +147,12 @@ def _db_import_all(PATH_TO_FILES, run_silently=False):
 			#django field :   assign object
 			"page"      :   dummy_page ,  #assign wyclif as author to all.
 		},
+		run_silently=run_silently,
 	)
-	if run_silently==False:
+	if not run_silently:
 		print "...Done importing Paragraphs."
 		
-	if run_silently==False:
+	if not run_silently:
 		print "Generating new Page information..."
 	for paragraph in Paragraph.objects.all():
 		model = Page
@@ -168,10 +173,10 @@ def _db_import_all(PATH_TO_FILES, run_silently=False):
 			
 		paragraph.page = page
 		paragraph.save()
-		if run_silently==False:
+		if not run_silently:
 			print "page %s -> paragraph %s" % (page.pk,paragraph.pk)
 	
-	if run_silently==False:
+	if not run_silently:
 		print "...done generating new Page information."
 	
 	dummy_title.delete()
@@ -182,7 +187,7 @@ def _db_import_all(PATH_TO_FILES, run_silently=False):
 	return
 	
 	
-def _db_import(csv_path, model, field_conversion, object_assign=None, query_assign=None, ignore_these_exceptions=None, run_silently=False):
+def _db_import(csv_path, model, field_conversion, object_assign=None, query_assign=None, ignore_these_exceptions=None, run_silently=True):
 	"""Import data from csv file at csv_path into django model according to field_conversion map."""
 	
 	#print "_db_import(%s, %s, %s, %s, %s)" % (str(csv_path), str(model), str(field_conversion), str(object_assign), str(query_assign))
