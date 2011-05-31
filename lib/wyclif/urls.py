@@ -56,14 +56,22 @@ urlpatterns += patterns('',
 	(r'^accounts/logout/', 				'django.contrib.auth.views.logout', {'next_page': '/'})	,
 )
 
+# implementing img_to_db.
+
+urlpatterns += patterns('',
+
+	(r'^img_to_db/run/$', 'wyclif.bin.img_to_db.run_view'),
+)
+
+
+
 # implementing /db/ views.
 
-from wyclif.bin.csv_to_db import run_view
 from wyclif.models import Paragraph, Title, Author
 
 urlpatterns += patterns('',
 
-	(r'^db/runimport/$', run_view),
+	(r'^db/runimport/$', 'wyclif.bin.csv_to_db.run_view'),
 	(r'^db/paragraphs/$', 'django.views.generic.list_detail.object_list', {
 		'queryset' : Paragraph.objects.all(),
 		'template_name' : 'wyclif/object_list.html'
