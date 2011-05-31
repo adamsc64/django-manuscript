@@ -49,9 +49,9 @@ def run(run_silently=True): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyc
 		
 	for page in Page.objects.all():
 		if not run_silently:
-			print "Running title %s, page %s." % (page.title.id, page.id)
+			print "Running title.old_id=%s, page.number=%s." % (page.title.old_id, page.number)
 
-		htmlresponse = urllib2.urlopen("http://www9.georgetown.edu/faculty/szittyap/wyclif/index.cfm?action=dsp_volume&titleID=%s&pageNo=%s" % (str(page.title.id) , str(page.id)))
+		htmlresponse = urllib2.urlopen("http://www9.georgetown.edu/faculty/szittyap/wyclif/index.cfm?action=dsp_volume&titleID=%s&pageNo=%s" % (str(page.title.old_id) , str(page.number)))
 		html = htmlresponse.read()
 	
 		parser = HTMLJPGParser()
@@ -70,7 +70,7 @@ def run(run_silently=True): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyc
 				jpg = jpgresponse.read()
 
 				path = settings.MEDIA_ROOT +"temp/"
-				filename = "title_id_%02d__page_id_%04d.jpg" % (page.title.id, page.id)
+				filename = "title_old_id_%02d__page_number_%04d.jpg" % (page.title.old_id, page.number)
 				dest = path + filename
 
 				#write temporary file.
