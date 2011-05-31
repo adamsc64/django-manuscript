@@ -70,7 +70,7 @@ def run(run_silently=True): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyc
 				jpg = jpgresponse.read()
 
 				path = settings.MEDIA_ROOT +"temp/"
-				filename = "title_id_%02d__page_id_%04d.jpg" % (str(page.title.id) , str(page.id))
+				filename = "title_id_%02d__page_id_%04d.jpg" % (page.title.id, page.id)
 				dest = path + filename
 
 				#write temporary file.
