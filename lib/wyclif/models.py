@@ -55,9 +55,9 @@ class Page(WyclifModel):
 
 class Paragraph(WyclifModel):
 	SPLIT_CHOICES = (
-		("bottom", "Bottom of page to top of next page"),
+		("bottom", "This paragraph continues from page before"),
 		("no", "Not split across pages"),
-		("top", "Top of page from bottom of last page"),
+		("top", "This paragraph continues onto next page"),
 	)
 	
 	chapter = models.ForeignKey('wyclif.Chapter', verbose_name="In Chapter")
