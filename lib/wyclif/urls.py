@@ -67,7 +67,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
 
-	(r'^img_to_db/run/$', 'wyclif.bin.img_to_db.run_view'),
+	#(r'^img_to_db/run/$', 'wyclif.bin.img_to_db.run_view'),
 )
 
 
@@ -78,7 +78,7 @@ from wyclif.models import Paragraph, Title, Author
 
 urlpatterns += patterns('',
 
-	(r'^db/runimport/$', 'wyclif.bin.csv_to_db.run_view'),
+	#(r'^db/runimport/$', 'wyclif.bin.csv_to_db.run_view'),
 	(r'^db/paragraphs/$', 'django.views.generic.list_detail.object_list', {
 		'queryset' : Paragraph.objects.all(),
 		'template_name' : 'wyclif/object_list.html'
