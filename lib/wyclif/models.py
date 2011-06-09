@@ -44,7 +44,7 @@ class Chapter(WyclifModel):
 class Page(WyclifModel):
 	title = models.ForeignKey("wyclif.Title", verbose_name="In Title")
 	number = models.IntegerField(verbose_name="Page number")
-	scan = models.ImageField(upload_to='pages')
+	scan = models.ImageField(upload_to='pages', blank=True)
 	
 	def __unicode__(self):
 		return u"%s, p. %s" % (unicode(self.title), unicode(self.number))
