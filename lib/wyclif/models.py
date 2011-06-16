@@ -1,8 +1,14 @@
+import os
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+
 from django.template.defaultfilters import slugify
+
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.base import ContentFile
 
 #class Profile(models.Model):
 #	# This field connects each profile with a user.
@@ -51,7 +57,12 @@ class Page(WyclifModel):
 	
 	class Meta:
 		unique_together = ('title','number')
-		
+	
+	def rename_scan_file(self, to):
+		old_scan_name = self.scan.name
+		self.scan.save("pages/"+to, ContentFile(self.scan.read()), save=True)
+		os.remove(settings.MEDIA_ROOT + old_scan_name)
+	
 
 class Paragraph(WyclifModel):
 	SPLIT_CHOICES = (
