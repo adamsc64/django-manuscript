@@ -60,9 +60,25 @@ class Page(WyclifModel):
 	
 	def rename_scan_file(self, to):
 		old_scan_name = self.scan.name
-		self.scan.save("pages/"+to, ContentFile(self.scan.read()), save=True)
-		os.remove(settings.MEDIA_ROOT + old_scan_name)
+		if old_scan_name != to:
+			self.scan.save("pages/"+to, ContentFile(self.scan.read()), save=True)
+			os.remove(settings.MEDIA_ROOT + old_scan_name)
 	
+	def normalize_scan_filename(self):
+		print "Normalizing page (%s)." % str(self)
+		print "-- old scan.name=%s" % str(self.scan.name)
+
+		to = "pages/" + str(self.title.slug) + "_p" + str(self.number) + ".jpg"
+		self.rename_scan_file(to=to)
+
+		print "-- new scan.name=%s" % str(self.scan.name)
+		print
+		
+	
+def normalize_all_page_scan_filenames():
+	for p in Page.objects.all():
+		p.normalize_scan_filename()
+		
 
 class Paragraph(WyclifModel):
 	SPLIT_CHOICES = (
