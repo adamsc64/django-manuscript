@@ -3,12 +3,13 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
-
+from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
-
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.base import ContentFile
+
+from datetime import datetime
 
 #class Profile(models.Model):
 #	# This field connects each profile with a user.
@@ -34,6 +35,27 @@ class WyclifModel(models.Model):
 	def get_fields(self):
 		return [(field.name, field.value_to_string(self)) for field in self._meta.fields]
 
+	def get_admin_path(self):
+		module_name = self._meta.module_name
+		return reverse( 'admin:wyclif_%s_change' % module_name, args=(self.pk,) )
+	
+	def get_admin_link(self):
+		path = self.get_admin_path()
+		return "<a href='%s'>%s</a>" % (path,str(self))
+
+	get_admin_link.allow_tags = True
+	get_admin_link.short_description = 'Link'
+
+	def get_children_links(self):
+		for related in self._meta.get_all_related_objects():
+			children = getattr(self,str(related.var_name)+"_set")
+			links = []
+			for child in children.all():
+				links.append(child.get_admin_link())
+			return "<br>".join(links)
+
+	get_children_links.allow_tags = True
+	get_children_links.short_description = 'Elements'
 
 class Chapter(WyclifModel):
 	heading = models.CharField(max_length=50)
@@ -44,7 +66,7 @@ class Chapter(WyclifModel):
 	
 	def __unicode__(self):
 		#return u"pk=%s, heading='%s'" % (self.pk,self.heading)
-		return u"(%s) '%s'" % (self.title , self.heading)
+		return u"%s" % self.heading
 
 
 class Page(WyclifModel):
@@ -53,7 +75,7 @@ class Page(WyclifModel):
 	scan = models.ImageField(upload_to='pages', blank=True)
 	
 	def __unicode__(self):
-		return u"%s, p. %s" % (unicode(self.title), unicode(self.number))
+		return u"p. %s" % unicode(self.number)
 	
 	class Meta:
 		unique_together = ('title','number')
@@ -74,6 +96,10 @@ class Page(WyclifModel):
 		print "-- new scan.name=%s" % str(self.scan.name)
 		print
 		
+	def normalize_scan_image(self):
+		#todo
+		pass
+
 	
 def normalize_all_page_scan_filenames():
 	for p in Page.objects.all():
@@ -96,8 +122,12 @@ class Paragraph(WyclifModel):
 	old_id = models.IntegerField(null=True, editable=False) # import field only
 
 	def __unicode__(self):
-		return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
+		return "Paragraph %s: %s" % (str(self.number),str(self.text[:100]))
+		#return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
 	
+	def title(self):
+		return self.page.title
+			
 
 class Title(WyclifModel):
 	text = models.CharField(verbose_name = "Title Text", max_length=70)
