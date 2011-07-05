@@ -32,13 +32,6 @@ USE_I18N = True
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '8w889y24thu23tn23jt32oit32o8ue8dsudsf8u32058905238huwehhfhjdfjsk8dfsudsfiou'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
-)
-
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -48,6 +41,23 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'wyclif.urls'
+
+
+#URL to use when referring to static files located in STATIC_ROOT.
+#Example: "/site_media/static/" or "http://static.example.com/"
+#If not None, this will be used as the base path for media definitions and the staticfiles app.
+#It must end in a slash if set to a non-empty value.
+STATIC_URL = '/static/'
+
+# The URL prefix for admin media -- CSS, JavaScript and images used by the
+# Django administrative interface. Make sure to use a trailing slash, and
+# to have this be different from the MEDIA_URL setting (since the same URL
+#cannot be mapped onto two different sets of files). For integration with
+#staticfiles, this should be the same as STATIC_URL followed by 'admin/'.
+ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+
+
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
@@ -64,6 +74,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
 	#'django.contrib.admindocs',
+	'django.contrib.staticfiles',
 
 	#sentry error reporting system.
 	'indexer', 'paging', 'sentry', 'sentry.client',
