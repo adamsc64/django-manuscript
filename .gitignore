@@ -1,4 +1,14 @@
+###################
 # Compiled source #
 ###################
 *.pyc
+
+#####################
+# Weird apple files #
+#####################
 .DS_Store
+
+##################
+# Local settings #
+##################
+local_settings.py
