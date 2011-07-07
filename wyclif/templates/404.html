@@ -1,0 +1,12 @@
+{% extends "Wyclif/base.html" %}
+
+{% load url from future %}
+
+{% block navbar %}
+	Page missing
+{% endblock navbar %}
+
+{% block content %}
+	<p>The page cannot be found on the server.</p>
+	<p><a href="{% url 'all-works' %}">Go to list of works.</a></p>
+{% endblock content %}
