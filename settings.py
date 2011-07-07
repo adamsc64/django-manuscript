@@ -6,7 +6,7 @@
 #       your own development database, staticfiles directory, DEBUG = value, etc.
 
 ADMINS = (
-	('Christopher R. Adams', 'christopher.r.adams@gmail.com')
+	('Christopher R. Adams', 'christopher.r.adams@gmail.com'),
 )
 
 MANAGERS = ADMINS
