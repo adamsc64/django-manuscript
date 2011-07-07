@@ -16,6 +16,8 @@ urlpatterns += patterns('',
 	# django-sentry for debugging.
 	(r'^sentry/', include('sentry.urls')),
 
+	(r'^favicon\.ico$', 'wyclif.views.favicon'),
+
 )
 
 #static media

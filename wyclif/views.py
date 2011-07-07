@@ -79,4 +79,5 @@ def edit_page(request, id):
 		'page_form' : page_form,
 	})
 
-
+def favicon(request):
+	return HttpResponseNotFound()
