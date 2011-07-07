@@ -38,6 +38,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'wyclif.urls'
@@ -57,10 +58,9 @@ STATIC_URL = '/static/'
 ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 
-
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
+	'django.core.context_processors.static',
 )
 
 
@@ -85,6 +85,9 @@ INSTALLED_APPS = (
 	#Other apps.
 	'tastypie',
 	'south',
+	
+	#debugging
+	'debug_toolbar',
 )
 
 #AUTH_PROFILE_MODULE = 'wyclif.Profile'
