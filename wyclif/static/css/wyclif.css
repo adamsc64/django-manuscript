@@ -1,0 +1,138 @@
+body {
+	margin: 0;
+	padding: 0;
+
+	width: 100%;
+	font-size:80%;
+	background-color: #d2d3ab;
+
+	min-width: 800px;
+	
+	background-image:url("/static/img/Balliol_front_quad580.jpg");
+	background-repeat:no-repeat;	
+	background-position:0 -30px;
+}
+
+a:link {
+	color: #ffffff;
+	text-decoration:underline;
+}
+
+a:visited {
+	color: #ffffff;
+	text-decoration:underline;
+}
+
+a:hover {
+	color: #AA6666;
+	text-decoration:none;
+}
+
+a:active {
+color: #900;
+text-decoration: underline;
+}
+
+div#wrap {
+width: 820px;
+margin:0 auto;
+padding:0;
+position:relative;
+}
+
+
+#header {
+	width:820px;
+	height:170px;
+	background: url("/static/img/wyclif200x150.png") no-repeat -10px 10px;
+}
+#header .right-side {
+	height: 169px;
+	width: 619px;
+	margin-bottom:0;
+	padding:0;
+	margin-top:0;
+	float:right;
+	border-right: 1px solid #fff;
+}
+
+#header h1 {
+	font-family: 'UnifrakturMaguntia', arial, serif;
+	color:white;
+	text-decoration: none;
+}
+
+#header h2 {
+	font-family: 'MedievalSharp', arial, serif;
+	color:white;
+	text-decoration: none;
+}
+#header h3 {
+	font-family: 'MedievalSharp', arial, serif;
+	color:white;
+	text-decoration: none;
+}
+
+#header #sections {
+	float:right;
+}
+
+#header #sections a {
+	font-size:12pt;
+}
+
+#header #search img {
+	position:relative;
+	top:10px;
+}
+
+#header a {
+text-decoration:none;
+border:none;
+}
+
+#content {
+	margin-top: 0;
+	margin-right:0;
+	width: 620px;
+	float:right;
+	background-color: #fcfcfc;
+}
+
+#content #pad {
+	padding: 10px 30px;
+}
+
+#navbar {
+	margin:0;
+	padding:0;
+
+	width: 200px;
+	position: absolute;
+
+	top: 179px; left:0;
+
+	display:block;
+	text-align:right;
+	
+	background-color:white;
+	opacity:0.4;
+}
+
+#navbar ul {
+	list-style-type:none;	
+}
+#navbar ul li {
+}
+
+#footer {
+	background-color:white;
+	clear:both;
+
+	width: 618px;
+	float:right;
+
+	border: 1px solid #fcfcfc;
+	padding-top: 20px; padding-bottom: 20px;
+	margin-bottom: 1px;
+}

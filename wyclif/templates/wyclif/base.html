@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{% block title %}Wyclif Digital Archive{% endblock %}</title>
+	<link rel="stylesheet" href='{{STATIC_URL}}css/wyclif.css' />
+	<link href='http://fonts.googleapis.com/css?family=UnifrakturMaguntia&v1' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=MedievalSharp&v1' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">	
+		<span class="right-side">
+			<a href="/">
+			<h1>The Latin Wor<span style="font-family:serif;">k</span>s of John Wyclif</h1>
+			<h2>A searchable database of the primary texts</h2>
+			</a>
+			<h3>{{title}}</h3>
+			<hr>
+			<div id="sections">	
+				<a class="navbutton" href="/">Home</a> |
+				<a class="navbutton" href="/work/">Works</a> |
+				<a class="navbutton" href="/about/">About</a> |
+				<a class="navbutton" href="/contact/">Contact</a> |
+				<a class="navbutton" href="/terms/">Terms of Service</a>
+			</div>
+			<div id="search"> 
+				<img src="/static/img/magnifying_glass.jpg" height="25" width="30"> 
+				<input name='q' id='q'>
+				<input type="submit" value="Go">
+			</div>
+		</span>
+	</div>
+	<hr>
+	<div id="content">
+		<div id="pad">
+			{% block content %}
+			{% endblock content %}
+		</div>
+	</div>
+	<div id="navbar">
+		<h2>group 1</h2>
+		<ul>
+			<li>item 1
+			<li>item 2
+			<li>item 3
+			<li>item 4
+			<li>item 5
+			<li>item 6
+			<li>item 7
+			<li>item 8
+			<li>item 9
+		</ul>
+	</div>
+
+	<div id="footer">
+		Copyright &copy; 2011
+	</div>
+</div>
+
+</body>
+
+</html>

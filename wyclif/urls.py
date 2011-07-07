@@ -5,8 +5,7 @@ from django.http import HttpResponse
 urlpatterns = patterns('')
 
 urlpatterns += patterns('',
-	#(r'^/?$', 'wyclif.views.index'),
-	(r'^/?$', 'wyclif.views.input'),
+	(r'^/?$', 'wyclif.views.index'),
 	(r'^input/?$', 'wyclif.views.input'),
 )
 

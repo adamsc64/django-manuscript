@@ -1,11 +1,14 @@
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound
+from django.template import RequestContext
 
 from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm
 
 
 def index(request):
-	return render_to_response('wyclif/index.html')
+	return render_to_response('wyclif/index.html',
+		context_instance=RequestContext(request),
+	)
 	
 def input(request):
 	#request_variables = dict(request.REQUEST.items())
