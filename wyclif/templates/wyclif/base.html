@@ -1,3 +1,5 @@
+{% load url from future %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -20,7 +22,7 @@
 			<hr>
 			<div id="sections">	
 				<a class="navbutton" href="/">Home</a> |
-				<a class="navbutton" href="/work/">Works</a> |
+				<a class="navbutton" href="{% url 'all-works' %}">Works</a> |
 				<a class="navbutton" href="/about/">About</a> |
 				<a class="navbutton" href="/contact/">Contact</a> |
 				<a class="navbutton" href="/terms/">Terms of Service</a>
@@ -39,19 +41,9 @@
 			{% endblock content %}
 		</div>
 	</div>
-	<div id="navbar">
-		<h2>group 1</h2>
-		<ul>
-			<li>item 1
-			<li>item 2
-			<li>item 3
-			<li>item 4
-			<li>item 5
-			<li>item 6
-			<li>item 7
-			<li>item 8
-			<li>item 9
-		</ul>
+	<div id="navbar" class="transparent">
+		{% block navbar %}
+		{% endblock navbar %}
 	</div>
 
 	<div id="footer">

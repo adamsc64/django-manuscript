@@ -13,25 +13,6 @@ body {
 	background-position:0 -30px;
 }
 
-a:link {
-	color: #ffffff;
-	text-decoration:underline;
-}
-
-a:visited {
-	color: #ffffff;
-	text-decoration:underline;
-}
-
-a:hover {
-	color: #AA6666;
-	text-decoration:none;
-}
-
-a:active {
-color: #900;
-text-decoration: underline;
-}
 
 div#wrap {
 width: 820px;
@@ -86,9 +67,24 @@ position:relative;
 	top:10px;
 }
 
-#header a {
-text-decoration:none;
-border:none;
+#header a:link {
+	color: #ffffff;
+	text-decoration:none;
+}
+
+#header a:visited {
+	color: #ffffff;
+	text-decoration:none;
+}
+
+#header a:hover {
+	color: #AA6666;
+	text-decoration:none;
+}
+
+#header a:active {
+	color: #AA6666;
+	text-decoration:none;
 }
 
 #content {
@@ -101,6 +97,11 @@ border:none;
 
 #content #pad {
 	padding: 10px 30px;
+}
+
+#content p {
+	font-family:Verdana, Arial, Helvetica, sans-serif;
+	font-size:12px;
 }
 
 #navbar {
@@ -116,13 +117,33 @@ border:none;
 	text-align:right;
 	
 	background-color:white;
-	opacity:0.4;
 }
 
 #navbar ul {
 	list-style-type:none;	
 }
 #navbar ul li {
+}
+
+
+#navbar a:link {
+	color: #000000;
+	text-decoration:none;
+}
+
+#navbar a:visited {
+	color: #000000;
+	text-decoration:none;
+}
+
+#navbar a:hover {
+	color: #AA6666;
+	text-decoration:none;
+}
+
+#navbar a:active {
+	color: #AA6666;
+	text-decoration:none;
 }
 
 #footer {
@@ -135,4 +156,10 @@ border:none;
 	border: 1px solid #fcfcfc;
 	padding-top: 20px; padding-bottom: 20px;
 	margin-bottom: 1px;
+}
+
+.transparent {
+	zoom: 1;
+	filter: alpha(opacity=50);
+	opacity: 0.5;
 }

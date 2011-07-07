@@ -1,5 +1,52 @@
-{% extends "wyclif/base.html" %}
+{% load url from future %}
 
-{% block content %}
-Index under construction.
-{% endblock %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>{% block title %}Wyclif Digital Archive{% endblock %}</title>
+	<style>
+	* {
+		margin:0;
+		padding:0;
+	}
+	#image {
+		position:absolute;
+		top:0;
+		left:0;
+	}
+	#image img {
+		width:100%;
+		height:100%;
+		text-align:center;
+	}
+	#link {
+		position:absolute;
+		top:40%;
+		left:10%;
+		width:20%;
+		background-color:black;
+	}
+	#link a {
+		font-family:Georgia, serif;
+		color:white;
+		text-decoration:none;
+	}
+	.transparent {
+		zoom: 1;
+		filter: alpha(opacity=50);
+		opacity: 0.5;
+	}
+	</style>
+</head>
+
+<body>
+	<div id="image">
+		<img src="{{STATIC_URL}}img/wyclif_big2.jpg">
+	<div>
+	<div id="link" class="transparent">
+		<a href="{% url 'all-works' %}">
+			<h2>The Latin Works of John Wyclif:</h2>
+			<h3>A searchable database of the primary texts</h3>
+		</a>
+	</div>
+</body>

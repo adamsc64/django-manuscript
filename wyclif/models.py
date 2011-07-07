@@ -61,12 +61,22 @@ class Chapter(WyclifModel):
 	heading = models.CharField(max_length=50)
 	title = models.ForeignKey("wyclif.Title", verbose_name="In Title")
 	start_page_no = models.IntegerField()
+	slug = models.SlugField(max_length=70, blank=True, verbose_name="Resource URL name")
 	old_id = models.IntegerField(null=True, editable=False) # import field
 	xml_chapter_id = models.CharField(max_length=10, null=True, editable=False) # import field
-	
+		
 	def __unicode__(self):
 		#return u"pk=%s, heading='%s'" % (self.pk,self.heading)
 		return u"%s" % self.heading
+
+	def save(self, *args, **kwargs):
+		if not self.slug:  #execute only if there is not one already.
+			slug = slugify( self.heading )
+			# duplicates are ok.
+
+			self.slug = slug
+
+		super( Chapter, self ).save(*args, **kwargs)
 
 
 class Page(WyclifModel):
@@ -134,7 +144,7 @@ class Title(WyclifModel):
 	author = models.ForeignKey("wyclif.Author")
 	volume = models.IntegerField()
 	pages = models.IntegerField()
-	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Slug: leave empty to auto-generate.")
+	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Resource URL name")
 
 	old_id = models.IntegerField(null=True, editable=False) # import field
 
@@ -158,7 +168,6 @@ class Title(WyclifModel):
 		super( Title, self ).save(*args, **kwargs)
 
 
-	
 class Author(WyclifModel):
 	name = models.CharField(max_length=70)
 	old_id = models.IntegerField(null=True, editable=False) # import field
@@ -166,3 +175,9 @@ class Author(WyclifModel):
 	def __unicode__(self):
 		return u"%s" % self.name
 
+class SiteCopyText(models.Model):
+	index = models.CharField(max_length=100)
+	value = models.TextField(default="")
+	
+	def __unicode__(self):
+		return self.value

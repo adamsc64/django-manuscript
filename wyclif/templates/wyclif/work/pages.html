@@ -1,0 +1,24 @@
+{% extends "wyclif/base.html" %}
+
+{% load url from future %}
+
+{% block navbar %}
+	<h2><a href="{% url 'all-works' %}">{{title.author}}</a></h2>
+	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h3>
+	<ul><li><a href="{% url 'show-pages' title=title.slug chapter=chapter.slug %}">{{chapter}}</a></ul>
+{% endblock navbar %}
+
+{% block content %}
+	{{copy_text|linebreaks}}
+	
+	<h2>Chapter: <a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a> , <a href="{% url 'show-pages' title=title.slug chapter=chapter.slug %}">{{chapter}}</a></h2>
+	<h3>Author: <a href="{% url 'all-works' %}">{{title.author}}</a></h3>
+	
+	
+	<ul>
+	{% for paragraph in chapter.paragraph_set.all %}
+		<li>{{paragraph.text}} <a href="http://translate.google.com/#la|en|{{paragraph.text|urlencode}}">Translate</a>
+	{% endfor %}
+	</ul>
+	
+{% endblock content %}
