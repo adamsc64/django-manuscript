@@ -66,14 +66,3 @@ def pages(request, title, chapter):
 	},
 		context_instance=RequestContext(request),
 	)
-
-
-
-def one_work(request, work):
-	return render_to_response('wyclif/work/one.html')
-
-def model_by_work(request, work, model):
-	return render_to_response('wyclif/work/model_by_work.html')
-
-def element_by_id(request, work, model, id):
-	return render_to_response('wyclif/work/element_by_id.html')
