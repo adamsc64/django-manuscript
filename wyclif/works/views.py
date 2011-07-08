@@ -19,7 +19,7 @@ def all_works(request):
 			"works" : Title.objects.filter(author=author)
 		})
 
-	return render_to_response('wyclif/work/all-works.html', {
+	return render_to_response('wyclif/work/all-titles.html', {
 		"works_by_author" : works_by_author,
 		"copy_text" : copy_text,
 	},
