@@ -82,6 +82,9 @@ INSTALLED_APPS = (
 	#wyclif apps.
 	'wyclif',
 
+	#django-manuscript
+	'manuscript',
+
 	#Other apps.
 	'tastypie',
 	'south',
