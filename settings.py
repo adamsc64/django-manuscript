@@ -83,7 +83,6 @@ INSTALLED_APPS = (
 	'wyclif',
 
 	#Other apps.
-	'tastypie',
 	'south',
 	
 	#debugging
