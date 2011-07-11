@@ -11,9 +11,8 @@
 {% block content %}
 	{{copy_text|linebreaks}}
 	
-	<h2>Chapter: <a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a> , <a href="{% url 'show-pages' title=title.slug chapter=chapter.slug %}">{{chapter}}</a></h2>
-	<h3>Author: <a href="{% url 'all-works' %}">{{title.author}}</a></h3>
-	
+	<h2>Chapter: <a href="{% url 'show-pages' title=title.slug chapter=chapter.slug %}">{{chapter}}</a> in <a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h2>
+	<h3>Author: <a href="{% url 'all-titles' %}">{{title.author}}</a></h3>
 	
 	<ul>
 	{% for paragraph in chapter.paragraph_set.all %}
