@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound
 from django.template import RequestContext
 
-from wyclif.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
+from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
 
 def all_works(request):
 	

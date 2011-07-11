@@ -31,19 +31,6 @@ urlpatterns += patterns('',
 	(r'^robots\.txt$', lambda response : HttpResponse("User-agent: *\r\nDisallow: /\r\n", mimetype="text/plain") ),
 )
 
-# implementing tastypie api.
-from tastypie.api import Api
-from wyclif.api import ParagraphResource, ChapterResource, TitleResource
-
-v1_api = Api(api_name='v1')
-v1_api.register(ParagraphResource())
-v1_api.register(ChapterResource())
-v1_api.register(TitleResource())
-
-urlpatterns += patterns('',
-	(r'^api/', include(v1_api.urls)),
-)
-
 from django.contrib import admin
 admin.autodiscover()
 
@@ -66,7 +53,7 @@ urlpatterns += patterns('',
 
 # implementing /db/ views.
 
-from wyclif.models import Paragraph, Title, Author
+from manuscript.models import Paragraph, Title, Author
 
 urlpatterns += patterns('',
 
