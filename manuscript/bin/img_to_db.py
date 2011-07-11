@@ -9,7 +9,7 @@ from django.core.files import File
 
 import sgmllib
 
-from wyclif.models import Page
+from manuscript.models import Page
 
 class HTMLJPGParser(sgmllib.SGMLParser):
 	"""To parse HTML to find links to JPG files."""

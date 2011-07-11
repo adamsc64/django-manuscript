@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from django.conf import settings
 from django.http import HttpResponse
 
-from wyclif.models import Chapter, Paragraph, Title, Author, Page
+from manuscript.models import Chapter, Paragraph, Title, Author, Page
 
 
 def run(PATH_TO_FILES = os.path.dirname(os.path.abspath(__file__)) + os.sep, run_silently=True): # "/Users/chris/coding/wyclif_project/wyclif/lib/wyclif/bin/"

@@ -53,7 +53,7 @@ urlpatterns += patterns('',
 
 # implementing /db/ views.
 
-from wyclif.models import Paragraph, Title, Author
+from manuscript.models import Paragraph, Title, Author
 
 urlpatterns += patterns('',
 

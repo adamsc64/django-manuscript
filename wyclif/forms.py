@@ -1,6 +1,6 @@
 from django import forms
 
-from wyclif.models import Paragraph, Title, Page, Chapter
+from manuscript.models import Paragraph, Title, Page, Chapter
 
 class ParagraphForm(forms.ModelForm):
 	class Meta:

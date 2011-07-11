@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from wyclif.models import Chapter,Paragraph,Title,Author,Page,SiteCopyText
+from manuscript.models import Chapter,Paragraph,Title,Author,Page,SiteCopyText
 
 admin.site.register(Chapter,
 	list_display = ('title','heading','start_page_no'),

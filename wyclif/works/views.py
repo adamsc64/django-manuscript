@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound
 from django.template import RequestContext
 
-from wyclif.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
+from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
 
 def all_works(request):
 	
@@ -19,7 +19,7 @@ def all_works(request):
 			"works" : Title.objects.filter(author=author)
 		})
 
-	return render_to_response('wyclif/work/all-works.html', {
+	return render_to_response('wyclif/work/all-titles.html', {
 		"works_by_author" : works_by_author,
 		"copy_text" : copy_text,
 	},
