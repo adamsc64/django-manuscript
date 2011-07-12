@@ -46,11 +46,11 @@ def chapters(request, title):
 		context_instance=RequestContext(request),
 	)
 	
-def pages(request, title, chapter):
+def paragraphs(request, title, chapter):
 
 	copy_text, created = SiteCopyText.objects.get_or_create(
-		index="wyclif.works.pages",
-		defaults={'value' : "Editable text to introduce all pages."}
+		index="wyclif.works.paragraphs",
+		defaults={'value' : "Editable text to introduce all paragraphs."}
 	)
 
 	try:
@@ -59,10 +59,32 @@ def pages(request, title, chapter):
 	except Title.DoesNotExist, Chapter.DoesNotExist:
 		raise Http404
 	
-	return render_to_response('wyclif/work/pages.html', {
+	return render_to_response('wyclif/work/paragraphs.html', {
 		"copy_text" : copy_text,
 		"title" : title,
 		"chapter" : chapter,
 	},
 		context_instance=RequestContext(request),
 	)
+
+def page(request, title, page):
+
+	copy_text, created = SiteCopyText.objects.get_or_create(
+		index="wyclif.works.paragraphs",
+		defaults={'value' : "Editable text to introduce any page."}
+	)
+
+	try:
+		title = Title.objects.get(slug=title)
+		page = Page.objects.get(title=title, number=page)
+	except Title.DoesNotExist, Page.DoesNotExist:
+		raise Http404
+	
+	return render_to_response('wyclif/work/page.html', {
+		"copy_text" : copy_text,
+		"title" : title,
+		"page" : page,
+	},
+		context_instance=RequestContext(request),
+	)
+	

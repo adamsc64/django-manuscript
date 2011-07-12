@@ -12,7 +12,7 @@ def index(request):
 	
 def input(request):
 	#request_variables = dict(request.REQUEST.items())
-	return HttpResponseRedirect('/admin/wyclif/paragraph/add/')
+	return HttpResponseRedirect('/admin/manuscript/paragraph/add/')
 	#return render_to_response('wyclif/input.html')
 
 def input_title(request):

@@ -7,7 +7,7 @@
 	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h3>
 	<ul>
 	{% for chapter in title.chapter_set.all %}
-		<li><a href="{% url 'show-pages' title=title.slug chapter=chapter.slug %}">{{chapter}}</a>
+		<li><a href="{% url 'show-paragraphs' title=title.slug chapter=chapter.slug %}">{{chapter}}</a>
 	{% endfor %}
 	</ul>
 {% endblock navbar %}
