@@ -48,7 +48,7 @@ class Chapter(BaseModel):
 		
 	def __unicode__(self):
 		#return u"pk=%s, heading='%s'" % (self.pk,self.heading)
-		return u"%s" % self.heading
+		return u"%s: %s" % (self.title.text , self.heading)
 
 	def save(self, *args, **kwargs):
 		if not self.slug:  #execute only if there is not one already.
@@ -135,7 +135,7 @@ class Paragraph(BaseModel):
 	old_id = models.IntegerField(null=True, editable=False) # import field only
 
 	def __unicode__(self):
-		return "Paragraph %s: %s" % (str(self.number),str(self.text[:100]))
+		return u"Paragraph %s: %s" % (unicode(self.number),unicode(self.text[:100]))
 		#return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
 	
 	def title(self):
