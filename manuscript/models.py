@@ -124,6 +124,7 @@ class Paragraph(BaseModel):
 		("bottom", "This paragraph continues from page before"),
 		("no", "Not split across pages"),
 		("top", "This paragraph continues onto next page"),
+		("both", "This paragraph continues from last page AND goes to next page"),
 	)
 	
 	chapter = models.ForeignKey('manuscript.Chapter', verbose_name="In Chapter")
