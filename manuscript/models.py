@@ -63,14 +63,25 @@ class Chapter(BaseModel):
 class Page(BaseModel):
 	title = models.ForeignKey("manuscript.Title", verbose_name="In Title")
 	number = models.IntegerField(verbose_name="Page number")
-	scan = models.ImageField(upload_to='pages', blank=True) # original scan
-	display = models.ImageField(upload_to='originals', blank=True) # for site
-	
-	def __unicode__(self):
-		return u"p. %s" % unicode(self.number)
+	scan = models.ImageField(upload_to='original_scans', blank=True) # original scan
+	display = models.ImageField(upload_to='pages_to_display', blank=True, verbose_name='display preview') # for site
 	
 	class Meta:
 		unique_together = ('title','number')
+		
+	def __unicode__(self):
+		return u"p. %s" % unicode(self.number)
+	
+	def save(self, *args, **kwargs):
+		# Call super.
+		super( Page, self ).save(*args, **kwargs)
+
+		# Process generation of resized image for site display.
+		if hasattr(self.scan,"path"): # If scan exists.
+			self_scan_path = self.scan.path
+			if not hasattr(self.display,"path"): # But display doesn't.
+				self.convert_scan_to_display() # avoids infinite loop.
+	
 	
 	#def rename_scan_file(self, to):
 	#	old_scan_name = self.scan.name
@@ -91,7 +102,7 @@ class Page(BaseModel):
 	def get_normalized_jpg_filename(self):
 		return str(self.title.slug) + "_p" + str(self.number) + ".jpg"
 	
-	def convert_scan_to_display(self):
+	def convert_scan_to_display(self, commit=True):
 		if hasattr(self.scan,"path"): # If scan exists.
 			if not hasattr(self.display,"path"): # But display doesn't.
 				(width , height) = (self.scan.width , self.scan.height)
@@ -99,12 +110,13 @@ class Page(BaseModel):
 				target_width = settings.MANUSCRIPT_DEFAULT_WIDTH
 				target_height = int(1.0 * target_width / width * height)
 				target_size = (target_width , target_height)
-				target_path = settings.MEDIA_ROOT + "originals/" + self.get_normalized_jpg_filename()
+				target_path = settings.MEDIA_ROOT + "pages_to_display/" + self.get_normalized_jpg_filename()
 		
 				PIL.Image.open(self.scan.path).resize(target_size).save(target_path)
 		
-				self.display = target_path
-				self.save()
+				self.display = "pages_to_display/" + self.get_normalized_jpg_filename()
+				if commit:
+					self.save()
 	
 	
 class Paragraph(BaseModel):
