@@ -90,9 +90,10 @@ position:relative;
 #content {
 	margin-top: 0;
 	margin-right:0;
-	width: 620px;
+	width: 619px;
 	float:right;
 	background-color: #fcfcfc;
+	padding-left:1px;
 }
 
 #content #pad {
@@ -156,6 +157,8 @@ position:relative;
 	border: 1px solid #fcfcfc;
 	padding-top: 20px; padding-bottom: 20px;
 	margin-bottom: 1px;
+	
+	text-align:right;
 }
 
 .transparent {
