@@ -14,7 +14,10 @@ admin.site.register(Chapter,
 admin.site.register(Paragraph,
 	list_display = ('title','chapter','number','page','split','text'),
 	list_display_links = ('number','text'),
+	list_filter = ('page',),
 	search_fields = ['number','text'],
+	
+	fields = ('page','chapter','number','split','text'),
 )
 admin.site.register(Title,
 	list_display = ('text','volume','pages'),

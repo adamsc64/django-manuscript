@@ -70,7 +70,7 @@ class Page(BaseModel):
 		unique_together = ('title','number')
 		
 	def __unicode__(self):
-		return u"p. %s" % unicode(self.number)
+		return u"%s, p. %s" % (unicode(self.title.text), unicode(self.number))
 	
 	def save(self, *args, **kwargs):
 		# Call super.
@@ -127,10 +127,10 @@ class Paragraph(BaseModel):
 		("both", "This paragraph continues from last page AND goes to next page"),
 	)
 	
-	chapter = models.ForeignKey('manuscript.Chapter', verbose_name="In Chapter")
-	number = models.IntegerField(verbose_name="Order in Chapter")
-	page = models.ForeignKey('manuscript.Page')
-	split = models.CharField(max_length=10, choices=SPLIT_CHOICES)
+	chapter = models.ForeignKey('manuscript.Chapter', verbose_name="in chapter")
+	number = models.IntegerField(verbose_name="order in chapter")
+	page = models.ForeignKey('manuscript.Page', verbose_name="on page")
+	split = models.CharField(max_length=10, choices=SPLIT_CHOICES, verbose_name="split across pages")
 	text = models.TextField()
 	old_page_number = models.IntegerField(null=True, editable=False) # import field only
 	old_id = models.IntegerField(null=True, editable=False) # import field only
