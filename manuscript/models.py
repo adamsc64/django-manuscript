@@ -1,14 +1,13 @@
-import os
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.files.base import ContentFile
+from django.core.files import File
 
 from datetime import datetime
-
+import PIL
 
 class BaseModel(models.Model):
 	class Meta:
@@ -64,7 +63,8 @@ class Chapter(BaseModel):
 class Page(BaseModel):
 	title = models.ForeignKey("manuscript.Title", verbose_name="In Title")
 	number = models.IntegerField(verbose_name="Page number")
-	scan = models.ImageField(upload_to='pages', blank=True)
+	scan = models.ImageField(upload_to='pages', blank=True) # original scan
+	display = models.ImageField(upload_to='originals', blank=True) # for site
 	
 	def __unicode__(self):
 		return u"p. %s" % unicode(self.number)
@@ -72,32 +72,41 @@ class Page(BaseModel):
 	class Meta:
 		unique_together = ('title','number')
 	
-	def rename_scan_file(self, to):
-		old_scan_name = self.scan.name
-		if old_scan_name != to:
-			self.scan.save("pages/"+to, ContentFile(self.scan.read()), save=True)
-			os.remove(settings.MEDIA_ROOT + old_scan_name)
+	#def rename_scan_file(self, to):
+	#	old_scan_name = self.scan.name
+	#	if old_scan_name != to:
+	#		self.scan.save("pages/"+to, ContentFile(self.scan.read()), save=True)
+	#		os.remove(settings.MEDIA_ROOT + old_scan_name)
+
+	#def normalize_scan_filename(self):
+	#	print "Normalizing page (%s)." % str(self)
+	#	print "-- old scan.name=%s" % str(self.scan.name)
+    #
+	#	to = "pages/" + self.get_normalized_filename()
+	#	self.rename_scan_file(to=to)
+    #
+	#	print "-- new scan.name=%s" % str(self.scan.name)
+	#	print
 	
-	def normalize_scan_filename(self):
-		print "Normalizing page (%s)." % str(self)
-		print "-- old scan.name=%s" % str(self.scan.name)
-
-		to = "pages/" + str(self.title.slug) + "_p" + str(self.number) + ".jpg"
-		self.rename_scan_file(to=to)
-
-		print "-- new scan.name=%s" % str(self.scan.name)
-		print
-		
-	def normalize_scan_image(self):
-		#todo
-		pass
-
+	def get_normalized_jpg_filename(self):
+		return str(self.title.slug) + "_p" + str(self.number) + ".jpg"
 	
-def normalize_all_page_scan_filenames():
-	for p in Page.objects.all():
-		p.normalize_scan_filename()
+	def convert_scan_to_display(self):
+		if hasattr(self.scan,"path"): # If scan exists.
+			if not hasattr(self.display,"path"): # But display doesn't.
+				(width , height) = (self.scan.width , self.scan.height)
 		
-
+				target_width = settings.MANUSCRIPT_DEFAULT_WIDTH
+				target_height = int(1.0 * target_width / width * height)
+				target_size = (target_width , target_height)
+				target_path = settings.MEDIA_ROOT + "originals/" + self.get_normalized_jpg_filename()
+		
+				PIL.Image.open(self.scan.path).resize(target_size).save(target_path)
+		
+				self.display = target_path
+				self.save()
+	
+	
 class Paragraph(BaseModel):
 	SPLIT_CHOICES = (
 		("bottom", "This paragraph continues from page before"),

@@ -100,6 +100,9 @@ LOGIN_URL = "/accounts/login/"
 TEMPLATE_DEBUG = True
 SENTRY_TESTING = True
 
+# django-manuscript
+MANUSCRIPT_DEFAULT_WIDTH = 1024
+
 # Import local settings.
 from local_settings import *
 
