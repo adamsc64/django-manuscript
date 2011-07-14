@@ -78,9 +78,9 @@ class Page(BaseModel):
 
 		# Process generation of resized image for site display.
 		if hasattr(self.scan,"path"): # If scan exists.
-			self_scan_path = self.scan.path
 			if not hasattr(self.display,"path"): # But display doesn't.
-				self.convert_scan_to_display() # avoids infinite loop.
+				#self.convert_scan_to_display() # avoids infinite loop.
+				pass # do nothing for now until we figure out jpeg decoder on server.
 	
 	
 	#def rename_scan_file(self, to):
