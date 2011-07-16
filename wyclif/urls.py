@@ -7,16 +7,10 @@ urlpatterns = patterns('')
 urlpatterns += patterns('',
 	(r'^/?$', 'wyclif.views.index'),
 
-	# works
+	# site
 	(r'^works/', include('wyclif.works.urls')),
-
-	# data input tool.
-	(r'^input/?$', 'wyclif.views.input'),
-
-	# django-sentry for debugging.
-	(r'^sentry/', include('sentry.urls')),
-
-	(r'^favicon\.ico$', 'wyclif.views.favicon'),
+	(r'^about/+$', 'wyclif.views.about'),
+	(r'^copyright/+$', 'wyclif.views.copyright'),
 
 )
 
@@ -38,17 +32,15 @@ urlpatterns += patterns('',
 	(r'^admin/', include(admin.site.urls)),
     #(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-	(r'^accounts/login/', 				'django.contrib.auth.views.login', {'template_name': 'django/registration/login.html'}),
-	(r'^accounts/logout/', 				'django.contrib.auth.views.logout', {'next_page': '/'})	,
+	# data input tool.
+	(r'^input/?$', 'wyclif.views.input'),
+	
+	# django-sentry for debugging.
+	(r'^sentry/', include('sentry.urls')),
+
+	(r'^favicon\.ico$', 'wyclif.views.favicon'),
+
 )
-
-# implementing img_to_db.
-
-urlpatterns += patterns('',
-
-	#(r'^img_to_db/run/$', 'wyclif.bin.img_to_db.run_view'),
-)
-
 
 
 # implementing /db/ views.
@@ -56,6 +48,8 @@ urlpatterns += patterns('',
 from manuscript.models import Paragraph, Title, Author
 
 urlpatterns += patterns('',
+
+	#(r'^img_to_db/run/$', 'wyclif.bin.img_to_db.run_view'),
 
 	#(r'^db/runimport/$', 'wyclif.bin.csv_to_db.run_view'),
 	(r'^db/paragraphs/$', 'django.views.generic.list_detail.object_list', {

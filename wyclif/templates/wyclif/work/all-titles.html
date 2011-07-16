@@ -3,16 +3,19 @@
 {% load url from future %}
 
 {% block navbar %}
-	{% for dataobj in works_by_author %}
-		<h2>{{dataobj.author}}</h2>
-		<ul>
-		{% for work in dataobj.works %}
-			<li><a href="{% url 'show-chapters' title=work.slug %}">{{work}}</a>
-		{% endfor %}
-		</ul>
-	{% endfor %}
+	All Works
 {% endblock navbar %}
 
 {% block content %}
 	{{copy_text|linebreaks}}
+
+	{% for dataobj in works_by_author %}
+		<h2>{{dataobj.author}}</h2>
+		<ul>
+		{% for title in dataobj.works %}
+			<li><a href="{% url 'show-chapters' title=title.slug %}">{{title.text}}</a> (v. {{title.volume}}, {{title.publication_year}})
+		{% endfor %}
+		</ul>
+		
+	{% endfor %}
 {% endblock content %}

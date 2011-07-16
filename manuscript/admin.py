@@ -20,11 +20,11 @@ admin.site.register(Paragraph,
 	fields = ('page','chapter','number','split','text'),
 )
 admin.site.register(Title,
-	list_display = ('text','volume','pages'),
+	list_display = ('text','volume','publication_year','pages'),
 	list_display_links = ('text','volume'),
 	search_fields = ['text','volume'],
 
-	fields = ('text','slug','volume','pages','author','get_children_links'),
+	fields = ('text','slug','volume','publication_year','pages','author','get_children_links'),
 	readonly_fields = ('slug','get_children_links',),
 )
 admin.site.register(Author)

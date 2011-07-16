@@ -1,0 +1,11 @@
+{% extends "wyclif/base.html" %}
+
+{% load url from future %}
+
+{% block navbar %}
+	<h3>About <i>The Latin Works of John Wyclif</i> project</h3>
+{% endblock navbar %}
+
+{% block content %}
+	{{copy_text|linebreaks}}
+{% endblock content %}

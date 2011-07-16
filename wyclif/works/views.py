@@ -4,12 +4,8 @@ from django.template import RequestContext
 
 from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
 
-def all_works(request):
-	
-	copy_text, created = SiteCopyText.objects.get_or_create(
-		index="wyclif.works.all_works",
-		defaults={'value' : "Editable text to introduce all works."}
-	)
+def all_works(request):	
+	copy_text, created = SiteCopyText.objects.get_or_create_for('all_works')
 
 	works_by_author = []
 
@@ -28,12 +24,8 @@ def all_works(request):
 
 
 def chapters(request, title):
-	
-	copy_text, created = SiteCopyText.objects.get_or_create(
-		index="wyclif.works.chapters",
-		defaults={'value' : "Editable text to introduce chapters."}
-	)
-	
+	copy_text, created = SiteCopyText.objects.get_or_create_for('chapters')
+
 	try:
 		title = Title.objects.get(slug=title)
 	except Title.DoesNotExist:
@@ -47,11 +39,7 @@ def chapters(request, title):
 	)
 	
 def paragraphs(request, title, chapter):
-
-	copy_text, created = SiteCopyText.objects.get_or_create(
-		index="wyclif.works.paragraphs",
-		defaults={'value' : "Editable text to introduce all paragraphs."}
-	)
+	copy_text, created = SiteCopyText.objects.get_or_create_for('paragraphs')
 
 	try:
 		title = Title.objects.get(slug=title)
@@ -68,11 +56,7 @@ def paragraphs(request, title, chapter):
 	)
 
 def page(request, title, page):
-
-	copy_text, created = SiteCopyText.objects.get_or_create(
-		index="wyclif.works.paragraphs",
-		defaults={'value' : "Editable text to introduce any page."}
-	)
+	copy_text, created = SiteCopyText.objects.get_or_create_for('page')
 
 	try:
 		title = Title.objects.get(slug=title)

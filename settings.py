@@ -61,6 +61,7 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
 	'django.core.context_processors.static',
+	'manuscript.context_processors.context_with_view',
 )
 
 

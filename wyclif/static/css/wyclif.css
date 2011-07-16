@@ -105,44 +105,47 @@ position:relative;
 	font-size:12px;
 }
 
-#navbar {
+#navbar-wrap {
 	margin:0;
 	padding:0;
 
 	width: 200px;
 	position: absolute;
 
-	top: 179px; left:0;
-
-	display:block;
-	text-align:right;
+	top: 184px; left:0;
 	
 	background-color:white;
 }
 
-#navbar ul {
+#navbar-content {
+	display:block;
+	text-align:right;
+	padding-right:10px;
+}
+
+#navbar-content ul {
 	list-style-type:none;	
 }
-#navbar ul li {
+#navbar-content ul li {
 }
 
 
-#navbar a:link {
+#navbar-content a:link {
 	color: #000000;
 	text-decoration:none;
 }
 
-#navbar a:visited {
+#navbar-content a:visited {
 	color: #000000;
 	text-decoration:none;
 }
 
-#navbar a:hover {
+#navbar-content a:hover {
 	color: #AA6666;
 	text-decoration:none;
 }
 
-#navbar a:active {
+#navbar-content a:active {
 	color: #AA6666;
 	text-decoration:none;
 }

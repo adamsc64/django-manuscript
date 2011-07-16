@@ -3,6 +3,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRespons
 from django.template import RequestContext
 
 from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm
+from manuscript.models import SiteCopyText
 
 
 def index(request):
@@ -14,6 +15,27 @@ def input(request):
 	#request_variables = dict(request.REQUEST.items())
 	return HttpResponseRedirect('/admin/manuscript/paragraph/add/')
 	#return render_to_response('wyclif/input.html')
+
+def about(request):
+	copy_text, created = SiteCopyText.objects.get_or_create_for('about')
+
+	return render_to_response('wyclif/about.html', {
+		"copy_text" : copy_text,
+	},
+		context_instance=RequestContext(request),
+	)
+
+def copyright(request):
+	url_path = request.META['PATH_INFO']
+	copy_text, created = SiteCopyText.objects.get_or_create_for('copyright')
+
+	return render_to_response('wyclif/about.html', {
+		"copy_text" : copy_text,
+	},
+		context_instance=RequestContext(request),
+	)
+
+
 
 def input_title(request):
 	title_form = TitleForm()

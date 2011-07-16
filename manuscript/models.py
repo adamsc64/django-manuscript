@@ -146,7 +146,8 @@ class Paragraph(BaseModel):
 class Title(BaseModel):
 	text = models.CharField(verbose_name = "Title Text", max_length=70)
 	author = models.ForeignKey("manuscript.Author")
-	volume = models.IntegerField()
+	volume = models.IntegerField(verbose_name='volume number')
+	publication_year = models.IntegerField()
 	pages = models.IntegerField()
 	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Resource URL name")
 
@@ -179,9 +180,21 @@ class Author(BaseModel):
 	def __unicode__(self):
 		return u"%s" % self.name
 
+
+class SiteCopyTextManager(models.Manager):
+	def get_or_create_for(self, index):
+		copy_text, created = self.get_or_create(
+			index=index,
+			defaults={'value' : "Text for %s" % index}
+		)
+		return copy_text, created
+		
+
 class SiteCopyText(models.Model):
 	index = models.CharField(max_length=100)
 	value = models.TextField(default="")
+	
+	objects = SiteCopyTextManager()
 	
 	def __unicode__(self):
 		return self.value
