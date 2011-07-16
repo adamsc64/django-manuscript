@@ -13,6 +13,9 @@ body {
 	background-position:0 -30px;
 }
 
+a {
+	text-decoration:none;
+}
 
 div#wrap {
 width: 820px;
@@ -39,19 +42,16 @@ position:relative;
 
 #header h1 {
 	font-family: 'UnifrakturMaguntia', arial, serif;
-	color:white;
-	text-decoration: none;
+	color: #dddddd;
 }
 
 #header h2 {
 	font-family: 'MedievalSharp', arial, serif;
-	color:white;
-	text-decoration: none;
+	color: #dddddd;
 }
 #header h3 {
 	font-family: 'MedievalSharp', arial, serif;
 	color:white;
-	text-decoration: none;
 }
 
 #header #sections {
@@ -62,29 +62,20 @@ position:relative;
 	font-size:12pt;
 }
 
-#header #search img {
-	position:relative;
-	top:10px;
-}
-
 #header a:link {
-	color: #ffffff;
-	text-decoration:none;
+	color: #dddddd;
 }
 
 #header a:visited {
-	color: #ffffff;
-	text-decoration:none;
+	color: #dddddd;
 }
 
 #header a:hover {
 	color: #AA6666;
-	text-decoration:none;
 }
 
 #header a:active {
 	color: #AA6666;
-	text-decoration:none;
 }
 
 #content {
@@ -95,9 +86,32 @@ position:relative;
 	background-color: #fcfcfc;
 	padding-left:1px;
 }
+#search #q {
+	background-color:#660000;
+	color:#FFFFFF;
+}
+#search span {
+	color:#888888;
+}
 
 #content #pad {
 	padding: 10px 30px;
+}
+
+#content li {
+	list-style-type:none;	
+}
+#content li a:link {
+	color: #770000;
+}
+#content li a:visited {
+	color: #770000;
+}
+#content li a:hover {
+	background-color: #aaaaaa;
+	color: black;
+}
+#content li a:active {
 }
 
 #content p {
@@ -126,28 +140,21 @@ position:relative;
 #navbar-content ul {
 	list-style-type:none;	
 }
-#navbar-content ul li {
-}
-
 
 #navbar-content a:link {
 	color: #000000;
-	text-decoration:none;
 }
 
 #navbar-content a:visited {
 	color: #000000;
-	text-decoration:none;
 }
 
 #navbar-content a:hover {
 	color: #AA6666;
-	text-decoration:none;
 }
 
 #navbar-content a:active {
 	color: #AA6666;
-	text-decoration:none;
 }
 
 #footer {
