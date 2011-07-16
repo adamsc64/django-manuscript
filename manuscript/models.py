@@ -144,10 +144,10 @@ class Paragraph(BaseModel):
 			
 
 class Title(BaseModel):
-	text = models.CharField(verbose_name = "Title Text", max_length=70)
+	text = models.CharField(verbose_name="title text", max_length=70)
 	author = models.ForeignKey("manuscript.Author")
 	volume = models.IntegerField(verbose_name='volume number')
-	publication_year = models.IntegerField()
+	publication_year = models.CharField(max_length=15, blank=True)
 	pages = models.IntegerField()
 	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Resource URL name")
 
