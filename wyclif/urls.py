@@ -36,7 +36,7 @@ urlpatterns += patterns('',
 	(r'^input/?$', 'wyclif.views.input'),
 	
 	# django-sentry for debugging.
-	(r'^sentry/', include('sentry.urls')),
+	(r'^sentry/', include('sentry.web.urls')),
 
 	(r'^favicon\.ico$', 'wyclif.views.favicon'),
 
