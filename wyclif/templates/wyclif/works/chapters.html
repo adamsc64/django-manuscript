@@ -5,11 +5,6 @@
 {% block navbar %}
 	<h2><a href="{% url 'all-titles' %}">{{title.author}}</a></h2>
 	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h3>
-	<ul>
-	{% for chapter in title.chapter_set.all %}
-		<li><a href="{% url 'show-paragraphs' title=title.slug chapter=chapter.slug %}">{{chapter}}</a>
-	{% endfor %}
-	</ul>
 {% endblock navbar %}
 
 {% block content %}
@@ -17,5 +12,11 @@
 
 	<h2>Author: <a href="{% url 'all-titles' %}">{{title.author}}</a></h2>
 	<h3>Title: <a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h3>
+
+	<ul>
+	{% for chapter in title.chapter_set.all %}
+		<li><a href="{% url 'show-paragraphs' title=title.slug chapter=chapter.slug %}">{{chapter}}</a>
+	{% endfor %}
+	</ul>
 
 {% endblock content %}

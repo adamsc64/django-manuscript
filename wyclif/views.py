@@ -35,8 +35,6 @@ def copyright(request):
 		context_instance=RequestContext(request),
 	)
 
-
-
 def input_title(request):
 	title_form = TitleForm()
 

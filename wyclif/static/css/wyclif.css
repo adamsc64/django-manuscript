@@ -98,20 +98,44 @@ position:relative;
 	padding: 10px 30px;
 }
 
-#content li {
+#content .wyclif-chapter-title {
+	text-align:center;
+	font-weight:bold;
+	border-top:1px solid;
+}
+#content .wyclif-paragraph-text {
+	font-family:Palatino, Georgia;
+	font-size:12pt;
+	border-top:1px solid;
+}
+#content .google-translate-wrap {
+	vertical-align:top;
+	padding-left:10px;
+}
+#content .page-navigator-wrap {
+	font-size:15pt;
+	text-align:center;
+}
+#content .page-navigator {
+	width:100%;
+	text-align:center;
+}
+
+
+#content ul {
 	list-style-type:none;	
 }
-#content li a:link {
+#content a:link {
 	color: #770000;
 }
-#content li a:visited {
+#content a:visited {
 	color: #770000;
 }
-#content li a:hover {
+#content a:hover {
 	background-color: #aaaaaa;
 	color: black;
 }
-#content li a:active {
+#content a:active {
 }
 
 #content p {

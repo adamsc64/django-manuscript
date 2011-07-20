@@ -1,0 +1,47 @@
+{% extends "wyclif/base.html" %}
+
+{% load url from future %}
+
+{% block navbar %}
+	<h2><a href="{% url 'all-titles' %}">{{ title.author }}</a></h2>
+	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a></h3>
+	<h3><a href="{% url 'show-page' title=title.slug page=page.number %}">{{ page }}</a></h3>
+{% endblock navbar %}
+
+{% block content %}
+	<div class="page-navigator-wrap">
+		<h2><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a>, <a href="{% url 'show-page' title=title.slug page=page.number %}">p. {{ page.number }}</a></h2>
+		<h3>Chapter: {% for chapter in chapters %}<a href="{% url 'show-chapter' title=chapter.title.slug chapter=chapter.slug %}">{{ chapter.heading }}</a>{% endfor %}</h3>
+		<table class="page-navigator"><tr>
+		<td><a href="{% url 'show-page' title=page.title.slug page=page_first.number %}">
+			&larr;first page
+		</a>
+		<td><a href="{% url 'show-page' title=page_prev.title.slug page=page_prev.number %}">
+			&larr;p. {{ page_prev.number }}
+		</a>
+		<td><a href="{% url 'show-page' title=page_next.title.slug page=page_next.number %}">
+			p. {{ page_next.number }}&rarr;
+		</a>
+		<td><a href="{% url 'show-page' title=page.title.slug page=page_last.number %}">
+			last page&rarr;
+		</a>
+		</tr></table>
+	</div>
+	
+	
+	<table>
+	{% for paragraph in paragraphs %}
+		{% if paragraph == paragraph.chapter.paragraph_set.all.0 and paragraph.split != "bottom" %}
+			<tr>
+				<td class="wyclif-chapter-title">{{ paragraph.chapter.heading }}
+				<td>
+			</tr>
+		{% endif %}
+			<tr>
+				<td class="wyclif-paragraph-text">{{ paragraph.text }} 
+				<td class="google-translate-wrap"><a href="http://translate.google.com/#la|en|{{paragraph.text|urlencode}}" target="_blank">Translate</a>
+			</tr>
+	{% endfor %}
+	</table>
+	
+{% endblock content %}
