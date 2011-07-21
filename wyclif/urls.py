@@ -22,6 +22,12 @@ urlpatterns += patterns('',
 											'show_indexes':		(settings.DEBUG==True)
 										}
 	),
+	(r'^static/(?P<path>.*)$',			'django.views.static.serve',
+										{
+											'document_root':	settings.STATIC_ROOT,
+											'show_indexes':		(settings.DEBUG==True)
+										}
+	),
 	(r'^robots\.txt$', lambda response : HttpResponse("User-agent: *\r\nDisallow: /\r\n", mimetype="text/plain") ),
 )
 
