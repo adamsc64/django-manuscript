@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound
 from django.template import RequestContext
 
@@ -7,9 +7,7 @@ from manuscript.models import SiteCopyText
 
 
 def index(request):
-	return render_to_response('wyclif/index.html',
-		context_instance=RequestContext(request),
-	)
+	return render(request,'wyclif/index.html')
 	
 def input(request):
 	#request_variables = dict(request.REQUEST.items())
@@ -19,33 +17,33 @@ def input(request):
 def about(request):
 	copy_text, created = SiteCopyText.objects.get_or_create_for('about')
 
-	return render_to_response('wyclif/about.html', {
+	return render(request, 'wyclif/about.html', {
 		"copy_text" : copy_text,
-	},
-		context_instance=RequestContext(request),
-	)
+	})
 
 def copyright(request):
 	url_path = request.META['PATH_INFO']
 	copy_text, created = SiteCopyText.objects.get_or_create_for('copyright')
 
-	return render_to_response('wyclif/about.html', {
+	return render(request, 'wyclif/about.html', {
 		"copy_text" : copy_text,
-	},
-		context_instance=RequestContext(request),
-	)
+	})
+
+
+def search(request):
+	return render(request, 'wyclif/search.html')
 
 def input_title(request):
 	title_form = TitleForm()
 
-	return render_to_response('wyclif/input.html', {
+	return render(request, 'wyclif/input.html', {
 		'title_form' : title_form,
 	})
 
 def input_chapter(request):
 	chapter_form = ChapterForm()
 
-	return render_to_response('wyclif/input.html', {
+	return render(request, 'wyclif/input.html', {
 		'chapter_form' : chapter_form,
 	})
 
@@ -53,7 +51,7 @@ def input_page(request):
 	paragraph_form = ParagraphForm()
 	page_form = PageForm()
 
-	return render_to_response('wyclif/input.html', {
+	return render(request, 'wyclif/input.html', {
 		'paragraph_form' : paragraph_form,
 		'page_form' : page_form,
 	})
@@ -66,7 +64,7 @@ def edit_title(request, id):
 
 	title_form = TitleForm(title)
 
-	return render_to_response('wyclif/edit.html', {
+	return render(request, 'wyclif/edit.html', {
 		'title_form' : title_form,
 	})
 
@@ -78,7 +76,7 @@ def edit_chapter(request, id):
 
 	chapter_form = ChapterForm(chapter)
 
-	return render_to_response('wyclif/edit.html', {
+	return render(request, 'wyclif/edit.html', {
 		'chapter_form' : chapter_form,
 	})
 
@@ -94,7 +92,7 @@ def edit_page(request, id):
 	for paragraph in paragraphs:
 		paragraph_forms.append(ParagraphForm(paragraph))
 		
-	return render_to_response('wyclif/edit.html', {
+	return render(request, 'wyclif/edit.html', {
 		'paragraph_forms' : paragraph_forms,
 		'page_form' : page_form,
 	})
