@@ -11,6 +11,7 @@ urlpatterns += patterns('',
 	(r'^works/', include('wyclif.works.urls')),
 	(r'^about/+$', 'wyclif.views.about'),
 	(r'^copyright/+$', 'wyclif.views.copyright'),
+	(r'^search/+$', 'wyclif.views.search'),
 
 )
 
