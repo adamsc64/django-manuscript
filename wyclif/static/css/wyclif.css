@@ -135,8 +135,17 @@ position:relative;
 #content .page-navigator {
 	width:100%;
 	text-align:center;
+	background-color:#DDDDDD;
+	border:1px solid;
 }
-
+#content .page-navigator .navigate-going-left {
+	width:100px;
+	text-align:left;
+}
+#content .page-navigator .navigate-going-right {
+	width:100px;
+	text-align:right;
+}
 
 
 #content #search-results .search-result-description {
