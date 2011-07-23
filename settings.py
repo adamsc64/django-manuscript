@@ -103,6 +103,7 @@ SENTRY_TESTING = True
 
 # django-manuscript
 MANUSCRIPT_DEFAULT_WIDTH = 1024
+MANUSCRIPT_HIGHLIGHT_CSS_CLASS = "manuscript-highlighted"
 
 # Import local settings.
 from local_settings import *
