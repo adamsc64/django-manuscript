@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound
 from django.template import RequestContext
 
-from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm
-from manuscript.models import SiteCopyText
+from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm, BigSearchForm
+from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 
 
 def index(request):
@@ -31,7 +31,35 @@ def copyright(request):
 
 
 def search(request):
-	return render(request, 'wyclif/search.html')
+	query = request.GET.get('q')
+
+	if query:
+		big_search_form = BigSearchForm(request.GET)
+		
+		if big_search_form.is_valid():
+			q = big_search_form.cleaned_data["q"]
+			titles = big_search_form.cleaned_data["titles"]
+			
+			if titles:
+				paragraph_matches = Paragraph.objects.filter(text__contains=query, chapter__title__in=titles)
+			else:
+				paragraph_matches = Paragraph.objects.filter(text__contains=query)
+				
+			chapter_matches = Chapter.objects.filter(heading__contains=query)
+		
+			return render(request, 'wyclif/works/search.html', {
+				"query" : query,
+				"big_search_form" : big_search_form,
+				"paragraph_matches" : paragraph_matches,
+				"chapter_matches" : chapter_matches,
+			})
+	else:
+		big_search_form = BigSearchForm()
+
+	return render(request, 'wyclif/works/search.html', {
+		"big_search_form" : big_search_form,
+	})
+
 
 def input_title(request):
 	title_form = TitleForm()
@@ -99,3 +127,4 @@ def edit_page(request, id):
 
 def favicon(request):
 	return HttpResponseNotFound()
+

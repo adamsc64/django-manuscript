@@ -1,0 +1,52 @@
+{% extends "wyclif/base.html" %}
+
+{% load url from future %}
+{% load manuscript_extras %}
+
+{% block navbar %}
+	Search Tool
+{% endblock navbar %}
+
+{% block content %}
+	{{copy_text|linebreaks}}
+
+	<div id="search-tool">
+		<h2>Search Tool</h2>
+		<form action="{% url 'wyclif.views.search' %}" method="GET">
+			<table class="search-table">
+				{{ big_search_form.as_table }}
+		</table>
+		<div class="submit-button-wrap"><input type="submit" value="Search" /></div>
+		</form>
+	</div>
+
+	<div id="search-results">
+		<div class="matched-chapters">
+			{% if chapters_matches %}
+				Matched Chapters
+				<ul>
+				{% for chapter in chapter_matches %}
+					<li><a href="{% url 'show-chapter' title=chapter.title.slug chapter=chapter.slug %}">{{ paragraph.text }}</a>
+				{% endfor %}
+				</ul>
+
+			{% endif %}
+		</div>
+
+		<div class="matched-paragraphs">
+			{% if paragraph_matches %}
+				<h2>Matched Paragraphs</h2>
+				<ul>
+				{% for paragraph in paragraph_matches %}
+					<li class="matched-result wyclif-paragraph-text">
+						<span class="search-result-description"><i>{{ paragraph.title.text }}</i>, {{ paragraph.chapter.heading }}, p. {{ paragraph.page.number }}: </span>
+						<a href="{% url 'show-page' title=paragraph.title.slug page=paragraph.page.number %}">{{ paragraph.text|highlight:query }}</a>
+				{% endfor %}
+				</ul>
+			{% endif %}
+		</div>
+
+	</div>
+
+
+{% endblock content %}

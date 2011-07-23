@@ -54,11 +54,11 @@ position:relative;
 	color:white;
 }
 
-#header #sections {
+#header #top-sections {
 	float:right;
 }
 
-#header #sections a {
+#header #top-sections a {
 	font-size:12pt;
 }
 
@@ -86,13 +86,29 @@ position:relative;
 	background-color: #fcfcfc;
 	padding-left:1px;
 }
-#search #q {
+#header #small-search #q {
 	background-color:#660000;
 	color:#FFFFFF;
 }
-#search span {
+#header #small-search span {
 	color:#888888;
 }
+#content #search-tool .search-table th {
+	vertical-align:top;
+	text-align:right;
+}
+#content #search-tool .search-table td * {
+	width:100%;
+}
+#content #search-tool .submit-button-wrap input {
+	width:100px;
+}
+
+#content #search-results .manuscript-highlighted {
+	background-color:#660000;
+	color:white;
+}
+
 
 #content #pad {
 	padding: 10px 30px;
@@ -119,6 +135,15 @@ position:relative;
 #content .page-navigator {
 	width:100%;
 	text-align:center;
+}
+
+
+
+#content #search-results .search-result-description {
+	font-weight:bold;
+}
+#content #search-results .matched-result {
+	margin-top:10px;
 }
 
 

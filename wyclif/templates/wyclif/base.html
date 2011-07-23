@@ -18,16 +18,18 @@
 			<h1>The Latin Wor<span style="font-family:serif;">k</span>s of John Wyclif</h1>
 			<h2>A searchable database of the primary texts</h2>
 			</a>
-			<h3>{{title}}</h3>
+			<h3>{{ title }}</h3>
 			<hr>
-			<div id="sections">	
+			<div id="top-sections">	
 				<a class="navbutton" href="{% url 'all-titles' %}">Home</a> |
 				<a class="navbutton" href="/about/">About</a> |
 				<a class="navbutton" href="/contact/">Contact</a> |
 			</div>
-			<div id="search"> 
-				<input name='q' id='q'>
-				<input type="submit" value="Search"><br>
+			<div id="small-search"> 
+				<form action="{% url 'wyclif.views.search' %}" method="GET">
+					<input name='q' id='q'>
+					<input type="submit" value="Search" /><br>
+				</form>
 				<span>- or -</span> <a href="/search/">Advanced Search</a>
 			</div>
 		</span>

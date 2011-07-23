@@ -17,3 +17,8 @@ class PageForm(forms.ModelForm):
 class ChapterForm(forms.ModelForm):
 	class Meta:
 		model = Chapter
+
+class BigSearchForm(forms.Form):
+	q = forms.CharField(max_length=1000, label="Search")
+	titles = forms.ModelMultipleChoiceField(queryset=Title.objects.all(), label="Work (hold down Ctrl+)", required=False)
+
