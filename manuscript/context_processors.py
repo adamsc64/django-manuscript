@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 from inspect import stack, getmodule  
 
 # Optional helper context processor to use with SiteCopyText.

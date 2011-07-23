@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpResponseNotFound
 from django.template import RequestContext

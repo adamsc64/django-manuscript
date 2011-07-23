@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 from django import template
 
 register = template.Library()

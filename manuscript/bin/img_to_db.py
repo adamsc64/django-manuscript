@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 """Module to get images from old wyclif project, from web, into new model. Use run() at commandline or run_view() in urls.py."""
 
 import urllib2

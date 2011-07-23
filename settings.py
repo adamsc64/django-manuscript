@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 # Django settings for wyclif project.
 
 # I have split django settings into two files.

@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 from django.conf.urls.defaults import *
 from django.conf import settings
 from django.http import HttpResponse

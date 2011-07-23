@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 from django import forms
 
 from manuscript.models import Paragraph, Title, Page, Chapter

@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 from django.contrib import admin
 
 from manuscript.models import Chapter,Paragraph,Title,Author,Page,SiteCopyText

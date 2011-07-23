@@ -1,3 +1,6 @@
+# Copyright Christopher Adams, 2011
+# All rights reserved.
+
 """Module to import sample csv data into model. Use run() at commandline or run_view() in urls.py."""
 
 import csv
