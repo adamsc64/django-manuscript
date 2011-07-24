@@ -7,9 +7,19 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>{% block title %}Wyclif Digital Archive{% endblock %}</title>
-	<link rel="stylesheet" href='{{STATIC_URL}}css/wyclif.css' />
+
+	<link rel="stylesheet" href='{{ STATIC_URL }}css/wyclif.css' />
+	<link rel="stylesheet" href='{{ STATIC_URL }}chosen/chosen.css' />
+
 	<link href='http://fonts.googleapis.com/css?family=UnifrakturMaguntia&v1' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=MedievalSharp&v1' rel='stylesheet' type='text/css'>
+	
+	
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}chosen/chosen.jquery.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/wyclif.js"></script>
+	
+	{% block extra_head %}{% endblock %}
 </head>
 
 <body>

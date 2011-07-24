@@ -30,13 +30,16 @@ def chapters(request, title):
 	copy_text, created = SiteCopyText.objects.get_or_create_for('chapters')
 
 	try:
-		title = Title.objects.get(slug=title)
+		focus_title = Title.objects.get(slug=title)
 	except Title.DoesNotExist:
 		raise Http404
+		
+	all_titles = Title.objects.all()
 	
 	return render(request, 'wyclif/works/chapters.html', {
 		"copy_text" : copy_text,
-		"title" : title,
+		"focus_title" : focus_title,
+		"all_titles" : all_titles,
 	})
 	
 def paragraphs(request, title, chapter):
@@ -74,8 +77,10 @@ def page(request, title, page):
 		raise Http404
 
 	paragraphs = page.paragraph_set.all().order_by('number')
-	chapters = paragraphs.values_list('chapter',flat=True)
-	chapters = Chapter.objects.filter(pk__in=chapters)		
+	focus_chapter = paragraphs.order_by('-number')[0].chapter
+	focus_chapter_first_paragraph = focus_chapter.paragraph_set.all().order_by('number')[0]
+
+	all_chapters = title.chapter_set.all()
 
 	page_first = Page.objects.filter(title=page.title).order_by('number')[0]
 	page_last = Page.objects.filter(title=page.title).order_by('-number')[0]
@@ -97,6 +102,8 @@ def page(request, title, page):
 		"page_first" : page_first, "page_last" : page_last,
 		"page_prev" : page_prev, "page_next" : page_next,
 		"paragraphs" : paragraphs,
-		"chapters" : chapters,
+		"focus_chapter" : focus_chapter,
+		"focus_chapter_first_paragraph" : focus_chapter_first_paragraph,
+		"all_chapters" : all_chapters,
 	})
 	

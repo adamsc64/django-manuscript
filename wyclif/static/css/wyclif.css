@@ -24,6 +24,9 @@ padding:0;
 position:relative;
 }
 
+.clickable {
+	cursor:hand; cursor:pointer;
+}
 
 #header {
 	width:820px;
@@ -93,15 +96,24 @@ position:relative;
 #header #small-search span {
 	color:#888888;
 }
-#content #search-tool .search-table th {
-	vertical-align:top;
-	text-align:right;
+
+#content #search-tool .search-field-wrapper {
+	margin-bottom:20px;
 }
-#content #search-tool .search-table td * {
-	width:100%;
+
+#content #search-tool .search-field-wrapper .search-input-wrapper {
+	margin-left:20px;
+	
 }
-#content #search-tool .submit-button-wrap input {
-	width:100px;
+#content #search-tool .search-field-wrapper #id_q {
+	width:200px;
+}
+
+#content #search-tool .search-field-wrapper .chzn-choices {
+	width:300px;
+	/*width:500px;*/
+	/*vertical-align:top;*/
+	/*text-align:right;*/
 }
 
 #content #search-results .manuscript-highlighted {
@@ -114,23 +126,32 @@ position:relative;
 	padding: 10px 30px;
 }
 
+#content .wyclif-page-el {
+	/*border:1px solid;*/
+}
 #content .wyclif-chapter-title {
 	text-align:center;
 	font-weight:bold;
+	font-size:15pt;
 	border-top:1px solid;
 }
 #content .wyclif-paragraph-text {
 	font-family:Palatino, Georgia;
 	font-size:12pt;
-	border-top:1px solid;
+	/*border-top:1px solid;*/
+	padding-bottom:10px;
+	padding-top:10px;
 }
 #content .google-translate-wrap {
 	vertical-align:top;
 	padding-left:10px;
+	padding-bottom:10px;
+	padding-top:10px;
 }
 #content .page-navigator-wrap {
 	font-size:15pt;
 	text-align:center;
+	padding-bottom:15px;
 }
 #content .page-navigator {
 	width:100%;
@@ -193,10 +214,21 @@ position:relative;
 	display:block;
 	text-align:right;
 	padding-right:10px;
+	padding-bottom:30px;
 }
 
 #navbar-content ul {
 	list-style-type:none;	
+}
+
+#navbar-content .nav-focused {
+	font-weight:bold;	
+	background-color: #aaaaaa;
+	color: black;
+}
+#navbar-content .nav-unfocused {
+	font-weight:normal;
+
 }
 
 #navbar-content a:link {
@@ -208,7 +240,8 @@ position:relative;
 }
 
 #navbar-content a:hover {
-	color: #AA6666;
+	background-color: #aaaaaa;
+	color: black;
 }
 
 #navbar-content a:active {

@@ -6,6 +6,14 @@
 {% load url from future %}
 {% load manuscript_extras %}
 
+{% block extra_head %}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#search-tool select").chosen();
+		});
+	</script>
+{% endblock extra_head %}
+
 {% block navbar %}
 	Search Tool
 {% endblock navbar %}
@@ -14,11 +22,34 @@
 	{{copy_text|linebreaks}}
 
 	<div id="search-tool">
-		<h2>Search Tool</h2>
+		<h2>Search Tool (experimental)</h2>
 		<form action="{% url 'wyclif.views.search' %}" method="GET">
-			<table class="search-table">
-				{{ big_search_form.as_table }}
-		</table>
+			{{ big_search_form.non_field_errors }}
+			<div class="search-field-wrapper">
+		        {{ big_search_form.q.errors }}
+		        <p><label for="id_q">Enter your search query below:</label></p>
+				<div class="search-input-wrapper">
+		        	{{ big_search_form.q }}
+				</div>
+		    </div>
+			<div class="search-field-wrapper">
+		        {{ big_search_form.titles.errors }}
+		        <p><label for="id_titles">Limit selection to certain works:</label></p>
+				<div class="search-input-wrapper">
+					<a href="javascript:void(0);" onclick="
+						$('select option:not(:selected)').attr('selected',true);
+						$('select').chosen().trigger('liszt:updated');
+					">Select All</a> |
+					<a href="javascript:void(0);" onclick="
+						$('select option:selected').attr('selected',false);
+						$('select').chosen().trigger('liszt:updated');
+					">Select None</a>
+			        {{ big_search_form.titles }}
+				</div>
+		    </div>
+		    
+			
+			
 		<div class="submit-button-wrap"><input type="submit" value="Search" /></div>
 		</form>
 	</div>
@@ -26,6 +57,7 @@
 	<div id="search-results">
 		<div class="matched-chapters">
 			{% if chapters_matches %}
+				<hr>
 				Matched Chapters
 				<ul>
 				{% for chapter in chapter_matches %}
@@ -38,6 +70,7 @@
 
 		<div class="matched-paragraphs">
 			{% if paragraph_matches %}
+				<hr>
 				<h2>Matched Paragraphs</h2>
 				<ul>
 				{% for paragraph in paragraph_matches %}
@@ -50,6 +83,5 @@
 		</div>
 
 	</div>
-
 
 {% endblock content %}

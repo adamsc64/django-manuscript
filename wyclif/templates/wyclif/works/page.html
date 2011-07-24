@@ -8,7 +8,11 @@
 {% block navbar %}
 	<h2><a href="{% url 'all-titles' %}">{{ title.author }}</a></h2>
 	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a></h3>
-	<h3><a href="{% url 'show-page' title=title.slug page=page.number %}">{{ page }}</a></h3>
+
+	{% for el_chapter in all_chapters %}
+		<div class="{% if el_chapter == focus_chapter %}nav-focused{% else %}nav-unfocused{% endif %}"><a href="{% url 'show-chapter' title=el_chapter.title.slug chapter=el_chapter.slug %}">{{ el_chapter.heading }}</a></div>
+	{% endfor %}
+
 {% endblock navbar %}
 
 {% block content %}
@@ -17,24 +21,22 @@
 		<h2><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a>, <a href="{% url 'show-page' title=title.slug page=page.number %}">p. {{ page.number }}</a></h2>
 
 		<table class="page-navigator"><tr>
-		<td class="navigate-going-left"><a href="{% url 'show-page' title=page.title.slug page=page_first.number %}">
-			&larr;first page
-		</a>
-		<td class="navigate-going-left">{% if page_prev %}<a href="{% url 'show-page' title=page_prev.title.slug page=page_prev.number %}"> &larr;p. {{ page_prev.number }}</a>{% endif %}
-		<td class="navigate-going-right">{% if page_next %}<a href="{% url 'show-page' title=page_next.title.slug page=page_next.number %}"> p. {{ page_next.number }}&rarr;</a>{% endif %}
-		<td class="navigate-going-right"><a href="{% url 'show-page' title=page.title.slug page=page_last.number %}">
-			last page&rarr;
-		</a>
+			<td class="navigate-going-left">{% if page_prev %}<a href="{% url 'show-page' title=page.title.slug page=page_first.number %}">
+				&larr;first page
+			</a>{% else %}first page{% endif %}
+			<td class="navigate-going-left">{% if page_prev %}<a href="{% url 'show-page' title=page_prev.title.slug page=page_prev.number %}"> &larr;p. {{ page_prev.number }}</a>{% endif %}
+			<td class="navigate-going-right">{% if page_next %}<a href="{% url 'show-page' title=page_next.title.slug page=page_next.number %}"> p. {{ page_next.number }}&rarr;</a>{% endif %}
+			<td class="navigate-going-right">{% if page_next %}<a href="{% url 'show-page' title=page.title.slug page=page_last.number %}">
+				last page&rarr;
+			</a>{% else %}last page{% endif %}
 		</tr></table>
-
-		<h3>Chapter: {% for chapter in chapters %}<a href="{% url 'show-chapter' title=chapter.title.slug chapter=chapter.slug %}">{{ chapter.heading }}</a>{% endfor %}</h3>
 
 	</div>
 	
 	
-	<table>
+	<table class="wyclif-page-el">
 	{% for paragraph in paragraphs %}
-		{% if paragraph == paragraph.chapter.paragraph_set.all.0 and paragraph.split != "bottom" %}
+		{% if paragraph == first_paragraph and paragraph.split != "bottom" %}
 			<tr>
 				<td class="wyclif-chapter-title">{{ paragraph.chapter.heading }}
 				<td>

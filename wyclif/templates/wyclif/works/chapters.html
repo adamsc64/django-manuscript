@@ -6,19 +6,23 @@
 {% load url from future %}
 
 {% block navbar %}
-	<h2><a href="{% url 'all-titles' %}">{{title.author}}</a></h2>
-	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h3>
+	<h2><a href="{% url 'all-titles' %}">{{ focus_title.author }}</a></h2>
+	
+	{% for el_title in all_titles %}
+		<div class="{% if el_title == focus_title %}nav-focused{% else %}nav-unfocused{% endif %}"><a href="{% url 'show-chapters' title=el_title.slug %}">{{ el_title }}</a></div>
+	{% endfor %}
+	
 {% endblock navbar %}
 
 {% block content %}
 	{{copy_text|linebreaks}}
 
-	<h2>Author: <a href="{% url 'all-titles' %}">{{title.author}}</a></h2>
-	<h3>Title: <a href="{% url 'show-chapters' title=title.slug %}">{{title}}</a></h3>
+	<h2>Author: <a href="{% url 'all-titles' %}">{{ focus_title.author}}</a></h2>
+	<h3>Title: <a href="{% url 'show-chapters' title=focus_title.slug %}">{{ focus_title }}</a></h3>
 
 	<ul>
-	{% for chapter in title.chapter_set.all %}
-		<li><a href="{% url 'show-paragraphs' title=title.slug chapter=chapter.slug %}">{{chapter}}</a>
+	{% for chapter in focus_title.chapter_set.all %}
+		<li><a href="{% url 'show-paragraphs' title=focus_title.slug chapter=chapter.slug %}">{{chapter.heading}}</a>
 	{% endfor %}
 	</ul>
 

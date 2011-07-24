@@ -22,6 +22,6 @@ class ChapterForm(forms.ModelForm):
 		model = Chapter
 
 class BigSearchForm(forms.Form):
-	q = forms.CharField(max_length=1000, label="Search")
-	titles = forms.ModelMultipleChoiceField(queryset=Title.objects.all(), label="Work (hold down Ctrl+)", required=False)
+	q = forms.CharField(max_length=1000, label="Search for text")
+	titles = forms.ModelMultipleChoiceField(queryset=Title.objects.all(), label="In", required=False)
 
