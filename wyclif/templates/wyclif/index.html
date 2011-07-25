@@ -68,7 +68,9 @@
 
 <body>
 	<div id="image">
-		<img src="{{STATIC_URL}}img/wyclif_big2.jpg">
+		<a href="{% url 'all-titles' %}">
+			<img src="{{STATIC_URL}}img/wyclif_big2.jpg">
+		</a>
 	<div>
 	<div id="link" class="transparent">
 		<a href="{% url 'all-titles' %}">
