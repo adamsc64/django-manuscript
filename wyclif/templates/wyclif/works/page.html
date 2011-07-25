@@ -43,7 +43,14 @@
 			</tr>
 		{% endif %}
 			<tr>
-				<td class="wyclif-paragraph-text">{{ paragraph.text }} 
+				<td class="wyclif-paragraph-text">
+					{% if paragraph.split == "top" or paragraph.split == "no" %}
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					{% endif %}
+					{{ paragraph.text }} 
+					{% if paragraph.split == "top" or paragraph.split == "both" %}
+						{% if page_next %}<a href="{% url 'show-page' title=page_next.title.slug page=page_next.number %}">...</a>{% endif %}
+					{% endif %}
 				<td class="google-translate-wrap"><a href="http://translate.google.com/#la|en|{{paragraph.text|urlencode}}" target="_blank">Translate</a>
 			</tr>
 	{% endfor %}
