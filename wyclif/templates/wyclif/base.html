@@ -34,8 +34,8 @@
 			<hr>
 			<div id="top-sections">	
 				<a class="navbutton" href="{% url 'all-titles' %}">Home</a> |
-				<a class="navbutton" href="/about/">About</a> |
-				<a class="navbutton" href="/contact/">Contact</a> |
+				<a class="navbutton" href="{% url 'wyclif.views.about' %}">About</a> |
+				<a class="navbutton" href="{% url 'wyclif.views.contact' %}">Contact</a> |
 			</div>
 			<div id="small-search"> 
 				<form action="{% url 'wyclif.views.search' %}" method="GET">
