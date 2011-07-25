@@ -10,7 +10,7 @@
 {% endblock navbar %}
 
 {% block content %}
-	{{copy_text|linebreaks}}
+	{{ copy_text|safe|linebreaks }}
 
 	{% for dataobj in works_by_author %}
 		<h2>{{dataobj.author}}</h2>

@@ -10,5 +10,5 @@
 {% endblock navbar %}
 
 {% block content %}
-	{{copy_text|linebreaks}}
+	{{ copy_text|safe|linebreaks }}
 {% endblock content %}

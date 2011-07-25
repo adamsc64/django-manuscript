@@ -19,7 +19,7 @@
 {% endblock navbar %}
 
 {% block content %}
-	{{copy_text|linebreaks}}
+	{{ copy_text|safe|linebreaks }}
 
 	<div id="search-tool">
 		<h2>Search Tool (experimental)</h2>
