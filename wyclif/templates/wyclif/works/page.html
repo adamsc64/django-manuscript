@@ -36,7 +36,7 @@
 	
 	<table class="wyclif-page-el">
 	{% for paragraph in paragraphs %}
-		{% if paragraph == first_paragraph and paragraph.split != "bottom" %}
+		{% if paragraph == focus_chapter_first_paragraph and paragraph.split != "bottom" %}
 			<tr>
 				<td class="wyclif-chapter-title">{{ paragraph.chapter.heading }}
 				<td>
