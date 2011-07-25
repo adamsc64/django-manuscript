@@ -30,6 +30,7 @@
 		left:10%;
 		width:20%;
 		background-color:black;
+		display:none;
 	}
 	#link a {
 		font-family:Georgia, serif;
@@ -54,8 +55,10 @@
 				$wyclif.css('width', $(window).width()+"px");
 				$wyclif.css('height',($(window).width()*INIT_WYCLIF_HEIGHT/INIT_WYCLIF_WIDTH)+'px');
 			}
-			$wyclif.fadeIn(1000);
-			resize_wyclif();
+			resize_wyclif();				
+			$wyclif.fadeIn(1000, function() {
+				$("#link").fadeIn(1000);
+			});
 
 			$(window).resize(resize_wyclif);
 		});
