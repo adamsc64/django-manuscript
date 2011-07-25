@@ -115,7 +115,7 @@ class Page(BaseModel):
 				target_size = (target_width , target_height)
 				target_path = settings.MEDIA_ROOT + "pages_to_display/" + self.get_normalized_jpg_filename()
 		
-				print "%s: Converting %s file to %s (new file)." % (str(self), str(self.scan.path), str(self.display.path))
+				print "%s: Converting %s %s file to %s %s (new file)." % (str(self), str(self.scan.path), str((width,height)), str(target_path), str(target_size))
 				PIL.Image.open(self.scan.path).resize(target_size).save(target_path)
 		
 				self.display = "pages_to_display/" + self.get_normalized_jpg_filename()
