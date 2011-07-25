@@ -24,6 +24,13 @@ def about(request):
 		"copy_text" : copy_text,
 	})
 
+def contact(request):
+	copy_text, created = SiteCopyText.objects.get_or_create_for('contact')
+
+	return render(request, 'wyclif/contact.html', {
+		"copy_text" : copy_text,
+	})
+
 def copyright(request):
 	url_path = request.META['PATH_INFO']
 	copy_text, created = SiteCopyText.objects.get_or_create_for('copyright')

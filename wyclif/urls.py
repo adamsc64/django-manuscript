@@ -15,7 +15,7 @@ urlpatterns += patterns('',
 	(r'^about/+$', 'wyclif.views.about'),
 	(r'^copyright/+$', 'wyclif.views.copyright'),
 	(r'^search/+$', 'wyclif.views.search'),
-
+	(r'^contact/+$', 'wyclif.views.contact'),
 )
 
 #static media
