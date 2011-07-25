@@ -126,6 +126,10 @@ position:relative;
 	padding: 10px 30px;
 }
 
+#content .page-scan-wrap {
+	text-align:right;
+}
+
 #content .wyclif-page-el {
 	/*border:1px solid;*/
 }

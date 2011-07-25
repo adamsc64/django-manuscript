@@ -33,6 +33,10 @@
 
 	</div>
 	
+	<div class="page-scan-wrap">
+		{% if page.display %}<a href="{{ page.display.url }}"><img src="{{ STATIC_URL }}img/download.jpg" width="20" height="20">Download Page Scan</a>{% endif %}
+	</div>
+	
 	
 	<table class="wyclif-page-el">
 	{% for paragraph in paragraphs %}
