@@ -142,3 +142,5 @@ def edit_page(request, id):
 def favicon(request):
 	return HttpResponseNotFound()
 
+def error_view(request):
+	return render(request, '500.html')

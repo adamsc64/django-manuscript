@@ -77,3 +77,5 @@ urlpatterns += patterns('',
 	}),
 
 )
+
+handler500 = 'wyclif.views.error_view'
