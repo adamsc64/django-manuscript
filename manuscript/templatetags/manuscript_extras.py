@@ -40,13 +40,10 @@ def highlight(value, arg):
 	result = value
 
 	for full_text in full_texts:
-		pattern = re.compile(full_text, flags=re.IGNORECASE)
-		result = re.sub(
-			pattern=pattern,
-			repl="<span class='%s'>%s</span>" % (css_class,full_text),
-			string=result,
+		result = result.replace(
+			full_text,
+			"<span class='%s'>%s</span>" % (css_class,full_text),
 		)
-
 	return mark_safe(result)
 
 highlight.is_safe = True
