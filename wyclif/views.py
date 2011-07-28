@@ -8,6 +8,7 @@ from django.template import RequestContext
 from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm, BigSearchForm
 from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 from manuscript.utils import convert_to_regex_search
+from manuscript.utils import InvalidSearchStringError
 
 def index(request):
 	return render(request,'wyclif/index.html')
@@ -50,14 +51,18 @@ def search(request):
 			q = big_search_form.cleaned_data["q"]
 			titles = big_search_form.cleaned_data["titles"]
 			
-			q = convert_to_regex_search(q)					
-			
-			if titles:
-				paragraph_matches = Paragraph.objects.filter(text__regex=q, chapter__title__in=titles)
+			try:
+				q = convert_to_regex_search(q)
+			except InvalidSearchStringError:
+				paragraph_matches = []
+				chapter_matches = []
 			else:
-				paragraph_matches = Paragraph.objects.filter(text__regex=q)
+				if titles:
+					paragraph_matches = Paragraph.objects.filter(text__regex=q, chapter__title__in=titles)
+				else:
+					paragraph_matches = Paragraph.objects.filter(text__regex=q)
 				
-			chapter_matches = Chapter.objects.filter(heading__regex=q)
+				chapter_matches = Chapter.objects.filter(heading__regex=q)
 		
 			return render(request, 'wyclif/works/search.html', {
 				"regex_query" : q,

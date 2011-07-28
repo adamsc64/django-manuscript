@@ -27,7 +27,7 @@ def highlight(value, arg):
 
 	# This is necessary for complex return values that come from findall
 	# when there are groups in the regexp.
-	full_texts = flatten(full_texts)	
+	full_texts = flatten(full_texts)
 	while '' in full_texts:
 		full_texts.remove('')
 

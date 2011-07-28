@@ -9,8 +9,11 @@ def flatten(l):
 		  	out.append(item)
 	return out
 
-def _full_word_regex(word):
-	return r"\b%s\b" % word
+class InvalidSearchStringError(Exception):
+	def __init__(self, value):
+		self.value = value
+	def __str__(self):
+		return repr(self.value)
 
 def convert_to_regex_search(expr):
 	expr = expr.replace("(","~")
@@ -25,13 +28,13 @@ def convert_to_regex_search(expr):
 			result = __finder(expr.replace(sub_expr, str(__finder(sub_expr[1:-1]))))
 			print "results " + result
 			return result
-		result = _to_regex(expr)
+		result = _parse_search(expr)
 		print "results" + result
 		return result
 
 	return __finder(expr)
 
-def _to_regex(q):
+def _parse_search(q):
 
 	q = q.replace("*","\w*")
 	ORs = q.split(" OR ")
@@ -44,8 +47,12 @@ def _to_regex(q):
 			conditions = []
 			for i in range(len(ANDs)):
 				word1 = ANDs[i]
+				if word1 == "":
+					raise InvalidSearchStringError(q)
 				for j in range(i,len(ANDs)):
 					word2 = ANDs[j]
+					if word2 == "":
+						raise InvalidSearchStringError(q)
 					if word1 != word2:
 						conditions.append(_full_word_regex(word1 + ".*" + word2))
 						conditions.append(_full_word_regex(word2 + ".*" + word1))
@@ -57,3 +64,7 @@ def _to_regex(q):
 		regex = ("(%s)" % "|".join(o for o in or_list)) if len(or_list)>1 else or_list[0]
 	
 	return regex
+
+def _full_word_regex(word):
+	return r"\b%s\b" % word
+
