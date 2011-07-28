@@ -60,4 +60,19 @@
 	{% endfor %}
 	</table>
 	
+	<div class="page-navigator-wrap">
+		<table class="page-navigator"><tr>
+			<td class="navigate-going-left">{% if page_prev %}<a href="{% url 'show-page' title=page.title.slug page=page_first.number %}">
+				&larr;first page
+			</a>{% else %}first page{% endif %}
+			<td class="navigate-going-left">{% if page_prev %}<a href="{% url 'show-page' title=page_prev.title.slug page=page_prev.number %}"> &larr;p. {{ page_prev.number }}</a>{% endif %}
+			<td class="navigate-going-right">{% if page_next %}<a href="{% url 'show-page' title=page_next.title.slug page=page_next.number %}"> p. {{ page_next.number }}&rarr;</a>{% endif %}
+			<td class="navigate-going-right">{% if page_next %}<a href="{% url 'show-page' title=page.title.slug page=page_last.number %}">
+				last page&rarr;
+			</a>{% else %}last page{% endif %}
+		</tr></table>
+
+	</div>
+	
+	
 {% endblock content %}

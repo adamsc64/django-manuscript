@@ -132,6 +132,7 @@ position:relative;
 
 #content .wyclif-page-el {
 	/*border:1px solid;*/
+	padding-bottom:10px;
 }
 #content .wyclif-chapter-title {
 	text-align:center;
