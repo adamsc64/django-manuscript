@@ -20,16 +20,13 @@ def convert_to_regex_search(expr):
 	expr = expr.replace(")","%")
 	
 	def __finder(expr):
-		print "gets " + expr
-		regex = re.compile(r"\~[^\(\)]+\%")
+		regex = re.compile(r"\~[^\(\)]+\%", re.IGNORECASE)
 		match = regex.search(expr)
 		if match:
 			sub_expr = match.group()
 			result = __finder(expr.replace(sub_expr, str(__finder(sub_expr[1:-1]))))
-			print "results " + result
 			return result
 		result = _parse_search(expr)
-		print "results" + result
 		return result
 
 	return __finder(expr)
@@ -46,18 +43,23 @@ def _parse_search(q):
 		if len(ANDs) > 1:
 			conditions = []
 			for i in range(len(ANDs)):
-				word1 = ANDs[i]
-				if word1 == "":
+				word1 = ANDs[i].strip()
+				if word1 == "" or word1 == "\w*":
 					raise InvalidSearchStringError(q)
 				for j in range(i,len(ANDs)):
-					word2 = ANDs[j]
-					if word2 == "":
+					word2 = ANDs[j].strip()
+					if word2 == "" or word2 == "\w*":
 						raise InvalidSearchStringError(q)
 					if word1 != word2:
+						print word1, word2
 						conditions.append(_full_word_regex(word1 + ".*" + word2))
 						conditions.append(_full_word_regex(word2 + ".*" + word1))
 		else:
-			conditions = [_full_word_regex(ANDs[0])]
+			word = ANDs[0]
+			if word == "" or word == "\w*":
+				raise InvalidSearchStringError(q)
+			word = _full_word_regex(word)
+			conditions = [word]
 				
 		or_list.append("|".join("(%s)" % condition for condition in conditions))
 		

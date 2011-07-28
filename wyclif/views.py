@@ -55,20 +55,17 @@ def search(request):
 				q = convert_to_regex_search(q)
 			except InvalidSearchStringError:
 				paragraph_matches = []
-				chapter_matches = []
 			else:
 				if titles:
-					paragraph_matches = Paragraph.objects.filter(text__regex=q, chapter__title__in=titles)
+					paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
 				else:
-					paragraph_matches = Paragraph.objects.filter(text__regex=q)
+					paragraph_matches = Paragraph.objects.filter(text__iregex=q)
 				
-				chapter_matches = Chapter.objects.filter(heading__regex=q)
 		
 			return render(request, 'wyclif/works/search.html', {
 				"regex_query" : q,
 				"big_search_form" : big_search_form,
 				"paragraph_matches" : paragraph_matches,
-				"chapter_matches" : chapter_matches,
 			})
 	else:
 		big_search_form = BigSearchForm()

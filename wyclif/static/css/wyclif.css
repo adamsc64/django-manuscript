@@ -101,6 +101,16 @@ position:relative;
 	margin-bottom:20px;
 }
 
+#content #search-tool .search-instructions {
+	margin-left:20px;
+	background-color:#EEEEEE;
+}
+
+#content #search-tool .search-instructions .search-instruction {
+	padding-right:10px;
+	vertical-align:top;
+}
+
 #content #search-tool .search-field-wrapper .search-input-wrapper {
 	margin-left:20px;
 	

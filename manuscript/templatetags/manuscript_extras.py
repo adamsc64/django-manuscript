@@ -23,7 +23,7 @@ def highlight(value, arg):
 	"""
 	css_class = settings.MANUSCRIPT_HIGHLIGHT_CSS_CLASS if hasattr(settings,"MANUSCRIPT_HIGHLIGHT_CSS_CLASS") else "manuscript-highlighted"
 
-	full_texts = re.findall(arg, value)
+	full_texts = re.findall(arg, value, flags=re.IGNORECASE)
 
 	# This is necessary for complex return values that come from findall
 	# when there are groups in the regexp.
@@ -40,10 +40,11 @@ def highlight(value, arg):
 	result = value
 
 	for full_text in full_texts:
+		pattern = re.compile(full_text, flags=re.IGNORECASE)
 		result = re.sub(
-			full_text,
-			"<span class='%s'>%s</span>" % (css_class,full_text),
-			result,
+			pattern=pattern,
+			repl="<span class='%s'>%s</span>" % (css_class,full_text),
+			string=result,
 		)
 
 	return mark_safe(result)

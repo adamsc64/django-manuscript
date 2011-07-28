@@ -31,6 +31,21 @@
 				<div class="search-input-wrapper">
 		        	{{ big_search_form.q }}
 				</div>
+				<div class="search-instructions-wrap">
+					<table class="search-instructions">
+						<tbody>
+							<tr><td class="search-instruction">
+								*</td><td>wildcard (<b>habit*</b> returns "habitus", "habito")<br>								
+							</td></tr>
+							<tr><td class="search-instruction">
+								AND</td><td>conjunctive logical operator<br>(<b>epistola AND incipit</b> returns "epistola ... incipit")<br>
+							</td></tr>
+							<tr><td class="search-instruction">
+								OR</td><td>disjunctive logical operator<br>(<b>ipso OR sequitur</b> returns anything with either "ipso," or "sequitur," or both)<br>
+							</td></tr>
+						</tbody>
+					</table>
+				</div>
 		    </div>
 			<div class="search-field-wrapper">
 		        {{ big_search_form.titles.errors }}
@@ -55,19 +70,6 @@
 	</div>
 
 	<div id="search-results">
-		<div class="matched-chapters">
-			{% if chapters_matches %}
-				<hr>
-				Matched Chapters
-				<ul>
-				{% for chapter in chapter_matches %}
-					<li><a href="{% url 'show-chapter' title=chapter.title.slug chapter=chapter.slug %}">{{ paragraph.text }}</a>
-				{% endfor %}
-				</ul>
-
-			{% endif %}
-		</div>
-
 		<div class="matched-paragraphs">
 			{% if paragraph_matches %}
 				<hr>
