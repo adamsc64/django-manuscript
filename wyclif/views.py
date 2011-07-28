@@ -7,7 +7,7 @@ from django.template import RequestContext
 
 from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm, BigSearchForm
 from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
-
+from manuscript.utils import convert_to_regex_search
 
 def index(request):
 	return render(request,'wyclif/index.html')
@@ -41,24 +41,26 @@ def copyright(request):
 
 
 def search(request):
-	query = request.GET.get('q')
+	raw_query = request.GET.get('q')
 
-	if query:
+	if raw_query:
 		big_search_form = BigSearchForm(request.GET)
 		
 		if big_search_form.is_valid():
 			q = big_search_form.cleaned_data["q"]
 			titles = big_search_form.cleaned_data["titles"]
 			
+			q = convert_to_regex_search(q)					
+			
 			if titles:
-				paragraph_matches = Paragraph.objects.filter(text__contains=query, chapter__title__in=titles)
+				paragraph_matches = Paragraph.objects.filter(text__regex=q, chapter__title__in=titles)
 			else:
-				paragraph_matches = Paragraph.objects.filter(text__contains=query)
+				paragraph_matches = Paragraph.objects.filter(text__regex=q)
 				
-			chapter_matches = Chapter.objects.filter(heading__contains=query)
+			chapter_matches = Chapter.objects.filter(heading__regex=q)
 		
 			return render(request, 'wyclif/works/search.html', {
-				"query" : query,
+				"regex_query" : q,
 				"big_search_form" : big_search_form,
 				"paragraph_matches" : paragraph_matches,
 				"chapter_matches" : chapter_matches,

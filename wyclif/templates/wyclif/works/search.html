@@ -76,7 +76,7 @@
 				{% for paragraph in paragraph_matches %}
 					<li class="matched-result wyclif-paragraph-text">
 						<span class="search-result-description"><i>{{ paragraph.title.text }}</i>, {{ paragraph.chapter.heading }}, p. {{ paragraph.page.number }}: </span>
-						<a href="{% url 'show-page' title=paragraph.title.slug page=paragraph.page.number %}">{{ paragraph.text|highlight:query }}</a>
+						<a href="{% url 'show-page' title=paragraph.title.slug page=paragraph.page.number %}">{{ paragraph.text|highlight:regex_query }}</a>
 				{% endfor %}
 				</ul>
 			{% endif %}
