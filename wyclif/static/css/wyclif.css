@@ -152,10 +152,6 @@ a {
 	padding: 10px 30px;
 }
 
-#content .page-scan-wrap {
-	text-align:right;
-}
-
 #content .wyclif-page-el {
 	/*border:1px solid;*/
 	padding-bottom:10px;
@@ -190,6 +186,21 @@ a {
 	background-color:#DDDDDD;
 	border:1px solid;
 }
+
+#content .extras-wrap {
+	margin-top:10px;
+	margin-bottom:10px;
+}
+
+#content .extras-wrap .page-scan-wrap {
+	text-align:right;
+}
+
+#content .extras-wrap .whole-chapter-link-wrap {
+	text-align:right;
+}
+
+
 #content .page-navigator .navigate-going-left {
 	width:100px;
 	text-align:left;

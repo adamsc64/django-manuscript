@@ -10,7 +10,7 @@
 	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a></h3>
 
 	{% for el_chapter in all_chapters %}
-		<div class="{% if el_chapter == focus_chapter %}nav-focused{% else %}nav-unfocused{% endif %}"><a href="{% url 'show-chapter' title=el_chapter.title.slug chapter=el_chapter.slug %}">{{ el_chapter.heading }}</a></div>
+		<div class="{% if el_chapter == focus_chapter %}nav-focused{% else %}nav-unfocused{% endif %}"><a href="{% url 'show-page' title=el_chapter.title.slug page=el_chapter.start_page_no %}">{{ el_chapter.heading }}</a></div>
 	{% endfor %}
 
 {% endblock navbar %}
@@ -30,11 +30,16 @@
 				last page&rarr;
 			</a>{% else %}last page{% endif %}
 		</tr></table>
-
 	</div>
 	
-	<div class="page-scan-wrap">
-		{% if page.display %}<a href="{{ page.display.url }}">Download Page Scan</a>{% endif %}
+	<div class="extras-wrap">
+		<div class="whole-chapter-link-wrap">
+			<a href="{% url 'show-chapter' title=focus_chapter.title.slug chapter=focus_chapter.slug %}">See entire Chapter "{{ focus_chapter.heading }}"</a>
+		</div>
+
+		<div class="page-scan-wrap">
+			{% if page.display %}<a href="{{ page.display.url }}">Download Page Scan</a>{% endif %}
+		</div>
 	</div>
 	
 	
@@ -59,6 +64,16 @@
 			</tr>
 	{% endfor %}
 	</table>
+	
+	<div class="extras-wrap">
+		<div class="whole-chapter-link-wrap">
+			<a href="{% url 'show-chapter' title=focus_chapter.title.slug chapter=focus_chapter.slug %}">See entire Chapter "{{ focus_chapter.heading }}"</a>
+		</div>
+
+		<div class="page-scan-wrap">
+			{% if page.display %}<a href="{{ page.display.url }}">Download Page Scan</a>{% endif %}
+		</div>
+	</div>
 	
 	<div class="page-navigator-wrap">
 		<table class="page-navigator"><tr>
