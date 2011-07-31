@@ -24,42 +24,47 @@
 
 <body>
 
-<div id="wrap">
-	<div id="header">	
+<div id="wrap-everything">
+	<div id="header">
+		<span class="left-side">
+			<a href="{% url 'all-titles' %}"><img id="wyclif-image" src="/static/img/wyclif200x150.png"></a>
+		</span>
 		<span class="right-side">
-			<a href="/">
-				<h1>The Latin Wor<span style="font-family:serif;">k</span>s of John Wyclif</h1>
-				<h2>A searchable database of the primary texts</h2>
-			</a>
-			<hr>
-			<div id="top-sections">	
-				<a class="navbutton" href="{% url 'all-titles' %}">Home</a> |
-				<a class="navbutton" href="{% url 'wyclif.views.about' %}">About</a> |
-				<a class="navbutton" href="{% url 'wyclif.views.contact' %}">Contact</a> |
+			<div class="title-wrap">
+				<a href="{% url 'all-titles' %}">
+					<h1>The Latin Wor<span style="font-family:serif;">k</span>s of John Wyclif</h1>
+					<h2>A searchable database of the primary texts</h2>
+				</a>
 			</div>
-			<div id="small-search"> 
-				<form action="{% url 'wyclif.views.search' %}" method="GET">
-					<input name='q' id='q'>
-					<input type="submit" value="Search" /><br>
-				</form>
-				<span>- or -</span> <a href="/search/">Advanced Search</a>
+			<div class="search-links-wrap">
+				<div id="section-links">	
+					<a class="navbutton" href="{% url 'all-titles' %}">Home</a> |
+					<a class="navbutton" href="{% url 'wyclif.views.about' %}">About</a> |
+					<a class="navbutton" href="{% url 'wyclif.views.contact' %}">Contact</a> |
+				</div>
+				<div id="small-search"> 
+					<form action="{% url 'wyclif.views.search' %}" method="GET">
+						<input name='q' id='q'>
+						<input type="submit" value="Search" /><br>
+					</form>
+					<span>- or -</span> <a href="/search/">Advanced Search</a>
+				</div>
 			</div>
 		</span>
 	</div>
 	<hr>
-	<div id="content">
-		<div id="pad">
-			{% block content %}
-			{% endblock content %}
-		</div>
-	</div>
 	<div id="navbar-wrap" class="transparent">
 		<div id="navbar-content">
 		{% block navbar %}
 		{% endblock navbar %}
 		</div>
 	</div>
-
+	<div id="content">
+		<div id="content-pad-wrap">
+			{% block content %}
+			{% endblock content %}
+		</div>
+	</div>
 	<div id="footer">
 		<a href="{% url 'wyclif.views.copyright' %}">Copyright &copy; 2011</a>
 	</div>

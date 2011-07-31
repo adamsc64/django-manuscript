@@ -17,11 +17,11 @@ a {
 	text-decoration:none;
 }
 
-div#wrap {
-width: 820px;
-margin:0 auto;
-padding:0;
-position:relative;
+#wrap-everything {
+	width: 820px;
+	margin:0 auto;
+	padding:0;
+	position:relative;
 }
 
 .clickable {
@@ -31,16 +31,30 @@ position:relative;
 #header {
 	width:820px;
 	height:170px;
-	background: url("/static/img/wyclif200x150.png") no-repeat -10px 10px;
 }
+#header .left-side {
+	position:absolute;
+}
+#header .left-side #wyclif-image {
+	border:none;
+	position:absolute;
+	top:10px;
+}
+
 #header .right-side {
+	position:absolute;
+	left:210px;
 	height: 169px;
-	width: 619px;
+	width: 609px;
 	margin-bottom:0;
 	padding:0;
 	margin-top:0;
 	float:right;
 	border-right: 1px solid #fff;
+}
+
+#header .right-side .title-wrap {
+	border-bottom: 1px solid white;
 }
 
 #header h1 {
@@ -57,11 +71,11 @@ position:relative;
 	color:white;
 }
 
-#header #top-sections {
+#header #section-links {
 	float:right;
 }
 
-#header #top-sections a {
+#header #section-links a {
 	font-size:12pt;
 }
 
@@ -84,13 +98,16 @@ position:relative;
 #content {
 	margin-top: 0;
 	margin-right:0;
-	width: 619px;
+	width: 620px;
 	float:right;
 	background-color: #fcfcfc;
 	padding-left:1px;
 }
+#header .search-links-wrap {
+	padding-top:5px;
+}
 #header #small-search #q {
-	background-color:#660000;
+	background-color:#330000;
 	color:#FFFFFF;
 }
 #header #small-search span {
@@ -131,8 +148,7 @@ position:relative;
 	color:white;
 }
 
-
-#content #pad {
+#content #content-pad-wrap {
 	padding: 10px 30px;
 }
 
@@ -220,7 +236,7 @@ position:relative;
 	width: 200px;
 	position: absolute;
 
-	top: 184px; left:0;
+	top: 185px; left:0;
 	
 	background-color:white;
 }
@@ -267,12 +283,13 @@ position:relative;
 	background-color:white;
 	clear:both;
 
-	width: 618px;
+	width: 619px;
 	float:right;
 
 	border: 1px solid #fcfcfc;
 	padding-top: 20px; padding-bottom: 20px;
 	margin-bottom: 1px;
+	padding-left: 1px;
 	
 	text-align:right;
 }
