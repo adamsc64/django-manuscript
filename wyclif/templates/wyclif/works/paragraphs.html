@@ -8,7 +8,7 @@
 {% block navbar %}
 	<h2><a href="{% url 'all-titles' %}">{{ title.author }}</a></h2>
 	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a></h3>
-	<ul><li><a href="{% url 'show-paragraphs' title=title.slug chapter=chapter.slug %}">{{ chapter }}</a></ul>
+	<ul><li><a href="{% url 'show-page' title=title.slug page=chapter.start_page_no %}">{{ chapter }}</a></ul>
 {% endblock navbar %}
 
 {% block content %}

@@ -19,7 +19,6 @@
 	{{ copy_text|safe|linebreaks }}
 
 	{% for dataobj in works_by_author %}
-		<h2>{{dataobj.author}}</h2>
 		<ul>
 		{% for title in dataobj.works %}
 			<li><a href="{% url 'show-chapters' title=title.slug %}">{{title.text}}</a> (v. {{title.volume}}, {{title.publication_year}})

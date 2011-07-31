@@ -17,12 +17,11 @@
 {% block content %}
 	{{ copy_text|safe|linebreaks }}
 
-	<h2>Author: <a href="{% url 'all-titles' %}">{{ focus_title.author}}</a></h2>
 	<h3>Title: <a href="{% url 'show-chapters' title=focus_title.slug %}">{{ focus_title }}</a></h3>
 
 	<ul>
 	{% for chapter in focus_title.chapter_set.all %}
-		<li><a href="{% url 'show-paragraphs' title=focus_title.slug chapter=chapter.slug %}">{{chapter.heading}}</a>
+		<li><a href="{% url 'show-page' title=focus_title.slug page=chapter.start_page_no %}">{{ chapter.heading }}</a>
 	{% endfor %}
 	</ul>
 
