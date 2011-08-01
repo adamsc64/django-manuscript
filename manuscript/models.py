@@ -190,7 +190,22 @@ def compile_paragraphs(flush=False):
 				new.save()
 			else:
 			
-			
+#mail_admins(
+#	subject="Wyclif: Possible data inconsistency",
+#	message="""
+#		Possible data inconsistency detected by the get_full_paragraphs() method.
+#		Check if paragraph.split is valid across paragraphs.
+#
+#		Details:
+#
+#		- paragraph.pk=%s
+#		- paragraph.split="%s"
+#		- Paragraph text:
+#		%s
+#
+#
+#	""")
+
 			
 			
 
