@@ -61,11 +61,19 @@ def chapter(request, title, chapter):
 	try:
 		title = Title.objects.get(slug=title)
 		chapter = title.chapter_set.get(slug=chapter)
-		page = chapter.paragraph_set.filter(~Q(split="bottom")).order_by('number')[0].page
+		#page = chapter.paragraph_set.filter(~Q(split="bottom")).order_by('number')[0].page
 	except Title.DoesNotExist, Chapter.DoesNotExist:
 		raise Http404
-		
-	return HttpResponseRedirect(reverse('show-page', args=(title.slug, page.number)))
+	
+	all_chapters = title.chapter_set.all()
+	paragraphs = chapter.get_full_paragraphs()
+	
+	return render(request, 'wyclif/works/chapter.html', {
+		"title" : title,
+		"chapter" : chapter,
+		"all_chapters" : all_chapters,
+		"paragraphs" : paragraphs,
+	})
 
 def page(request, title, page):
 	copy_text, created = SiteCopyText.objects.get_or_create_for('page')

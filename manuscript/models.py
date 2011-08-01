@@ -61,6 +61,11 @@ class Chapter(BaseModel):
 			self.slug = slug
 
 		super( Chapter, self ).save(*args, **kwargs)
+	
+	def get_full_paragraphs(self):
+		#paragraphs = self.paragraph_set.all().order_by('number')
+		zzz
+		return full_paragraphs
 
 
 class Page(BaseModel):
@@ -139,13 +144,94 @@ class Paragraph(BaseModel):
 	old_page_number = models.IntegerField(null=True, editable=False) # import field only
 	old_id = models.IntegerField(null=True, editable=False) # import field only
 
+	composite = models.ForeignKey('manuscript.CompositeParagraph', null=True, blank=True, editable=False, verbose_name="composite")
+
 	def __unicode__(self):
 		return u"Paragraph %s: %s" % (unicode(self.number),unicode(self.text[:100]))
 		#return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
 	
 	def title(self):
 		return self.page.title
+
+class CompositeParagraph(BaseModel):
+	
+	chapter = models.ForeignKey('manuscript.Chapter', verbose_name="in chapter")
+	number = models.IntegerField(verbose_name="order in chapter")
+	pages = models.ManyToManyField('manuscript.Page', verbose_name="on pages")
+	text = models.TextField()
+
+	def __unicode__(self):
+		return u"CompositeParagraph %s: %s" % (unicode(self.number),unicode(self.text[:100]))
+	
+	def title(self):
+		return self.page.title
+
+def compile_paragraphs(flush=False):
+	if flush:
+		CompositeParagraph.objects.all().delete()
+
+	for title in Title.objects.all():
+
+		paragraphs = Paragraph.objects.filter(page__title=title, composite__isnull=True)
+		numbers = list(set(paragraphs.values_list('number',flat=True)))
+	
+		for number in numbers:
+			elements = paragraphs.filter(number=number)
+			if elements.count() < 1:
+				raise Exception("Count for CompositeParagraph generator is unexpectedly < 1 when compiling paragraphs.")
+			elif elements.count() == 1:
+				paragraph = elements[0]
+				new = CompositeParagraph(
+					chapter = paragraph.chapter,
+					number = paragraph.number,
+					pages = [paragraph.page],
+					text = paragraph.text,
+				)
+				new.save()
+			else:
 			
+			
+			
+			
+
+	pks_and_numbers = list(self.paragraph_set.values_list('pk','number'))
+	pks_by_number = {}
+	
+	for pk, number in pks_and_numbers:
+		#pks_by_number[number].append(pk) if number in pks_by_number else pks_by_number[number] = [pk,]
+		pass
+			
+	for pks in pks_by_number:
+		pks
+	full_paragraphs = []
+
+	#("bottom", "This paragraph continues from page before"),
+	#("no", "Not split across pages"),
+	#("top", "This paragraph continues onto next page"),
+	#("both", "This paragraph continues from last page AND goes to next page"),
+
+	result = ""
+	for paragraph in paragraphs:
+		if result:
+			# We have data to prepend or append.
+			pass
+		else:
+			# We should have a fresh paragraph.
+			result = paragraph.text, paragraph.number
+
+		if paragraph.split in ("top", "no"):
+			# This is the beginning of the paragraph.
+			result = paragraph.text
+		if paragraph.split in ("bottom", "both"):
+			# This paragraph is a continuation.
+			result = result + paragraph.text
+
+		if paragraph.split in ("bottom", "no"):
+			# Append only if we have a full paragraph.
+			full_paragraphs.append(result)
+			result = ""
+	
+	
 
 class Title(BaseModel):
 	text = models.CharField(verbose_name="title text", max_length=70)
