@@ -3,7 +3,7 @@
 
 from django.contrib import admin
 
-from manuscript.models import Chapter,Paragraph,Title,Author,Page,SiteCopyText
+from manuscript.models import Chapter, Paragraph, Title, Author, Page, SiteCopyText, CompositeParagraph
 
 admin.site.register(Chapter,
 	list_display = ('title','heading','start_page_no'),
@@ -21,6 +21,10 @@ admin.site.register(Paragraph,
 	search_fields = ['number','text'],
 	
 	fields = ('page','chapter','number','split','text'),
+)
+admin.site.register(CompositeParagraph,
+	fields = ('chapter','number','pages','text','get_children_links'),
+	readonly_fields = ('get_children_links',),
 )
 admin.site.register(Title,
 	list_display = ('text','volume','publication_year','pages'),
