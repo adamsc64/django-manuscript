@@ -166,87 +166,62 @@ class CompositeParagraph(BaseModel):
 	def title(self):
 		return self.page.title
 
-def compile_paragraphs(flush=False):
+def compile_paragraphs(flush=False, verbose=True):
 	if flush:
-		CompositeParagraph.objects.all().delete()
+		while CompositeParagraph.objects.all().count() > 0:
+			# SQLite does not delete groups well ("DatabaseError: too many SQL variables")
+			# so do it in chunks.
+			for chapter in Chapter.objects.all():
+				CompositeParagraph.objects.filter(chapter=chapter).delete()
 
-	for title in Title.objects.all():
+	for chapter in Chapter.objects.all():
 
-		paragraphs = Paragraph.objects.filter(page__title=title, composite__isnull=True)
+		paragraphs = Paragraph.objects.filter(chapter=chapter, composite__isnull=True)
 		numbers = list(set(paragraphs.values_list('number',flat=True)))
 	
 		for number in numbers:
-			elements = paragraphs.filter(number=number)
-			if elements.count() < 1:
-				raise Exception("Count for CompositeParagraph generator is unexpectedly < 1 when compiling paragraphs.")
-			elif elements.count() == 1:
-				paragraph = elements[0]
-				new = CompositeParagraph(
-					chapter = paragraph.chapter,
-					number = paragraph.number,
-					pages = [paragraph.page],
-					text = paragraph.text,
-				)
-				new.save()
-			else:
+			elements = paragraphs.filter(chapter=chapter, number=number)
+			if verbose:
+				print "Combining: "
+				for element in elements:
+					print "   %s: %s" % (element.pk, element.text[:40])
+
+
+			PRIORITY = ("no","top","both","bottom")
 			
-#mail_admins(
-#	subject="Wyclif: Possible data inconsistency",
-#	message="""
-#		Possible data inconsistency detected by the get_full_paragraphs() method.
-#		Check if paragraph.split is valid across paragraphs.
-#
-#		Details:
-#
-#		- paragraph.pk=%s
-#		- paragraph.split="%s"
-#		- Paragraph text:
-#		%s
-#
-#
-#	""")
-
+			result_text = ""
 			
+			for step in PRIORITY:
+				elements_in_paragraph = elements.filter(split=step).order_by('page__number')
+				texts = elements_in_paragraph.values_list('text',flat=True)
+				for text in texts:
+					result_text = result_text.strip() + " " + text.strip()
+					
+			pages = elements.values_list('page__pk', flat=True)
+			pages = Page.objects.filter(pk__in=pages)
 			
-
-	pks_and_numbers = list(self.paragraph_set.values_list('pk','number'))
-	pks_by_number = {}
-	
-	for pk, number in pks_and_numbers:
-		#pks_by_number[number].append(pk) if number in pks_by_number else pks_by_number[number] = [pk,]
-		pass
+			new_composite = CompositeParagraph(
+				chapter = chapter,
+				number = number,
+				text = result_text,
+			)
+			new_composite.save()
+			for page in pages:
+				new_composite.pages.add(page)
+			new_composite.save()
 			
-	for pks in pks_by_number:
-		pks
-	full_paragraphs = []
-
-	#("bottom", "This paragraph continues from page before"),
-	#("no", "Not split across pages"),
-	#("top", "This paragraph continues onto next page"),
-	#("both", "This paragraph continues from last page AND goes to next page"),
-
-	result = ""
-	for paragraph in paragraphs:
-		if result:
-			# We have data to prepend or append.
-			pass
-		else:
-			# We should have a fresh paragraph.
-			result = paragraph.text, paragraph.number
-
-		if paragraph.split in ("top", "no"):
-			# This is the beginning of the paragraph.
-			result = paragraph.text
-		if paragraph.split in ("bottom", "both"):
-			# This paragraph is a continuation.
-			result = result + paragraph.text
-
-		if paragraph.split in ("bottom", "no"):
-			# Append only if we have a full paragraph.
-			full_paragraphs.append(result)
-			result = ""
-	
-	
+			#Save foreignkey relation on paragraphs.
+			for element in elements:
+				element.composite = new_composite
+				element.save()
+			
+			if verbose:
+				print "Created:\n   %s" % str(new_composite.text)
+				print "---"
+			
+	if verbose:
+		print "Finished."
+		
 
 class Title(BaseModel):
 	text = models.CharField(verbose_name="title text", max_length=70)
