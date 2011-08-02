@@ -75,6 +75,7 @@ urlpatterns += patterns('',
 		'queryset' : Author.objects.all(),
 		'template_name' : 'wyclif/object_list.html'
 	}),
+	(r'^db/recreate_paragraph_composites/$', 'manuscript.views.recreate_paragraph_composites'),
 
 )
 
