@@ -15,7 +15,19 @@ class InvalidSearchStringError(Exception):
 	def __str__(self):
 		return repr(self.value)
 
+#def execute_search(expr):
+#	"""Master function to execute django-manuscript search on an expression.
+#	This, and child functions, are in rough shape and need a lot of work."""
+#
+#	if expr.find(" NEAR ") == -1:
+#		execute_near
+#
+#def execute_near_search(expr):
+#	"""Search function to handle NEAR searches."""
+
 def convert_to_regex_search(expr):
+	"""function to handle regular expression searches for AND and OR."""
+	
 	expr = expr.replace("(","~")
 	expr = expr.replace(")","%")
 	

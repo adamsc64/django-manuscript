@@ -146,6 +146,18 @@ class Paragraph(BaseModel):
 
 	composite = models.ForeignKey('manuscript.CompositeParagraph', null=True, blank=True, editable=False, verbose_name="composite")
 
+	class Meta:
+		order_with_respect_to = 'chapter'  #page?
+		ordering = ('chapter','number',)
+
+		#chapter.set_paragraph_order([1,2,3])
+		#chapter.get_paragraph_order()
+		#
+		#paragraph = get()
+		#next = paragraph.get_next_in_order()
+		#prev = paragraph.get_previous_in_order()
+
+
 	def __unicode__(self):
 		return u"Paragraph %s: %s" % (unicode(self.number),unicode(self.text[:100]))
 		#return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
@@ -153,6 +165,41 @@ class Paragraph(BaseModel):
 	def title(self):
 		return self.page.title
 
+def printif(istrue, text):
+	if istrue:
+		print text
+
+def reset_paragraph_order(verbose=False):
+
+	for chapter in Chapter.objects.all():
+		printif(verbose, chapter)
+
+		paragraphs = chapter.paragraph_set.all()
+		numbers = list(set(paragraphs.values_list('number',flat=True)))
+
+		sorted_ids = []
+
+		for number in numbers:
+#			printif(verbose, number)
+			elements = paragraphs.filter(number=number)
+
+#			printif(verbose, "Calculating: ")
+
+			PRIORITY = ("no","top","both","bottom")
+
+			for step in PRIORITY:
+#				printif(verbose, step)
+				
+				found = elements.filter(split=step).order_by('page__number')
+				for element in found:
+#					printif(verbose, "   %s: %s" % (str(element.pk), element.text[:40]))
+					sorted_ids.append(element.id)
+
+		printif(verbose, sorted_ids)
+		chapter.set_paragraph_order(sorted_ids)
+
+	printif(verbose,"Finished.")
+	
 class CompositeParagraph(BaseModel):
 	
 	chapter = models.ForeignKey('manuscript.Chapter', verbose_name="in chapter")
