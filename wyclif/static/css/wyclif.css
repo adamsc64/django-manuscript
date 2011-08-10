@@ -135,6 +135,11 @@ a {
 #content #search-tool .search-field-wrapper #id_q {
 	width:200px;
 }
+#content #search-tool .search-field-wrapper #near-prompt-wrap {
+	padding-left:20px;
+	padding-bottom:10px;
+	display:none;
+}
 
 #content #search-tool .search-field-wrapper .chzn-choices {
 	width:300px;

@@ -10,7 +10,23 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$("#search-tool select").chosen();
+
+			// todo: This needs to be made better!
+			$main_search_input = $("#id_q");
+			$near_prompt = $("#near-prompt-wrap")
+			function check_near_prompt() {
+				var text = $main_search_input.val();
+				if (text.search("NEAR") > -1) {
+					$near_prompt.fadeIn(500);
+				} else {
+					$near_prompt.fadeOut(500);
+				}
+			}
+			check_near_prompt();			
+			$main_search_input.keyup(check_near_prompt);
+
 		});
+		
 	</script>
 {% endblock extra_head %}
 
@@ -31,17 +47,24 @@
 				<div class="search-input-wrapper">
 		        	{{ big_search_form.q }}
 				</div>
+				<div id="near-prompt-wrap">
+					Near by how many words? {{ big_search_form.nearprompt }}
+			        
+				</div>
 				<div class="search-instructions-wrap">
 					<table class="search-instructions">
 						<tbody>
 							<tr><td class="search-instruction">
-								*</td><td>wildcard (<b>habit*</b> returns "habitus", "habito")<br>								
+								*</td><td>wildcard<br>(<b>habit*</b> returns "habitus", "habito")<br>								
 							</td></tr>
 							<tr><td class="search-instruction">
 								AND</td><td>conjunctive logical operator<br>(<b>epistola AND incipit</b> returns "epistola ... incipit")<br>
 							</td></tr>
 							<tr><td class="search-instruction">
 								OR</td><td>disjunctive logical operator<br>(<b>ipso OR sequitur</b> returns anything with either "ipso," or "sequitur," or both)<br>
+							</td></tr>
+							<tr><td class="search-instruction">
+								NEAR</td><td>finds words near each other in the same paragraph<br>(<b>ipso NEAR sequitur</b> returns paragraphs with "ipso" or "sequitur" near each other; you will be prompted for number of words between.)<br>
 							</td></tr>
 						</tbody>
 					</table>

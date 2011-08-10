@@ -9,6 +9,7 @@ from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm, BigSea
 from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 from manuscript.utils import convert_to_regex_search
 from manuscript.utils import InvalidSearchStringError
+import re
 
 def index(request):
 	return render(request,'wyclif/index.html')
@@ -51,17 +52,38 @@ def search(request):
 			q = big_search_form.cleaned_data["q"]
 			titles = big_search_form.cleaned_data["titles"]
 			
-			try:
-				q = convert_to_regex_search(q)
-			except InvalidSearchStringError:
-				paragraph_matches = []
-			else:
-				if titles:
-					paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
-				else:
+			# This needs to be much better.
+			if q.find(" NEAR ") != -1:
+				NEARs = q.split(" NEAR ")
+				if len(NEARs) > 1:
+					NEARs[0] = NEARs[0].strip()
+					NEARs[1] = NEARs[1].strip()
+					matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
+					matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
+					
+					by_words = request.GET.get('nearprompt')
+					
+					q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
+						(NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
+					regex = re.compile(q, re.IGNORECASE)
+
 					paragraph_matches = Paragraph.objects.filter(text__iregex=q)
+				else:
+					paragraph_matches = Paragraph.objects.none()
+
+				if titles:
+					paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
+			else:
+				try:
+					q = convert_to_regex_search(q)
+				except InvalidSearchStringError:
+					paragraph_matches = []
+				else:
+					if titles:
+						paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
+					else:
+						paragraph_matches = Paragraph.objects.filter(text__iregex=q)
 				
-		
 			return render(request, 'wyclif/works/search.html', {
 				"regex_query" : q,
 				"big_search_form" : big_search_form,
