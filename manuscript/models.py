@@ -62,10 +62,37 @@ class Chapter(BaseModel):
 
 		super( Chapter, self ).save(*args, **kwargs)
 	
+	@models.permalink
+	def get_absolute_url(self):
+		return ('show-chapter', (), {
+			'chapter': self.slug,
+			'title': self.title.slug,
+		})	
+	
 	def get_full_paragraphs(self):
 		#paragraphs = self.paragraph_set.all().order_by('number')
-		zzz
+
+		paragraphs = Paragraph.objects.filter(chapter=self)
+		numbers = list(set(paragraphs.values_list('number',flat=True)))		
+		full_paragraphs = [get_full_paragraph(chapter=self, paragraph_number=number) for number in numbers]
+
 		return full_paragraphs
+		
+
+def get_full_paragraph(chapter, paragraph_number):
+
+	elements = Paragraph.objects.filter(chapter=chapter, number=paragraph_number)
+	
+	result_text = ""
+	
+	for step in Paragraph.SPLIT_PRIORITY:
+		elements_in_paragraph = elements.filter(split=step).order_by('page__number')
+		texts = elements_in_paragraph.values_list('text',flat=True)
+		for text in texts:
+			result_text = result_text.strip() + " " + text.strip()
+
+	return result_text.strip()
+
 
 
 class Page(BaseModel):
@@ -127,7 +154,7 @@ class Page(BaseModel):
 				if commit:
 					self.save()
 	
-	
+
 class Paragraph(BaseModel):
 	SPLIT_CHOICES = (
 		("bottom", "This paragraph continues from page before"),
@@ -135,6 +162,7 @@ class Paragraph(BaseModel):
 		("top", "This paragraph continues onto next page"),
 		("both", "This paragraph continues from last page AND goes to next page"),
 	)
+	SPLIT_PRIORITY = ("no","top","both","bottom")
 	
 	chapter = models.ForeignKey('manuscript.Chapter', verbose_name="in chapter")
 	number = models.IntegerField(verbose_name="order in chapter")
