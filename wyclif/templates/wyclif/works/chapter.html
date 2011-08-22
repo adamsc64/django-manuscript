@@ -21,15 +21,12 @@
 			<td class="wyclif-chapter-title">{{ chapter.heading }}
 			<td>
 		</tr>
-	{% for paragraph in paragraphs %}
+	{% for full_paragraph_text in paragraphs %}
 		<tr>
 			<td class="wyclif-paragraph-text">
-				{% if paragraph.split == "top" or paragraph.split == "no" %}
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				{% endif %}
-
-				{{ paragraph.text|safe }}
-			<td class="google-translate-wrap"><a href="http://translate.google.com/#la|en|{{paragraph.text|urlencode}}" target="_blank">Translate</a>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				{{ full_paragraph_text|safe }}
+			<td class="google-translate-wrap"><a href="http://translate.google.com/#la|en|{{ full_paragraph_text|urlencode }}" target="_blank">Translate</a>
 		</tr>
 	{% endfor %}
 	</table>

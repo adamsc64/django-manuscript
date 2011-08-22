@@ -65,8 +65,8 @@ def chapter(request, title, chapter):
 	except Title.DoesNotExist, Chapter.DoesNotExist:
 		raise Http404
 	
-	all_chapters = title.chapter_set.all()
 	paragraphs = chapter.get_full_paragraphs()
+	all_chapters = title.chapter_set.all()
 	
 	return render(request, 'wyclif/works/chapter.html', {
 		"title" : title,
