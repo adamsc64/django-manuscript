@@ -96,16 +96,16 @@
 		<div class="matched-paragraphs">
 			{% if results_by_title %}
 				<hr>
-				<h2 id="top-of-results">Search Results ({{ num_results }} results total)</h2>
+				<h2 id="top-of-results">Search Results ({{ num_results }} result{{ num_results|pluralize }} total)</h2>
 				<div>
 					<ul>
 					{% for title, paragraph_matches in results_by_title %}
-						<li><a href="#{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} results)</a>
+						<li><a href="#{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} result{{ num_results|pluralize }})</a>
 					{% endfor %}
 					</ul>
 				</div>
 				{% for title, paragraph_matches in results_by_title %}
-					<h3 id="{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} results)</h3>
+					<h3 id="{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} result{{ num_results|pluralize }})</h3>
 					<ul>
 					{% for paragraph in paragraph_matches %}
 						<li class="matched-result wyclif-paragraph-text">
