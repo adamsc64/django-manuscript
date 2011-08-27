@@ -83,11 +83,20 @@ def search(request):
 						paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
 					else:
 						paragraph_matches = Paragraph.objects.filter(text__iregex=q)
-				
+			
+			# Sort paragraph_matches by title.
+			results_by_title = []
+			for title in Title.objects.all():
+				paragraphs_in_title = paragraph_matches.filter(page__title=title)
+				pair = title,paragraphs_in_title
+				if paragraphs_in_title.count() > 0:
+					results_by_title.append(pair)
+			
 			return render(request, 'wyclif/works/search.html', {
 				"regex_query" : q,
 				"big_search_form" : big_search_form,
-				"paragraph_matches" : paragraph_matches,
+				"results_by_title" : results_by_title,
+				"num_results" : paragraph_matches.count()
 			})
 	else:
 		big_search_form = BigSearchForm()

@@ -152,6 +152,9 @@ a {
 	background-color:#660000;
 	color:white;
 }
+#content #search-results .back-to-top-div {
+	text-align:right;
+}
 
 #content #content-pad-wrap {
 	padding: 10px 30px;

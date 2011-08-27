@@ -94,16 +94,27 @@
 
 	<div id="search-results">
 		<div class="matched-paragraphs">
-			{% if paragraph_matches %}
+			{% if results_by_title %}
 				<hr>
-				<h2>Matched Paragraphs</h2>
-				<ul>
-				{% for paragraph in paragraph_matches %}
-					<li class="matched-result wyclif-paragraph-text">
-						<span class="search-result-description"><i>{{ paragraph.title.text }}</i>, {{ paragraph.chapter.heading }}, p. {{ paragraph.page.number }}: </span>
-						<a href="{% url 'show-page' title=paragraph.title.slug page=paragraph.page.number %}#{{ paragraph.pk }}">{{ paragraph.text|highlight:regex_query }}</a>
+				<h2 id="top-of-results">Search Results ({{ num_results }} results total)</h2>
+				<div>
+					<ul>
+					{% for title, paragraph_matches in results_by_title %}
+						<li><a href="#{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} results)</a>
+					{% endfor %}
+					</ul>
+				</div>
+				{% for title, paragraph_matches in results_by_title %}
+					<h3 id="{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} results)</h3>
+					<ul>
+					{% for paragraph in paragraph_matches %}
+						<li class="matched-result wyclif-paragraph-text">
+							<span class="search-result-description">{{ paragraph.chapter.heading }}, p. {{ paragraph.page.number }}: </span>
+							<a href="{% url 'show-page' title=paragraph.title.slug page=paragraph.page.number %}#{{ paragraph.pk }}">{{ paragraph.text|highlight:regex_query }}</a>
+							<div class="back-to-top-div"><a href="#top-of-results">Back to top</a></div>
+					{% endfor %}
+					</ul>
 				{% endfor %}
-				</ul>
 			{% endif %}
 		</div>
 
