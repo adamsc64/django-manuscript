@@ -82,3 +82,12 @@ def _parse_search(q):
 def _full_word_regex(word):
 	return r"\b%s\b" % word
 
+
+class Prioritizer:
+    """This class effectively sorts displays information, sortable by 'priority' field."""
+    def __init__(self,priority,**args):
+        self.priority=priority
+        for i in args:
+            setattr(self,i,args[i])
+    def __cmp__(self,other):
+        return cmp(self.priority, other.priority)
