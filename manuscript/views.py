@@ -4,6 +4,7 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 
+from manuscript import ORDER_TITLES_FN as order_titles
 from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
 from manuscript.models import compile_paragraphs
 
@@ -14,9 +15,12 @@ def all_works(request):
 	works_by_author = []
 
 	for author in Author.objects.all():
+
+		works = order_titles(Title.objects.filter(author=author))
+
 		works_by_author.append({
 			"author" : author,
-			"works" : Title.objects.filter(author=author)
+			"works" :  works,
 		})
 
 	return render(request, 'manuscript/all-titles.html', {
@@ -33,7 +37,7 @@ def chapters(request, title):
 	except Title.DoesNotExist:
 		raise Http404
 		
-	all_titles = Title.objects.all()
+	all_titles = order_titles(Title.objects.all())
 	
 	return render(request, 'manuscript/chapters.html', {
 		"copy_text" : copy_text,
