@@ -7,7 +7,7 @@
 
 {% block navbar %}
 	{% for ws in works_by_author %}
-		<h2><a href="{% url 'all-titles' %}">{{ ws.author }}</a></h2>
+		<h2><a href="{% url 'all-works' %}">{{ ws.author }}</a></h2>
 		{% for title in ws.works %}
 			<div class="nav-unfocused"><a href="{% url 'show-chapters' title=title.slug %}">{{ title.text }}</a></div>
 		{% endfor %}

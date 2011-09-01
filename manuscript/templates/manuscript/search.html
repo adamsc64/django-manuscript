@@ -100,7 +100,7 @@
 				<div>
 					<ul>
 					{% for title, paragraph_matches in results_by_title %}
-						<li><a href="#{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} result{{ num_results|pluralize }})</a>
+						<li><a href="#{{ title.slug }}">{{ title.text }}</a> ({{ paragraph_matches.count }} result{{ num_results|pluralize }})
 					{% endfor %}
 					</ul>
 				</div>
@@ -111,7 +111,7 @@
 						<li class="matched-result wyclif-paragraph-text">
 							<span class="search-result-description">{{ paragraph.chapter.heading }}, p. {{ paragraph.page.number }}: </span>
 							<a href="{% url 'show-page' title=paragraph.title.slug page=paragraph.page.number %}#{{ paragraph.pk }}">{{ paragraph.text|highlight:regex_query }}</a>
-							<div class="back-to-top-div"><a href="#top-of-results">Back to top</a></div>
+							<div class="back-to-top-div"><a href="#top-of-results">Back to search results</a></div>
 					{% endfor %}
 					</ul>
 				{% endfor %}

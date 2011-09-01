@@ -92,7 +92,7 @@ def search(request):
 				if paragraphs_in_title.count() > 0:
 					results_by_title.append(pair)
 			
-			return render(request, 'wyclif/works/search.html', {
+			return render(request, 'manuscript/search.html', {
 				"regex_query" : q,
 				"big_search_form" : big_search_form,
 				"results_by_title" : results_by_title,
@@ -101,7 +101,7 @@ def search(request):
 	else:
 		big_search_form = BigSearchForm()
 
-	return render(request, 'wyclif/works/search.html', {
+	return render(request, 'manuscript/search.html', {
 		"big_search_form" : big_search_form,
 	})
 
