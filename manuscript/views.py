@@ -19,7 +19,7 @@ def all_works(request):
 			"works" : Title.objects.filter(author=author)
 		})
 
-	return render(request, 'manuscript/all-works.html', {
+	return render(request, 'manuscript/all-titles.html', {
 		"works_by_author" : works_by_author,
 		"copy_text" : copy_text,
 	})
