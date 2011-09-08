@@ -91,3 +91,72 @@ class Prioritizer:
             setattr(self,i,args[i])
     def __cmp__(self,other):
         return cmp(self.priority, other.priority)
+
+
+class Word(object):
+	"""
+	This class is used by the search engine to find the relationships between
+	words within logical paragraphs. For example, distance between words, or
+	finding words within the same paragraph. It takes care of the fact that
+	logical paragraphs within the manuscript django application may be spread
+	across two or more objects within the manuscript.paragraph model.
+	"""
+
+	def __init__(self, paragraph, word_index):
+		self._paragraph = paragraph
+		self._word_index = word_index
+		
+		self._paragraph_words = unicode(self._paragraph.text).split(" ")
+		self._word = self._paragraph_words[word_index]
+	
+	def __str__(self):
+		return unicode(self._word)
+
+	def __repr__(self):
+		return "Word(%s, %s)" % (self._paragraph, self._word_index)
+		
+	def get_paragraph():
+		return self._paragraph
+
+	def previous(self, jump=1):
+		return Word(self._paragraph, self._word_index-jump)
+	
+	def next(self, jump=1):
+		return Word(self._paragraph, self._word_index+jump)
+	
+	def previous_few(self, count):
+		result = []
+		for i in range(1, count):
+			result.insert(0, self.previous(jump=i))
+		return result
+
+	def next_few(self, count):
+		result = []
+		for i in range(1, count):
+			result.append(self.next(jump=i))
+		return result
+	
+	def find_nearby(self, distance=0):
+		"""
+		Finds and returns the nearby Word objects by `distance` from this word.
+		Default returns only this word.
+		"""
+		result = []
+		
+		result = result + self.previous_few(distance)
+		result = result + [self,]
+		result = result + self.next_few(distance)
+
+		return result
+
+def get_random_word():
+	"""
+	For testing purposes.
+	"""
+	from manuscript.models import Paragraph
+	l = Paragraph.objects.all().count()
+
+	from random import random
+	i = int(l * random())
+	p = Paragraph.objects.all()[i]
+	return Word(p,0)
