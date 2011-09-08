@@ -48,7 +48,7 @@ class Chapter(BaseModel):
 	slug = models.SlugField(max_length=70, blank=True, verbose_name="Resource URL name")
 	old_id = models.IntegerField(null=True, editable=False) # import field
 	xml_chapter_id = models.CharField(max_length=10, null=True, editable=False) # import field
-		
+	
 	def __unicode__(self):
 		#return u"pk=%s, heading='%s'" % (self.pk,self.heading)
 		return u"%s: %s" % (self.title.text , self.heading)
@@ -77,7 +77,54 @@ class Chapter(BaseModel):
 		full_paragraphs = [get_full_paragraph(chapter=self, paragraph_number=number) for number in numbers]
 
 		return full_paragraphs
-		
+
+	def get_first_paragraph(self):
+		paragraphs = self.paragraph_set.all()
+
+		if not paragraphs:
+			raise Paragraph.DoesNotExist
+
+		first_number = list(set(paragraphs.values_list('number', flat=True)))[0]
+		paragraphs = paragraphs.filter(number=first_number)
+		pages = paragraphs.values_list('page', flat=True).order_by('number')
+		first_page = pages[0]
+
+		first_paragraph = None
+
+		for split in Paragraph.SPLIT_PRIORITY:
+			try:
+				first_paragraph = paragraphs.get(page=first_page, split=split)
+			except Paragraph.DoesNotExist:
+				pass
+			else:
+				break
+
+		if not first_paragraph:
+			raise Paragraph.DoesNotExist
+		else:
+			return first_paragraph
+
+	def get_first_page(self):
+		first_paragraph = self.get_first_paragraph()
+		return first_paragraph.page
+
+	def next(self):
+		"""
+		Returns the next chapter in this chapter's title. If this is the last
+		chapter, returns None.
+		"""
+
+		next_chapters_in_title = Chapter.objects.filter(
+			title = self.title,
+			start_page_no__gt = self.start_page_no,
+		).order_by('start_page_no')
+
+		if next_chapters_in_title.count() > 0:
+			return next_chapters_in_title[0]
+		else:
+			return None
+
+
 
 def get_full_paragraph(chapter, paragraph_number):
 
@@ -103,7 +150,16 @@ class Page(BaseModel):
 	
 	class Meta:
 		unique_together = ('title','number')
-		
+	
+	def next(self):
+		try:
+			return Page.objects.get(
+				title = self.title,
+				number = self.number+1,
+			)
+		except Page.DoesNotExist:
+			return None
+	
 	def __unicode__(self):
 		return u"%s, p. %s" % (unicode(self.title.text), unicode(self.number))
 	
@@ -185,13 +241,71 @@ class Paragraph(BaseModel):
 		#next = paragraph.get_next_in_order()
 		#prev = paragraph.get_previous_in_order()
 
-
 	def __unicode__(self):
 		return u"Paragraph %s: %s" % (unicode(self.number),unicode(self.text[:100]))
 		#return u"[%s] paragraph #%s in chapter, starting '%s...'" % (self.page, self.number, self.text[:20])
 	
 	def title(self):
 		return self.page.title
+	
+	def next(self):
+		next_paragraph = None
+
+		raise Exception("needs more testing")
+
+		# First, try the next paragraph in this paragraph number and page by
+		# split priority.
+		i = Paragraph.SPLIT_PRIORITY.index(str(self.split)) + 1
+		while i < len(Paragraph.SPLIT_PRIORITY) and not next_paragraph:
+			next_group = Paragraph.objects.filter(
+				chapter = self.chapter,
+				number = self.number,
+				page = self.page,
+				split = Paragraph.SPLIT_PRIORITY[i]
+			)
+			if next_group.count() > 0:
+				next_paragraph = next_group[0]
+
+			i = i + 1
+		
+		if not next_paragraph:
+			for split in Paragraph.SPLIT_PRIORITY:
+				next_group = Paragraph.objects.filter(
+					chapter = self.chapter,
+					number = self.number,
+					page = self.page.next(),
+					split = split,
+				)
+				if next_group.count() > 0:
+					next_paragraph = next_group[0]
+				else:
+					break
+		
+		if not next_paragraph:
+			next_number_group = Paragraph.objects.filter(
+				chapter = self.chapter,
+				number = self.number+1,
+			)
+			for split in Paragraph.SPLIT_PRIORITY:
+				try:
+					next_paragraph = next_number_group.get(split=split)
+				except Paragraph.DoesNotExist:
+					pass
+				else:
+					break
+		
+		if not next_paragraph:
+			next_chapter = self.chapter.next()
+			if next_chapter:
+				next_paragraph = next_chapter.get_first_paragraph()
+
+		return next_paragraph
+			
+	def _follow_and_print(self):
+		pi = self
+		while pi:
+			print pi.chapter, pi.number
+			pi = pi.next()
 
 def printif(istrue, text):
 	if istrue:
