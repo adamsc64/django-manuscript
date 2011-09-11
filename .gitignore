@@ -12,3 +12,7 @@
 # Local settings #
 ##################
 local_settings.py
+
+
+# Databases
+*.db
