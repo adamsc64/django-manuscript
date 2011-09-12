@@ -1,4 +1,5 @@
 import re
+import time
 
 def flatten(l):
 	out = []
@@ -104,10 +105,11 @@ class Word(object):
 
 	def __init__(self, paragraph, word_index):
 		self._paragraph = paragraph
-		self._word_index = word_index
 		
 		self._paragraph_words = unicode(self._paragraph.text).split(" ")
 		self._word = self._paragraph_words[word_index]
+
+		self._word_index = word_index % len(self._paragraph_words) # sets correctly if -1
 	
 	def __str__(self):
 		return unicode(self._word)
@@ -115,14 +117,63 @@ class Word(object):
 	def __repr__(self):
 		return "Word(%s, %s)" % (self._paragraph, self._word_index)
 		
-	def get_paragraph():
+	def __eq__(self,other):
+		if self._paragraph.pk == other._paragraph.pk:
+			if self._word_index == other._word_index:
+				return True
+		return False
+	
+	def get_paragraph(self):
 		return self._paragraph
 
 	def previous(self, jump=1):
-		return Word(self._paragraph, self._word_index-jump)
+		if not self._word_index-jump < 0:
+			return Word(self._paragraph, self._word_index-jump)
+		else:
+			return Word(self._paragraph.previous(), self._word_index-jump)
 	
 	def next(self, jump=1):
-		return Word(self._paragraph, self._word_index+jump)
+		"""
+		Returns the next logical Word object.
+		"""
+		if self._word_index+jump < len(self._paragraph_words):
+			return Word(self._paragraph, self._word_index+jump)
+		else:
+			next_paragraph = this_paragraph = self._paragraph
+			next_paragraph_words = self._paragraph_words
+			this_index = self._word_index
+			next_index = None
+
+			while next_index == None or next_index >= len(next_paragraph_words):
+				old_paragraph = this_paragraph
+				this_paragraph = next_paragraph
+				this_paragraph_words = next_paragraph_words
+
+				next_paragraph = old_paragraph.next()
+				if next_paragraph:
+					next_paragraph_words = unicode(next_paragraph.text).split(" ")
+
+					old_index = this_index
+					this_index = next_index
+					next_index = old_index + jump - len(this_paragraph_words)
+				else:
+					return None
+			
+			return Word(
+				next_paragraph,
+				next_index,
+			)
+
+	def print_and_follow(self):
+		"""
+		For testing.
+		"""
+		w1 = self
+		while w1:
+			print w1
+			w1=w1.next()
+			time.sleep(.5)
+		
 	
 	def previous_few(self, count):
 		result = []
