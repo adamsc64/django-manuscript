@@ -69,7 +69,7 @@ class Chapter(BaseModel):
 			'title': self.title.slug,
 		})	
 	
-	def get_full_paragraphs(self):
+	def get_paragraph_strings(self):
 		#paragraphs = self.paragraph_set.all().order_by('number')
 
 		paragraphs = Paragraph.objects.filter(chapter=self)
@@ -79,25 +79,20 @@ class Chapter(BaseModel):
 		return full_paragraphs
 
 	def get_first_paragraph(self):
+		# all paragraphs in this chapter.
 		paragraphs = self.paragraph_set.all()
 
 		if not paragraphs:
 			raise Paragraph.DoesNotExist
 
-		first_number = list(set(paragraphs.values_list('number', flat=True)))[0]
+		# first paragraph objects by paragraph number (one logical paragraph).
+		first_number = paragraphs.order_by('number')[0].number
 		paragraphs = paragraphs.filter(number=first_number)
-		pages = paragraphs.values_list('page', flat=True).order_by('number')
-		first_page = pages[0]
+		
+		# paragraph objects on the lowest page.
+		first_page = paragraphs.values_list('page', flat=True).order_by('page__number')[0]
 
-		first_paragraph = None
-
-		for split in Paragraph.SPLIT_PRIORITY:
-			try:
-				first_paragraph = paragraphs.get(page=first_page, split=split)
-			except Paragraph.DoesNotExist:
-				pass
-			else:
-				break
+		first_paragraph = paragraphs.get(page=first_page)
 
 		if not first_paragraph:
 			raise Paragraph.DoesNotExist
@@ -124,6 +119,21 @@ class Chapter(BaseModel):
 		else:
 			return None
 
+	def previous(self):
+		"""
+		Returns the previous chapter in this chapter's title. If this is
+		the first chapter, returns None.
+		"""
+		
+		prev_chapters_in_title = Chapter.objects.filter(
+			title = self.title,
+			start_page_no__lt = self.start_page_no,
+		).order_by('-start_page_no')
+
+		if prev_chapters_in_title.count() > 0:
+			return prev_chapters_in_title[0]
+		else:
+			return None
 
 
 def get_logical_paragraph_elements(chapter, paragraph_number):

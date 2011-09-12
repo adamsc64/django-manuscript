@@ -68,7 +68,7 @@ def chapter(request, title, chapter):
 	except Title.DoesNotExist, Chapter.DoesNotExist:
 		raise Http404
 	
-	paragraphs = chapter.get_full_paragraphs()
+	paragraphs = chapter.get_paragraph_strings()
 	all_chapters = title.chapter_set.all()
 	
 	return render(request, 'manuscript/chapter.html', {
