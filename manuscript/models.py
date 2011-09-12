@@ -290,63 +290,39 @@ class Paragraph(BaseModel):
 		return self.page.title
 	
 	def next(self):
-		next_paragraph = None
+		lpes = get_logical_paragraph_elements(self.chapter, self.number)
 
-		raise Exception("needs more testing")
+		self_index = lpes.index(self)
 
-		# First, try the next paragraph in this paragraph number and page by
-		# split priority.
-		i = Paragraph.SPLIT_PRIORITY.index(str(self.split)) + 1
-		while i < len(Paragraph.SPLIT_PRIORITY) and not next_paragraph:
-			next_group = Paragraph.objects.filter(
-				chapter = self.chapter,
-				number = self.number,
-				page = self.page,
-				split = Paragraph.SPLIT_PRIORITY[i]
-			)
-			if next_group.count() > 0:
-				next_paragraph = next_group[0]
-
-			i = i + 1
-		
-		if not next_paragraph:
-			for split in Paragraph.SPLIT_PRIORITY:
-				next_group = Paragraph.objects.filter(
-					chapter = self.chapter,
-					number = self.number,
-					page = self.page.next(),
-					split = split,
-				)
-				if next_group.count() > 0:
-					next_paragraph = next_group[0]
+		if self_index+1 < len(lpes):
+			return lpes[self_index+1]
+		else:
+			try:
+				return get_logical_paragraph_elements(self.chapter, self.number+1)[0]
+			except Paragraph.DoesNotExist:
+				next_chapter = self.chapter.next()
+				if next_chapter:
+					return next_chapter.get_first_paragraph_object()
 				else:
-					break
-		
-		if not next_paragraph:
-			next_number_group = Paragraph.objects.filter(
-				chapter = self.chapter,
-				number = self.number+1,
-			)
-			for split in Paragraph.SPLIT_PRIORITY:
-				try:
-					next_paragraph = next_number_group.get(split=split)
-				except Paragraph.DoesNotExist:
-					pass
-				else:
-					break
-		
-		if not next_paragraph:
-			next_chapter = self.chapter.next()
-			if next_chapter:
-				next_paragraph = next_chapter.get_first_paragraph_object()
+					return None
+					
+	def previous(self):
+		lpes = get_logical_paragraph_elements(self.chapter, self.number)
 
-		return next_paragraph
-			
-	def _follow_and_print(self):
-		pi = self
-		while pi:
-			print pi.chapter, pi.number
-			pi = pi.next()
+		self_index = lpes.index(self)
+
+		if self_index-1 >= 0:
+			return lpes[self_index-1]
+		else:
+			try:
+				return get_logical_paragraph_elements(self.chapter, self.number-1)[-1]
+			except Paragraph.DoesNotExist:
+				previous_chapter = self.chapter.previous()
+				if previous_chapter:
+					return previous_chapter.get_last_paragraph_object()
+				else:
+					return None
+
 
 def printif(istrue, text):
 	if istrue:
