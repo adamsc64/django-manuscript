@@ -78,7 +78,7 @@ class Chapter(BaseModel):
 
 		return full_paragraphs
 
-	def get_first_paragraph(self):
+	def get_first_paragraph_object(self):
 		# all paragraphs in this chapter.
 		paragraphs = self.paragraph_set.all()
 
@@ -99,8 +99,30 @@ class Chapter(BaseModel):
 		else:
 			return first_paragraph
 
+	def get_last_paragraph_object(self):
+		# all paragraphs in this chapter.
+		paragraphs = self.paragraph_set.all()
+
+		if not paragraphs:
+			raise Paragraph.DoesNotExist
+
+		# last set of paragraph objects by paragraph number (one logical paragraph).
+		last_number = paragraphs.order_by('-number')[0].number
+		paragraphs = paragraphs.filter(number=last_number)
+
+		# paragraph objects on the lowest page.
+		last_page = paragraphs.values_list('page', flat=True).order_by('-page__number')[0]
+
+		last_paragraph = paragraphs.get(page=last_page)
+
+		if not last_paragraph:
+			raise Paragraph.DoesNotExist
+		else:
+			return last_paragraph
+
+
 	def get_first_page(self):
-		first_paragraph = self.get_first_paragraph()
+		first_paragraph = self.get_first_paragraph_object()
 		return first_paragraph.page
 
 	def next(self):
@@ -316,7 +338,7 @@ class Paragraph(BaseModel):
 		if not next_paragraph:
 			next_chapter = self.chapter.next()
 			if next_chapter:
-				next_paragraph = next_chapter.get_first_paragraph()
+				next_paragraph = next_chapter.get_first_paragraph_object()
 
 		return next_paragraph
 			
