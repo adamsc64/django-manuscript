@@ -73,8 +73,8 @@ class Chapter(BaseModel):
 		#paragraphs = self.paragraph_set.all().order_by('number')
 
 		paragraphs = Paragraph.objects.filter(chapter=self)
-		numbers = list(set(paragraphs.values_list('number',flat=True)))		
-		full_paragraphs = [get_full_paragraph(chapter=self, paragraph_number=number) for number in numbers]
+		numbers = list(set(paragraphs.values_list('number',flat=True)))
+		full_paragraphs = [get_logical_paragraph_text(chapter=self, paragraph_number=number) for number in numbers]
 
 		return full_paragraphs
 
@@ -126,20 +126,29 @@ class Chapter(BaseModel):
 
 
 
-def get_full_paragraph(chapter, paragraph_number):
-
+def get_logical_paragraph_elements(chapter, paragraph_number):
 	elements = Paragraph.objects.filter(chapter=chapter, number=paragraph_number)
-	
-	result_text = ""
-	
+	if elements.count() < 1:
+		raise Paragraph.DoesNotExist
+
+	l = []
 	for step in Paragraph.SPLIT_PRIORITY:
 		elements_in_paragraph = elements.filter(split=step).order_by('page__number')
-		texts = elements_in_paragraph.values_list('text',flat=True)
-		for text in texts:
-			result_text = result_text.strip() + " " + text.strip()
+		if elements_in_paragraph.count() > 0:
+			for el in elements_in_paragraph:
+				l.append(el)
+	return l
+
+
+def get_logical_paragraph_text(chapter, paragraph_number):
+	elements = get_logical_paragraph_elements(chapter, paragraph_number)
+
+	result_text = ""
+
+	for el in elements:
+		result_text = result_text.strip() + " " + (el.text).strip()
 
 	return result_text.strip()
-
 
 
 class Page(BaseModel):
