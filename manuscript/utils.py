@@ -104,6 +104,11 @@ class Word(object):
 	"""
 
 	def __init__(self, paragraph, word_index):
+		if not paragraph:
+			raise Exception("Invalid paragraph: %s" % paragraph)
+		if word_index != 0 and not word_index:
+			raise Exception("Invalid word_index: %s" % word_index)
+
 		self._paragraph = paragraph
 		
 		self._paragraph_words = unicode(self._paragraph.text).split(" ")
@@ -123,46 +128,93 @@ class Word(object):
 				return True
 		return False
 	
+	def is_first_in_paragraph(self):
+		return self._word_index == 0
+		
+	def is_last_in_paragraph(self):
+		return self._word_index == len(self._paragraph_words) - 1
+	
 	def get_paragraph(self):
 		return self._paragraph
 
 	def previous(self, jump=1):
-		if not self._word_index-jump < 0:
+		"""
+		Returns the previous logical Word object.
+		"""
+		if jump == 0:
+			return self
+			
+		if jump < 0:
+			return self.next(jump=-jump)
+
+		if self._word_index-jump >= 0:
 			return Word(self._paragraph, self._word_index-jump)
+
+		if jump > 1:
+			recurs = self.previous(jump-1)
+			if recurs:
+				return recurs.previous()
+			else:
+				return None
+
+		#jump == 1
+		
+		if self.is_first_in_paragraph():
+			prev_paragraph = self._paragraph.previous()
+			if prev_paragraph:
+				return prev_paragraph.last_word()
+			else:
+				return None
 		else:
-			return Word(self._paragraph.previous(), self._word_index-jump)
+			return Word(
+				self._paragraph,
+				self._word_index - jump,
+			)
 	
 	def next(self, jump=1):
 		"""
 		Returns the next logical Word object.
 		"""
+		if jump == 0:
+			return self
+			
+		if jump < 0:
+			return self.previous(jump=-jump)
+
 		if self._word_index+jump < len(self._paragraph_words):
 			return Word(self._paragraph, self._word_index+jump)
+
+		if jump > 1:
+			recurs = self.next(jump-1)
+			if recurs:
+				return recurs.next()
+			else:
+				return None
+
+		#jump == 1
+
+		if self.is_last_in_paragraph():
+			next_paragraph = self._paragraph.next()
+			if next_paragraph:
+				return next_paragraph.first_word()
+			else:
+				return None
 		else:
-			next_paragraph = this_paragraph = self._paragraph
-			next_paragraph_words = self._paragraph_words
-			this_index = self._word_index
-			next_index = None
-
-			while next_index == None or next_index >= len(next_paragraph_words):
-				old_paragraph = this_paragraph
-				this_paragraph = next_paragraph
-				this_paragraph_words = next_paragraph_words
-
-				next_paragraph = old_paragraph.next()
-				if next_paragraph:
-					next_paragraph_words = unicode(next_paragraph.text).split(" ")
-
-					old_index = this_index
-					this_index = next_index
-					next_index = old_index + jump - len(this_paragraph_words)
-				else:
-					return None
-			
 			return Word(
-				next_paragraph,
-				next_index,
+				self._paragraph,
+				self._word_index + jump,
 			)
+
+
+	def test(self, count=10):
+		w1 = self.next(jump=count)
+		w2 = self
+		for i in range(count):
+			print "word[%s] = %s" % (i, w2)
+			w2 = w2.next()
+		
+		print "%s == %s : %s " % (w1, w2, w1==w2)
+
 
 	def print_and_follow(self):
 		"""
@@ -177,14 +229,18 @@ class Word(object):
 	
 	def previous_few(self, count):
 		result = []
-		for i in range(1, count):
-			result.insert(0, self.previous(jump=i))
+		for i in range(1, count+1):
+			previous = self.previous(jump=i)
+			if previous:
+				result.insert(0, previous)
 		return result
 
 	def next_few(self, count):
 		result = []
-		for i in range(1, count):
-			result.append(self.next(jump=i))
+		for i in range(1, count+1):
+			next = self.next(jump=i)
+			if next:
+				result.append(next)
 		return result
 	
 	def find_nearby(self, distance=0):
@@ -199,6 +255,7 @@ class Word(object):
 		result = result + self.next_few(distance)
 
 		return result
+
 
 def get_random_word():
 	"""

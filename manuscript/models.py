@@ -9,6 +9,8 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files import File
 
+from manuscript.utils import Word
+
 from datetime import datetime
 import PIL
 
@@ -323,6 +325,18 @@ class Paragraph(BaseModel):
 				else:
 					return None
 
+	def first_word(self):
+		return Word(
+			paragraph=self,
+			word_index=0,
+		)
+
+	def last_word(self):
+		return Word(
+			paragraph=self,
+			word_index=len(unicode(self.text).split(" ")) - 1,
+		)
+		
 
 def printif(istrue, text):
 	if istrue:
