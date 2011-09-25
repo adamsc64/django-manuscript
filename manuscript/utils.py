@@ -243,7 +243,7 @@ class Word(object):
 				result.append(next)
 		return result
 	
-	def find_nearby(self, distance=0):
+	def get_nearby(self, distance=0):
 		"""
 		Finds and returns the nearby Word objects by `distance` from this word.
 		Default returns only this word.
@@ -256,6 +256,45 @@ class Word(object):
 
 		return result
 
+def is_near(word1, word2, num_words):
+	"""
+	Returns an array of unique paragraph objects that have these words
+	near each other. Arguments can be Word objects or strings.
+	"""
+	
+	from manuscript.models import Paragraph
+	
+	paragraphs_for1 = \
+		Paragraph.objects.filter(text__icontains=unicode(word1+u" ")) | \
+		Paragraph.objects.filter(text__icontains=unicode(u" "+word1))
+	paragraphs_for2 = \
+		Paragraph.objects.filter(text__icontains=unicode(word2+u" ")) | \
+		Paragraph.objects.filter(text__icontains=unicode(u" "+word2))
+		
+	words_for1 = []
+	words_for2 = []	
+	
+	def append_words(l,ps,w):
+		for p in ps:
+			l.extend(p.get_words_for(w))
+	
+	append_words(words_for1, paragraphs_for1, word1)
+	append_words(words_for2, paragraphs_for2, word2)
+
+	print "words_for1 %s" % words_for1
+	print "words_for2 %s" % words_for2
+		
+	result = []
+	
+	for result_word1 in words_for1:
+		for nearby in result_word1.get_nearby(distance=num_words):
+			for result_word2 in words_for2:
+				if nearby == result_word2:
+					result.append(nearby._paragraph)
+					result.append(result_word2._paragraph)
+			
+	return list(set(result))
+	
 
 def get_random_word():
 	"""
