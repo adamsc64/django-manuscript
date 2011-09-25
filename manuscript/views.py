@@ -87,7 +87,7 @@ def page(request, title, page):
 	except Title.DoesNotExist, Page.DoesNotExist:
 		raise Http404
 
-	paragraphs = page.paragraph_set.all().order_by('number')
+	paragraphs = page.paragraph_set.all().order_by('chapter__start_page_no','number')
 	focus_chapter = paragraphs.order_by('-number')[0].chapter
 	focus_chapter_first_paragraph = focus_chapter.paragraph_set.all().order_by('number')[0]
 
