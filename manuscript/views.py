@@ -51,7 +51,9 @@ def paragraphs(request, title, chapter):
 	try:
 		title = Title.objects.get(slug=title)
 		chapter = title.chapter_set.get(slug=chapter)
-	except Title.DoesNotExist, Chapter.DoesNotExist:
+	except Title.DoesNotExist:
+		raise Http404
+	except Chapter.DoesNotExist:
 		raise Http404
 	
 	return render(request, 'manuscript/paragraphs.html', {
@@ -65,7 +67,9 @@ def chapter(request, title, chapter):
 		title = Title.objects.get(slug=title)
 		chapter = title.chapter_set.get(slug=chapter)
 		#page = chapter.paragraph_set.filter(~Q(split="bottom")).order_by('number')[0].page
-	except Title.DoesNotExist, Chapter.DoesNotExist:
+	except Title.DoesNotExist:
+		raise Http404
+	except Chapter.DoesNotExist:
 		raise Http404
 	
 	paragraphs = chapter.get_full_paragraphs()
@@ -84,8 +88,10 @@ def page(request, title, page):
 	try:
 		title = Title.objects.get(slug=title)
 		page = Page.objects.get(title=title, number=page)
-	except Title.DoesNotExist, Page.DoesNotExist:
+	except Title.DoesNotExist:
 		raise Http404
+	except Page.DoesNotExist:
+		raise Http404		
 
 	paragraphs = page.paragraph_set.all().order_by('chapter__start_page_no','number')
 	if paragraphs.count() > 0:
