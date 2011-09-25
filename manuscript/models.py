@@ -13,6 +13,7 @@ from manuscript.utils import Word
 
 from datetime import datetime
 import PIL
+import re
 
 class BaseModel(models.Model):
 	class Meta:
@@ -334,10 +335,32 @@ class Paragraph(BaseModel):
 	def last_word(self):
 		return Word(
 			paragraph=self,
-			word_index=len(unicode(self.text).split(" ")) - 1,
+			word_index=len(re.split('\s',unicode(self.text))) - 1,
 		)
+	
+	def get_words_for(self, word):
+		"""
+		Returns an array of Word objects which exactly match word string or string
+		representation of word object.
+		"""
+		word = unicode(word).lower()
+		text = unicode(self.text).lower()
 		
+		result = []
+		words_in_text = re.split('\s',text)
+		for i in range(len(words_in_text)):
+			word_in_text = words_in_text[i]
+			if word == word_in_text:
+				result.append(
+					Word(
+						paragraph=self,
+						word_index=i,
+					)
+				)
+		
+		return result
 
+		
 def printif(istrue, text):
 	if istrue:
 		print text
