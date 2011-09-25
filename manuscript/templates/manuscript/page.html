@@ -33,9 +33,11 @@
 	</div>
 	
 	<div class="extras-wrap">
+		{% if focus_chapter %}
 		<div class="whole-chapter-link-wrap">
 			<a href="{% url 'show-chapter' title=focus_chapter.title.slug chapter=focus_chapter.slug %}">See entire Chapter "{{ focus_chapter.heading }}"</a>
 		</div>
+		{% endif %}
 
 		<div class="page-scan-wrap">
 			{% if page.display %}<a href="{{ page.display.url }}">Download Page Scan</a>{% endif %}
@@ -62,13 +64,19 @@
 					{% endif %}
 				<td class="google-translate-wrap"><a href="http://translate.google.com/#la|en|{{paragraph.text|urlencode}}" target="_blank">Translate</a>
 			</tr>
+	{% empty %}
+		<tr>
+			<td class="wyclif-paragraph-text">(No paragraph information)
+		</tr>
 	{% endfor %}
 	</table>
 	
 	<div class="extras-wrap">
+		{% if focus_chapter %}
 		<div class="whole-chapter-link-wrap">
 			<a href="{% url 'show-chapter' title=focus_chapter.title.slug chapter=focus_chapter.slug %}">See entire chapter "{{ focus_chapter.heading }}"</a>
 		</div>
+		{% endif %}
 
 		<div class="page-scan-wrap">
 			{% if page.display %}<a href="{{ page.display.url }}">Download Page Scan</a>{% endif %}

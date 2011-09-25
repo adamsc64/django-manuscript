@@ -88,8 +88,12 @@ def page(request, title, page):
 		raise Http404
 
 	paragraphs = page.paragraph_set.all().order_by('chapter__start_page_no','number')
-	focus_chapter = paragraphs.reverse()[0].chapter
-	focus_chapter_first_paragraph = focus_chapter.paragraph_set.all().order_by('number')[0]
+	if paragraphs.count() > 0:
+		focus_chapter = paragraphs.reverse()[0].chapter
+		focus_chapter_first_paragraph = focus_chapter.paragraph_set.all().order_by('number')[0]
+	else:
+		focus_chapter = None
+		focus_chapter_first_paragraph = None
 
 	all_chapters = title.chapter_set.all()
 
