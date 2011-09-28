@@ -62,7 +62,7 @@ def search(request):
 					#matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
 					#matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
 					#
-					by_words = request.GET.get('nearprompt')
+					#by_words = request.GET.get('nearprompt')
 					#
 					#q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
 					#	(NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
@@ -70,8 +70,11 @@ def search(request):
                     #
 					#paragraph_matches = Paragraph.objects.filter(text__iregex=q)
 					
-					paragraph_matches = is_near(NEARs[0] , NEARs[1], num_words=int(by_words))
-					
+					by_words = request.GET.get('nearprompt')
+					if by_words:
+						paragraph_matches = is_near(NEARs[0] , NEARs[1], num_words=int(by_words))
+					else:
+						paragraph_matches = Paragraph.objects.none()						
 				else:
 					paragraph_matches = Paragraph.objects.none()
 
@@ -81,7 +84,7 @@ def search(request):
 				try:
 					q = convert_to_regex_search(q)
 				except InvalidSearchStringError:
-					paragraph_matches = []
+					paragraph_matches = Paragraph.objects.none()
 				else:
 					if titles:
 						paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)

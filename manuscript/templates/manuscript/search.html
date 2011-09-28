@@ -13,13 +13,18 @@
 
 			// todo: This needs to be made better!
 			$main_search_input = $("#id_q");
-			$near_prompt = $("#near-prompt-wrap")
+			$near_prompt_wrap = $("#near-prompt-wrap");
+			$near_prompt = $("#id_nearprompt");
 			function check_near_prompt() {
 				var text = $main_search_input.val();
 				if (text.search("NEAR") > -1) {
-					$near_prompt.fadeIn(500);
+					$near_prompt_wrap.fadeIn(500);
+					if ($near_prompt.val() == "") {
+						$near_prompt.val("5");
+					}
 				} else {
-					$near_prompt.fadeOut(500);
+					$near_prompt_wrap.fadeOut(500);
+					$near_prompt.val("");
 				}
 			}
 			check_near_prompt();			
