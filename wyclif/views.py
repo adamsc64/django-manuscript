@@ -9,6 +9,7 @@ from wyclif.forms import ParagraphForm, TitleForm, PageForm, ChapterForm, BigSea
 from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 from manuscript.utils import convert_to_regex_search
 from manuscript.utils import InvalidSearchStringError
+from manuscript.utils import is_near
 import re
 
 def index(request):
@@ -58,16 +59,19 @@ def search(request):
 				if len(NEARs) > 1:
 					NEARs[0] = NEARs[0].strip()
 					NEARs[1] = NEARs[1].strip()
-					matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
-					matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
-					
+					#matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
+					#matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
+					#
 					by_words = request.GET.get('nearprompt')
+					#
+					#q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
+					#	(NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
+					#regex = re.compile(q, re.IGNORECASE)
+                    #
+					#paragraph_matches = Paragraph.objects.filter(text__iregex=q)
 					
-					q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
-						(NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
-					regex = re.compile(q, re.IGNORECASE)
-
-					paragraph_matches = Paragraph.objects.filter(text__iregex=q)
+					paragraph_matches = is_near(NEARs[0] , NEARs[1], num_words=int(by_words))
+					
 				else:
 					paragraph_matches = Paragraph.objects.none()
 
