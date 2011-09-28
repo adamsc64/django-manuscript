@@ -115,17 +115,21 @@ class Word(object):
 		self._word = self._paragraph_words[word_index]
 
 		self._word_index = word_index % len(self._paragraph_words) # sets correctly if -1
-	
+		
 	def __str__(self):
+		return str(self._word)
+
+	def __unicode__(self):
 		return unicode(self._word)
 
 	def __repr__(self):
-		return "Word(%s, %s)" % (self._paragraph, self._word_index)
+		return "Word(%s, %s) == \"%s\"" % (self._paragraph, self._word_index, unicode(self))
 		
 	def __eq__(self,other):
-		if self._paragraph.pk == other._paragraph.pk:
-			if self._word_index == other._word_index:
-				return True
+		if hasattr(other, "_paragraph"):
+			if self._paragraph.pk == other._paragraph.pk:
+				if self._word_index == other._word_index:
+					return True
 		return False
 	
 	def is_first_in_paragraph(self):
@@ -259,41 +263,37 @@ class Word(object):
 def is_near(word1, word2, num_words):
 	"""
 	Returns an array of unique paragraph objects that have these words
-	near each other. Arguments can be Word objects or strings.
+	near each other.
 	"""
+	
+	word1 = unicode(word1)
+	word2 = unicode(word2)
 	
 	from manuscript.models import Paragraph
 	
 	paragraphs_for1 = \
 		Paragraph.objects.filter(text__icontains=unicode(word1+u" ")) | \
 		Paragraph.objects.filter(text__icontains=unicode(u" "+word1))
-	paragraphs_for2 = \
-		Paragraph.objects.filter(text__icontains=unicode(word2+u" ")) | \
-		Paragraph.objects.filter(text__icontains=unicode(u" "+word2))
 		
-	words_for1 = []
-	words_for2 = []	
+	words = []
 	
-	def append_words(l,ps,w):
-		for p in ps:
-			l.extend(p.get_words_for(w))
-	
-	append_words(words_for1, paragraphs_for1, word1)
-	append_words(words_for2, paragraphs_for2, word2)
+	for p in paragraphs_for1:
+		print "Searching paragraph %s" % p.pk
+		words.extend(p.get_words_for(word1))
+		print " found %s in paragraph %s" % (word1, p.pk)
 
-	print "words_for1 %s" % words_for1
-	print "words_for2 %s" % words_for2
-		
 	result = []
 	
-	for result_word1 in words_for1:
+	for result_word1 in words:
 		for nearby in result_word1.get_nearby(distance=num_words):
-			for result_word2 in words_for2:
-				if nearby == result_word2:
-					result.append(nearby._paragraph)
-					result.append(result_word2._paragraph)
+			if unicode(nearby) == unicode(word2):
+				print "%s is near %s" % (nearby, result_word1)
+				result.append(nearby._paragraph.pk)
+				result.append(result_word1._paragraph.pk)
 			
-	return list(set(result))
+	result = list(set(result))
+	
+	return Paragraph.objects.filter(pk__in=result)
 	
 
 def get_random_word():
