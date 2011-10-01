@@ -16,7 +16,7 @@ def all_works(request):
 
 	for author in Author.objects.all():
 
-		works = order_titles(Title.objects.filter(author=author))
+		works = order_titles(Title.objects_with_data.filter(author=author))
 
 		works_by_author.append({
 			"author" : author,
@@ -37,7 +37,7 @@ def chapters(request, title):
 	except Title.DoesNotExist:
 		raise Http404
 		
-	all_titles = order_titles(Title.objects.all())
+	all_titles = order_titles(Title.objects_with_data.all())
 	
 	return render(request, 'manuscript/chapters.html', {
 		"copy_text" : copy_text,

@@ -93,7 +93,7 @@ def search(request):
 			
 			# Sort paragraph_matches by title.
 			results_by_title = []
-			for title in Title.objects.all():
+			for title in Title.objects_with_data.all():
 				paragraphs_in_title = paragraph_matches.filter(page__title=title)
 				pair = title,paragraphs_in_title
 				if paragraphs_in_title.count() > 0:

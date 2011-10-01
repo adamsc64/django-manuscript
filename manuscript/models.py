@@ -466,6 +466,14 @@ def compile_paragraphs(flush=False, verbose=True):
 		print "Finished."
 		
 
+class TitleWithDataManager(models.Manager):
+	def get_query_set(self):
+		existing_chapter_ids = Title.objects.values_list('chapter', flat=True)
+		
+		return super(TitleWithDataManager, self).get_query_set().filter(
+			chapter__in=existing_chapter_ids
+		).distinct()
+
 class Title(BaseModel):
 	text = models.CharField(verbose_name="title text", max_length=70)
 	author = models.ForeignKey("manuscript.Author")
@@ -483,6 +491,9 @@ class Title(BaseModel):
 	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Resource URL name")
 
 	old_id = models.IntegerField(null=True, editable=False) # import field
+
+	objects = models.Manager()
+	objects_with_data = TitleWithDataManager()
 
 	def __unicode__(self):
 		return u"%s" % self.text

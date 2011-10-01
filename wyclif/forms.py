@@ -23,5 +23,5 @@ class ChapterForm(forms.ModelForm):
 
 class BigSearchForm(forms.Form):
 	q = forms.CharField(max_length=1000, label="Search for text")
-	titles = forms.ModelMultipleChoiceField(queryset=Title.objects.all(), label="In", required=False)
+	titles = forms.ModelMultipleChoiceField(queryset=Title.objects_with_data.all(), label="In", required=False)
 	nearprompt = forms.IntegerField(min_value=1, max_value=100, required=False)
