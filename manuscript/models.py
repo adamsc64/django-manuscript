@@ -479,7 +479,7 @@ class Title(BaseModel):
 	author = models.ForeignKey("manuscript.Author")
 	volume = models.IntegerField(verbose_name='volume number')
 	num_volumes = models.IntegerField(null=True, blank=True, verbose_name="number of physical volumes")
-	editor = models.CharField(blank=True, max_length=70, verbose_name="editor")
+	editor = models.CharField(blank=True, max_length=70, verbose_name="editor(s)")
 	publisher = models.CharField(blank=True, max_length=70, verbose_name="publisher")
 	place_of_publication = models.CharField(blank=True, max_length=70, verbose_name="place of publication")
 	publication_year = models.CharField(max_length=15, blank=True)
