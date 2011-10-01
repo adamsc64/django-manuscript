@@ -470,8 +470,16 @@ class Title(BaseModel):
 	text = models.CharField(verbose_name="title text", max_length=70)
 	author = models.ForeignKey("manuscript.Author")
 	volume = models.IntegerField(verbose_name='volume number')
+	num_volumes = models.IntegerField(null=True, blank=True, verbose_name="number of physical volumes")
+	editor = models.CharField(blank=True, max_length=70, verbose_name="editor")
+	publisher = models.CharField(blank=True, max_length=70, verbose_name="publisher")
+	place_of_publication = models.CharField(blank=True, max_length=70, verbose_name="place of publication")
 	publication_year = models.CharField(max_length=15, blank=True)
 	pages = models.IntegerField()
+	title_page = models.OneToOneField("manuscript.Page", null=True, blank=True, related_name="title_page_of")
+	copyright_page = models.OneToOneField("manuscript.Page", null=True, blank=True, related_name="copyright_page_of")
+	original_publication_title = models.OneToOneField("self", null=True, blank=True)
+
 	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Resource URL name")
 
 	old_id = models.IntegerField(null=True, editable=False) # import field

@@ -27,11 +27,43 @@ admin.site.register(CompositeParagraph,
 	readonly_fields = ('get_children_links',),
 )
 admin.site.register(Title,
-	list_display = ('text','volume','publication_year','pages'),
+	list_display = ('text','volume','pages'),
 	list_display_links = ('text','volume'),
 	search_fields = ['text','volume'],
 
-	fields = ('text','slug','volume','publication_year','pages','author','get_children_links'),
+	fieldsets = (
+		("Basic Information", {
+			'fields' : (
+				'text','author',
+			)
+		}),
+		("Bibliographic Information", {
+			'fields' : (
+				'volume','num_volumes','editor','publisher',
+				'place_of_publication','publication_year','pages',
+			)
+		}),
+		("Special Beginning Pages", {
+			'fields' : (
+				'title_page','copyright_page',
+			)
+		}),
+		("URL display settings", {
+			'fields' : (
+				'slug',
+			)
+		}),
+		("Reprinting Information", {
+			'fields' : (
+				'original_publication_title',
+			)
+		}),
+		("Chapters", {
+			'fields' : (
+				'get_children_links',
+			)
+		}),
+	),
 	readonly_fields = ('slug','get_children_links',),
 )
 admin.site.register(Author)
