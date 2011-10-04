@@ -486,7 +486,7 @@ class Title(BaseModel):
 	pages = models.IntegerField()
 	title_page = models.OneToOneField("manuscript.Page", null=True, blank=True, related_name="title_page_of")
 	copyright_page = models.OneToOneField("manuscript.Page", null=True, blank=True, related_name="copyright_page_of")
-	original_publication_title = models.OneToOneField("self", null=True, blank=True)
+	if_a_reprint_original_publication_information = models.CharField(max_length=100, blank=True)
 
 	slug = models.SlugField(max_length=70, unique=True, blank=True, verbose_name="Resource URL name")
 

@@ -53,11 +53,11 @@ admin.site.register(Title,
 				'slug',
 			)
 		}),
-#		("Reprinting Information", {
-#			'fields' : (
-#				'original_publication_title',
-#			)
-#		}),
+		("Reprinting Information", {
+			'fields' : (
+				'if_a_reprint_original_publication_information',
+			)
+		}),
 		("Chapters", {
 			'fields' : (
 				'get_children_links',
