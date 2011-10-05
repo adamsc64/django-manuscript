@@ -514,6 +514,18 @@ class Title(BaseModel):
 
 		super( Title, self ).save(*args, **kwargs)
 
+	def text_to_sort_by(self):
+		CUT_OUT = [
+			"^De\ ",
+			"^Sermones\ ",
+			"^[IVXLCDM]*\ ",
+		]
+		for regexp in CUT_OUT:
+			result = re.split(regexp, self.text)
+			if len(result) > 1: #There is a match
+				return result[1]
+		return self.text
+
 
 class Author(BaseModel):
 	name = models.CharField(max_length=70)
