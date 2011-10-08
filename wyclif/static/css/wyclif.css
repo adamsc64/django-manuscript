@@ -163,6 +163,7 @@ a {
 #content .wyclif-page-el {
 	/*border:1px solid;*/
 	padding-bottom:10px;
+	width:560px;
 }
 #content .wyclif-chapter-title {
 	text-align:center;
@@ -176,9 +177,11 @@ a {
 	/*border-top:1px solid;*/
 	padding-bottom:10px;
 	padding-top:10px;
+	width:490px;
 }
 #content .google-translate-wrap {
 	vertical-align:top;
+	text-align:right;
 	padding-left:10px;
 	padding-bottom:10px;
 	padding-top:10px;

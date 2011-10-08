@@ -30,6 +30,30 @@ def all_works(request):
 		"copy_text" : copy_text,
 	})
 
+def whole_work(request, title):
+	copy_text, created = SiteCopyText.objects.get_or_create_for('whole_work')
+
+	try:
+		title = Title.objects.get(slug=title)
+	except Title.DoesNotExist:
+		raise Http404
+
+	all_chapters = title.chapter_set.all()
+
+	chapter_datasets = []
+
+	for chapter in all_chapters:
+		paragraphs = chapter.get_paragraph_strings()
+		chapter_datasets.append([
+			chapter,
+			paragraphs,
+		])
+
+	return render(request, 'manuscript/whole-work.html', {
+		"title" : title,
+		"all_chapters" : all_chapters,
+		"chapter_datasets" : chapter_datasets,
+	})
 
 def chapters(request, title):
 	copy_text, created = SiteCopyText.objects.get_or_create_for('chapters')
