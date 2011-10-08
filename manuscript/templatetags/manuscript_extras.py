@@ -21,6 +21,9 @@ def highlight(value, arg):
 		where foo is "Monty Python"
 		and settings.MANUSCRIPT_HIGHLIGHT_CSS_CLASS is "manuscript-highlighted" or is undefined.
 	"""
+	if arg==None:
+		return value
+		
 	css_class = settings.MANUSCRIPT_HIGHLIGHT_CSS_CLASS if hasattr(settings,"MANUSCRIPT_HIGHLIGHT_CSS_CLASS") else "manuscript-highlighted"
 
 	full_texts = re.findall(arg, value, flags=re.IGNORECASE)

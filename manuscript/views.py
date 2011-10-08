@@ -121,6 +121,8 @@ def page(request, title, page):
 	except Page.DoesNotExist:
 		page_next = None
 	
+	highlight = request.GET.get('highlight')
+	
 	return render(request, 'manuscript/page.html', {
 		"copy_text" : copy_text,
 		"title" : title,
@@ -131,6 +133,7 @@ def page(request, title, page):
 		"focus_chapter" : focus_chapter,
 		"focus_chapter_first_paragraph" : focus_chapter_first_paragraph,
 		"all_chapters" : all_chapters,
+		"regex_query" : highlight,
 	})
 
 

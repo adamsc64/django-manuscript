@@ -148,7 +148,7 @@ a {
 	/*text-align:right;*/
 }
 
-#content #search-results .manuscript-highlighted {
+#content .manuscript-highlighted {
 	background-color:#660000;
 	color:white;
 }
