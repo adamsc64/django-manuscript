@@ -515,15 +515,21 @@ class Title(BaseModel):
 		super( Title, self ).save(*args, **kwargs)
 
 	def text_to_sort_by(self):
-		CUT_OUT = [
-			"^De\ ",
-			"^Sermones\ ",
-			"^[IVXLCDM]*\ ",
-		]
-		for regexp in CUT_OUT:
-			result = re.split(regexp, self.text)
-			if len(result) > 1: #There is a match
-				return result[1]
+		"""
+		By default, a generic passthru. If you would like to implement a proprietary
+		sorting algorithm for title display order, replace this method with your
+		own method when initializing your application.
+		
+		In myapp.__init__:
+		
+			from manuscript.models import Title
+
+			def text_to_sort_by(self):
+				... process self.text ...
+				return result
+	
+			Title.text_to_sort_by = text_to_sort_by
+		"""
 		return self.text
 
 
