@@ -2,29 +2,21 @@
 # All rights reserved.
 
 from manuscript.utils import Prioritizer
+from manuscript.models import Title
 import manuscript
 
-def order_titles(queryset):
-	"""
-	This function takes a django queryset as argument and returns the records
-	according to proprietary processing logic.
-	"""
+import re
 
-	ordered_groups = []
-	for pk, text in queryset.values_list('pk','text'):
-		orderable_text = text.lower()
-		if orderable_text[:3] == 'de ':
-			orderable_text = orderable_text[3:]
+def text_to_sort_by(self):
+	CUT_OUT = [
+		"^De\ ",
+		"^Sermones\ ",
+		"^[IVXLCDM]*\ ",
+	]
+	for regexp in CUT_OUT:
+		result = re.split(regexp, self.text)
+		if len(result) > 1: #There is a match
+			return result[1]
+	return self.text
 
-		ordered_groups.append(
-			Prioritizer(
-				priority=orderable_text,
-				element=queryset.get(pk=pk),
-			)
-		)
-
-	ordered_groups.sort()
-		
-	return [item.element for item in ordered_groups]
-
-manuscript.ORDER_TITLES_FN = order_titles
+Title.text_to_sort_by = text_to_sort_by
