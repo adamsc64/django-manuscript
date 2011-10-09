@@ -18,6 +18,8 @@
 	{{ copy_text|safe|linebreaks }}
 
 	<h3>Title: <a href="{% url 'show-chapters' title=focus_title.slug %}">{{ focus_title }}</a></h3>
+	
+	<div><a href="{% url 'show-whole-work' title=focus_title.slug %}">See entire work "{{ focus_title.text }}"</a></div>
 
 	<ul>
 	{% for chapter in focus_title.chapter_set.all %}

@@ -1,0 +1,36 @@
+{# Copyright Christopher Adams, 2011 #}
+{# All rights reserved. #}
+
+{% extends "wyclif/base.html" %}
+
+{% load url from future %}
+
+{% block navbar %}
+	<h2><a href="{% url 'all-works' %}">{{ title.author }}</a></h2>
+	<h3><a href="{% url 'show-chapters' title=title.slug %}">{{ title }}</a></h3>
+
+	{% for el_chapter in all_chapters %}
+		<div class="{% if el_chapter == focus_chapter %}nav-focused{% else %}nav-unfocused{% endif %}"><a href="{% url 'show-page' title=el_chapter.title.slug page=el_chapter.start_page_no %}">{{ el_chapter.heading }}</a></div>
+	{% endfor %}
+
+{% endblock navbar %}
+
+{% block content %}
+	{% for chapter, paragraphs in chapter_datasets %}
+	<table class="wyclif-page-el">
+		<tr>
+			<td class="wyclif-chapter-title">{{ chapter.heading }}
+			<td>
+		</tr>
+		{% for full_paragraph_text in paragraphs %}
+			<tr>
+				<td class="wyclif-paragraph-text">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					{{ full_paragraph_text|safe }}
+				<td class="google-translate-wrap"><a href="http://translate.google.com/#la|en|{{ full_paragraph_text|urlencode }}" target="_blank">Translate</a>
+			</tr>
+		{% endfor %}
+	</table>
+	{% endfor %}
+	
+{% endblock content %}

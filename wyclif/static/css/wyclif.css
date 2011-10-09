@@ -13,6 +13,10 @@ body {
 	background-position:0 -30px;
 }
 
+.print-only {
+	display:none;
+}
+
 a {
 	text-decoration:none;
 }
@@ -58,16 +62,16 @@ a {
 }
 
 #header h1 {
-	font-family: 'UnifrakturMaguntia', arial, serif;
+	font-family: 'UnifrakturMaguntia', serif;
 	color: #dddddd;
 }
 
 #header h2 {
-	font-family: 'MedievalSharp', arial, serif;
+	font-family: 'MedievalSharp', serif;
 	color: #dddddd;
 }
 #header h3 {
-	font-family: 'MedievalSharp', arial, serif;
+	font-family: 'MedievalSharp', serif;
 	color:white;
 }
 
@@ -148,7 +152,7 @@ a {
 	/*text-align:right;*/
 }
 
-#content #search-results .manuscript-highlighted {
+#content .manuscript-highlighted {
 	background-color:#660000;
 	color:white;
 }
@@ -163,6 +167,7 @@ a {
 #content .wyclif-page-el {
 	/*border:1px solid;*/
 	padding-bottom:10px;
+	width:560px;
 }
 #content .wyclif-chapter-title {
 	text-align:center;
@@ -176,9 +181,11 @@ a {
 	/*border-top:1px solid;*/
 	padding-bottom:10px;
 	padding-top:10px;
+	width:490px;
 }
 #content .google-translate-wrap {
 	vertical-align:top;
+	text-align:right;
 	padding-left:10px;
 	padding-bottom:10px;
 	padding-top:10px;
