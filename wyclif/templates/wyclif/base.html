@@ -8,8 +8,9 @@
 <head>
 	<title>{% block title %}Wyclif Digital Archive{% endblock %}</title>
 
-	<link rel="stylesheet" href='{{ STATIC_URL }}css/wyclif.css' />
-	<link rel="stylesheet" href='{{ STATIC_URL }}chosen/chosen.css' />
+	<link rel="stylesheet" href='{{ STATIC_URL }}css/wyclif.css' media="screen" />
+	<link rel="stylesheet" href='{{ STATIC_URL }}css/wyclif-print.css' media="print" />
+	<link rel="stylesheet" href='{{ STATIC_URL }}chosen/chosen.css' media="all" />
 
 	<link href='http://fonts.googleapis.com/css?family=UnifrakturMaguntia&v1' rel='stylesheet' type='text/css'>
 	<link href='http://fonts.googleapis.com/css?family=MedievalSharp&v1' rel='stylesheet' type='text/css'>
@@ -34,6 +35,7 @@
 				<a href="{% url 'all-works' %}">
 					<h1>The Latin Wor<span style="font-family:serif;">k</span>s of John Wyclif</h1>
 					<h2>A searchable database of the primary texts</h2>
+					<div class="print-only">Fordham University</h3></div>
 				</a>
 			</div>
 			<div class="search-links-wrap">
