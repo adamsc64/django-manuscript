@@ -13,173 +13,173 @@ from manuscript.utils import is_near
 import re
 
 def index(request):
-	return render(request,'wyclif/index.html')
-	
+    return render(request,'wyclif/index.html')
+    
 def input(request):
-	#request_variables = dict(request.REQUEST.items())
-	return HttpResponseRedirect('/admin/manuscript/paragraph/add/')
-	#return render_to_response('wyclif/input.html')
+    #request_variables = dict(request.REQUEST.items())
+    return HttpResponseRedirect('/admin/manuscript/paragraph/add/')
+    #return render_to_response('wyclif/input.html')
 
 def about(request):
-	copy_text, created = SiteCopyText.objects.get_or_create_for('about')
+    copy_text, created = SiteCopyText.objects.get_or_create_for('about')
 
-	return render(request, 'wyclif/about.html', {
-		"copy_text" : copy_text,
-	})
+    return render(request, 'wyclif/about.html', {
+        "copy_text" : copy_text,
+    })
 
 def contact(request):
-	copy_text, created = SiteCopyText.objects.get_or_create_for('contact')
+    copy_text, created = SiteCopyText.objects.get_or_create_for('contact')
 
-	return render(request, 'wyclif/contact.html', {
-		"copy_text" : copy_text,
-	})
+    return render(request, 'wyclif/contact.html', {
+        "copy_text" : copy_text,
+    })
 
 def copyright(request):
-	url_path = request.META['PATH_INFO']
-	copy_text, created = SiteCopyText.objects.get_or_create_for('copyright')
+    url_path = request.META['PATH_INFO']
+    copy_text, created = SiteCopyText.objects.get_or_create_for('copyright')
 
-	return render(request, 'wyclif/about.html', {
-		"copy_text" : copy_text,
-	})
+    return render(request, 'wyclif/about.html', {
+        "copy_text" : copy_text,
+    })
 
 
 def search(request):
-	raw_query = request.GET.get('q')
+    raw_query = request.GET.get('q')
 
-	if raw_query:
-		big_search_form = BigSearchForm(request.GET)
-		
-		if big_search_form.is_valid():
-			q = big_search_form.cleaned_data["q"]
-			titles = big_search_form.cleaned_data["titles"]
-			
-			# This needs to be much better.
-			if q.find(" NEAR ") != -1:
-				NEARs = q.split(" NEAR ")
-				if len(NEARs) > 1:
-					NEARs[0] = NEARs[0].strip()
-					NEARs[1] = NEARs[1].strip()
-					#matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
-					#matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
-					#
-					#by_words = request.GET.get('nearprompt')
-					#
-					#q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
-					#	(NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
-					#regex = re.compile(q, re.IGNORECASE)
+    if raw_query:
+        big_search_form = BigSearchForm(request.GET)
+        
+        if big_search_form.is_valid():
+            q = big_search_form.cleaned_data["q"]
+            titles = big_search_form.cleaned_data["titles"]
+            
+            # This needs to be much better.
+            if q.find(" NEAR ") != -1:
+                NEARs = q.split(" NEAR ")
+                if len(NEARs) > 1:
+                    NEARs[0] = NEARs[0].strip()
+                    NEARs[1] = NEARs[1].strip()
+                    #matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
+                    #matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
                     #
-					#paragraph_matches = Paragraph.objects.filter(text__iregex=q)
-					
-					by_words = request.GET.get('nearprompt')
-					if by_words:
-						paragraph_matches = is_near(NEARs[0] , NEARs[1], num_words=int(by_words))
-					else:
-						paragraph_matches = Paragraph.objects.none()						
-				else:
-					paragraph_matches = Paragraph.objects.none()
+                    #by_words = request.GET.get('nearprompt')
+                    #
+                    #q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
+                    #   (NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
+                    #regex = re.compile(q, re.IGNORECASE)
+                    #
+                    #paragraph_matches = Paragraph.objects.filter(text__iregex=q)
+                    
+                    by_words = request.GET.get('nearprompt')
+                    if by_words:
+                        paragraph_matches = is_near(NEARs[0] , NEARs[1], num_words=int(by_words))
+                    else:
+                        paragraph_matches = Paragraph.objects.none()                        
+                else:
+                    paragraph_matches = Paragraph.objects.none()
 
-				if titles:
-					paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
-			else:
-				try:
-					q = convert_to_regex_search(q)
-				except InvalidSearchStringError:
-					paragraph_matches = Paragraph.objects.none()
-				else:
-					if titles:
-						paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
-					else:
-						paragraph_matches = Paragraph.objects.filter(text__iregex=q)
-			
-			# Sort paragraph_matches by title.
-			results_by_title = []
-			for title in Title.objects_with_data.all():
-				paragraphs_in_title = paragraph_matches.filter(page__title=title)
-				pair = title,paragraphs_in_title
-				if paragraphs_in_title.count() > 0:
-					results_by_title.append(pair)
-			
-			return render(request, 'manuscript/search.html', {
-				"regex_query" : q,
-				"big_search_form" : big_search_form,
-				"results_by_title" : results_by_title,
-				"num_results" : paragraph_matches.count()
-			})
-	else:
-		big_search_form = BigSearchForm()
+                if titles:
+                    paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
+            else:
+                try:
+                    q = convert_to_regex_search(q)
+                except InvalidSearchStringError:
+                    paragraph_matches = Paragraph.objects.none()
+                else:
+                    if titles:
+                        paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
+                    else:
+                        paragraph_matches = Paragraph.objects.filter(text__iregex=q)
+            
+            # Sort paragraph_matches by title.
+            results_by_title = []
+            for title in Title.objects_with_data.all():
+                paragraphs_in_title = paragraph_matches.filter(page__title=title)
+                pair = title,paragraphs_in_title
+                if paragraphs_in_title.count() > 0:
+                    results_by_title.append(pair)
+            
+            return render(request, 'manuscript/search.html', {
+                "regex_query" : q,
+                "big_search_form" : big_search_form,
+                "results_by_title" : results_by_title,
+                "num_results" : paragraph_matches.count()
+            })
+    else:
+        big_search_form = BigSearchForm()
 
-	return render(request, 'manuscript/search.html', {
-		"big_search_form" : big_search_form,
-	})
+    return render(request, 'manuscript/search.html', {
+        "big_search_form" : big_search_form,
+    })
 
 
 def input_title(request):
-	title_form = TitleForm()
+    title_form = TitleForm()
 
-	return render(request, 'wyclif/input.html', {
-		'title_form' : title_form,
-	})
+    return render(request, 'wyclif/input.html', {
+        'title_form' : title_form,
+    })
 
 def input_chapter(request):
-	chapter_form = ChapterForm()
+    chapter_form = ChapterForm()
 
-	return render(request, 'wyclif/input.html', {
-		'chapter_form' : chapter_form,
-	})
+    return render(request, 'wyclif/input.html', {
+        'chapter_form' : chapter_form,
+    })
 
 def input_page(request):
-	paragraph_form = ParagraphForm()
-	page_form = PageForm()
+    paragraph_form = ParagraphForm()
+    page_form = PageForm()
 
-	return render(request, 'wyclif/input.html', {
-		'paragraph_form' : paragraph_form,
-		'page_form' : page_form,
-	})
+    return render(request, 'wyclif/input.html', {
+        'paragraph_form' : paragraph_form,
+        'page_form' : page_form,
+    })
 
 def edit_title(request, id):
-	try:
-		title = Title.objects.get(id=id)
-	except Title.DoesNotExist:
-		raise Http404
+    try:
+        title = Title.objects.get(id=id)
+    except Title.DoesNotExist:
+        raise Http404
 
-	title_form = TitleForm(title)
+    title_form = TitleForm(title)
 
-	return render(request, 'wyclif/edit.html', {
-		'title_form' : title_form,
-	})
+    return render(request, 'wyclif/edit.html', {
+        'title_form' : title_form,
+    })
 
 def edit_chapter(request, id):
-	try:
-		chapter = Chapter.objects.get(id=id)
-	except Chapter.DoesNotExist:
-		raise Http404
+    try:
+        chapter = Chapter.objects.get(id=id)
+    except Chapter.DoesNotExist:
+        raise Http404
 
-	chapter_form = ChapterForm(chapter)
+    chapter_form = ChapterForm(chapter)
 
-	return render(request, 'wyclif/edit.html', {
-		'chapter_form' : chapter_form,
-	})
+    return render(request, 'wyclif/edit.html', {
+        'chapter_form' : chapter_form,
+    })
 
 def edit_page(request, id):
-	try:
-		page = Page.objects.get(id=id)
-	except Page.DoesNotExist:
-		raise Http404
+    try:
+        page = Page.objects.get(id=id)
+    except Page.DoesNotExist:
+        raise Http404
 
-	page_form = PageForm(page)
-	paragraphs = Paragraph.objects.filter(page = page)
-	paragraph_forms = []
-	for paragraph in paragraphs:
-		paragraph_forms.append(ParagraphForm(paragraph))
-		
-	return render(request, 'wyclif/edit.html', {
-		'paragraph_forms' : paragraph_forms,
-		'page_form' : page_form,
-	})
+    page_form = PageForm(page)
+    paragraphs = Paragraph.objects.filter(page = page)
+    paragraph_forms = []
+    for paragraph in paragraphs:
+        paragraph_forms.append(ParagraphForm(paragraph))
+        
+    return render(request, 'wyclif/edit.html', {
+        'paragraph_forms' : paragraph_forms,
+        'page_form' : page_form,
+    })
 
 def favicon(request):
-	return HttpResponseNotFound()
+    return HttpResponseNotFound()
 
 def error_view(request):
-	return render(request, '500.html')
-	
+    return render(request, '500.html')
+    
