@@ -50,7 +50,7 @@ class Chapter(BaseModel):
 	start_page_no = models.IntegerField()
 	slug = models.SlugField(max_length=70, blank=True, verbose_name="Resource URL name")
 	old_id = models.IntegerField(null=True, editable=False) # import field
-	xml_chapter_id = models.CharField(max_length=10, null=True, editable=False) # import field
+	xml_chapter_id = models.CharField(max_length=20, null=True, editable=False) # import field
 	
 	def __unicode__(self):
 		#return u"pk=%s, heading='%s'" % (self.pk,self.heading)
