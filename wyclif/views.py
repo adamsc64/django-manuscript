@@ -43,7 +43,6 @@ def copyright(request):
         "copy_text" : copy_text,
     })
 
-
 def search(request):
     raw_query = request.GET.get('q')
 
@@ -89,20 +88,25 @@ def search(request):
                     paragraphs = Paragraph.objects.all()
 
                     def understand(o):
+                        print "understand called with %s" % str(o)
                         result_ids = []
                         if o.asDict() == {}:
                             word = o[0]
+                            print "%s as dict is {}; word is %s" % (str(o), str(word))
                             for paragraph in paragraphs:
                                 if word in paragraph.text:
                                     result_ids.append(paragraph.pk)
-                            return set(result_ids)
+                            result = set(result_ids)
+                            print "returning result ids %s" % str(result)
+                            return result
 
-                        result_dict = {}
-                        for operator in o.keys():
-                            result_dict[operator] = understand(o[operator])
+                        okeys = o.keys()
                         
-                        for operator in result_dict.keys():
-                            next = result_dict[operator]
+                        for operator in o.keys():
+                            next = o[operator]
+                            unary_func = [
+                                "word"
+                            ]
                             binary_func = {
                                 "or" : "union",
                                 "and": "intersection",
@@ -111,30 +115,33 @@ def search(request):
                                 next1, next2 = next
                                 set1 = understand(next1)
                                 set2 = understand(next2)
-                                return getattr(set1,binary_func[operator])(set2)
+                                result = getattr(set1,binary_func[operator])(set2)
+                            elif operator in unary_func:
+                                result = understand(next)
                             else:
                                 raise ValueError(operator)
+                        
+                            raise Exception(result)
+                        
+                        
 
                     id_matches = understand(parse(q))
-                    raise Exception
-                    paragraph_matches = paragraphs.filter(id__in=id_matches)
+                    paragraph_matches = paragraphs.filter(id__in=list(id_matches))
                     
-                    q = convert_to_regex_search(q)
                 except InvalidSearchStringError:
                     paragraph_matches = Paragraph.objects.none()
                 else:
                     if titles:
-                        paragraph_matches = Paragraph.objects.filter(text__iregex=q, chapter__title__in=titles)
-                    else:
-                        paragraph_matches = Paragraph.objects.filter(text__iregex=q)
+                        paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
             
             # Sort paragraph_matches by title.
             results_by_title = []
-            for title in Title.objects_with_data.all():
+            for title in Title.objects.all():
                 paragraphs_in_title = paragraph_matches.filter(page__title=title)
                 pair = title,paragraphs_in_title
                 if paragraphs_in_title.count() > 0:
                     results_by_title.append(pair)
+            
             
             return render(request, 'manuscript/search.html', {
                 "regex_query" : q,
