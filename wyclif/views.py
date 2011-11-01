@@ -10,6 +10,7 @@ from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 from manuscript.utils import convert_to_regex_search
 from manuscript.utils import InvalidSearchStringError
 from manuscript.utils import is_near
+from manuscript.searchparser import SearchQueryParser
 import re
 
 def index(request):
@@ -82,6 +83,42 @@ def search(request):
                     paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
             else:
                 try:
+                    parse = SearchQueryParser().parser()
+
+                    # Load whole database into RAM.
+                    paragraphs = Paragraph.objects.all()
+
+                    def understand(o):
+                        result_ids = []
+                        if o.asDict() == {}:
+                            word = o[0]
+                            for paragraph in paragraphs:
+                                if word in paragraph.text:
+                                    result_ids.append(paragraph.pk)
+                            return set(result_ids)
+
+                        result_dict = {}
+                        for operator in o.keys():
+                            result_dict[operator] = understand(o[operator])
+                        
+                        for operator in result_dict.keys():
+                            next = result_dict[operator]
+                            binary_func = {
+                                "or" : "union",
+                                "and": "intersection",
+                            }
+                            if operator in binary_func:
+                                next1, next2 = next
+                                set1 = understand(next1)
+                                set2 = understand(next2)
+                                return getattr(set1,binary_func[operator])(set2)
+                            else:
+                                raise ValueError(operator)
+
+                    id_matches = understand(parse(q))
+                    raise Exception
+                    paragraph_matches = paragraphs.filter(id__in=id_matches)
+                    
                     q = convert_to_regex_search(q)
                 except InvalidSearchStringError:
                     paragraph_matches = Paragraph.objects.none()
