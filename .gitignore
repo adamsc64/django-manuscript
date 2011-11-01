@@ -2,6 +2,7 @@
 # Compiled source #
 ###################
 *.pyc
+*.pyo
 
 #####################
 # Weird apple files #
