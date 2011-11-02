@@ -10,6 +10,7 @@ from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 from manuscript.utils import convert_to_regex_search
 from manuscript.utils import InvalidSearchStringError
 from manuscript.utils import is_near
+from manuscript.utils import flatten
 from manuscript.searchparser import SearchQueryParser
 import re
 
@@ -84,46 +85,63 @@ def search(request):
                 try:
                     parse = SearchQueryParser().parser()
 
-                    # Load whole database into RAM.
+                    # Load all paragraph data into RAM.
+                    # We could, alternatively, compile a __regex filter search,
+                    # but the syntax of __regex is database-backend dependent.
+                    # This is better because it runs regex search at the
+                    # python level.
                     paragraphs = Paragraph.objects.all()
 
                     def understand(o):
-                        print "understand called with %s" % str(o)
+                        numkeys = len(o.keys())
+                        
                         result_ids = []
-                        if o.asDict() == {}:
-                            word = o[0]
-                            print "%s as dict is {}; word is %s" % (str(o), str(word))
+
+                        unary_func = [
+                            "word", "quotes"
+                        ]
+                        binary_func = {
+                            "or" : "union",
+                            "and": "intersection",
+                        }
+                        
+                        def _django_query(o,operator):
+                            if operator == "word":
+                                matchme = o[0]
+                            elif operator == "quotes":
+                                elements = o.asList()
+                                matchme = " ".join(flatten(elements))
+
+                            matchme = matchme.lower()
+                            pattern = "\\b" + matchme + "\\b"
+
                             for paragraph in paragraphs:
-                                if word in paragraph.text:
+                                if re.search(pattern, paragraph.text, re.IGNORECASE):
                                     result_ids.append(paragraph.pk)
                             result = set(result_ids)
-                            print "returning result ids %s" % str(result)
                             return result
-
-                        okeys = o.keys()
                         
-                        for operator in o.keys():
+                        if numkeys == 0 and o.asDict() == {}:
+                            operator = o.getName()
+                            return _django_query(o,operator)
+                        elif numkeys == 1:
+                            #initial run.
+                            operator = o.keys().pop().lower()
+
                             next = o[operator]
-                            unary_func = [
-                                "word"
-                            ]
-                            binary_func = {
-                                "or" : "union",
-                                "and": "intersection",
-                            }
+                            
                             if operator in binary_func:
                                 next1, next2 = next
                                 set1 = understand(next1)
                                 set2 = understand(next2)
                                 result = getattr(set1,binary_func[operator])(set2)
+                                return result
                             elif operator in unary_func:
-                                result = understand(next)
+                                return _django_query(next,operator)
                             else:
-                                raise ValueError(operator)
-                        
-                            raise Exception(result)
-                        
-                        
+                                raise InvalidSearchStringError("Unknown operator %s" % operator)
+                        else:
+                            raise InvalidSearchStringError("Something went wrong with keys in pyparsing search.")
 
                     id_matches = understand(parse(q))
                     paragraph_matches = paragraphs.filter(id__in=list(id_matches))
