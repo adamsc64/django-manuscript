@@ -10,7 +10,7 @@ from manuscript.models import SiteCopyText, Title, Paragraph, Chapter
 from manuscript.utils import convert_to_regex_search
 from manuscript.utils import InvalidSearchStringError
 from manuscript.utils import is_near
-from manuscript.utils import flatten
+from manuscript.utils import flatten, clean_for_search_parser
 from manuscript.searchparser import SearchQueryParser
 import re
 
@@ -51,12 +51,13 @@ def search(request):
         big_search_form = BigSearchForm(request.GET)
         
         if big_search_form.is_valid():
-            q = big_search_form.cleaned_data["q"]
+            original_q = big_search_form.cleaned_data["q"]
+            cleaned_q = clean_for_search_parser(original_q)
             titles = big_search_form.cleaned_data["titles"]
             
             # This needs to be much better.
-            if q.find(" NEAR ") != -1:
-                NEARs = q.split(" NEAR ")
+            if cleaned_q.find(" NEAR ") != -1:
+                NEARs = cleaned_q.split(" NEAR ")
                 if len(NEARs) > 1:
                     NEARs[0] = NEARs[0].strip()
                     NEARs[1] = NEARs[1].strip()
@@ -143,7 +144,7 @@ def search(request):
                         else:
                             raise InvalidSearchStringError("Something went wrong with keys in pyparsing search.")
 
-                    id_matches = understand(parse(q))
+                    id_matches = understand(parse(cleaned_q))
                     paragraph_matches = paragraphs.filter(id__in=list(id_matches))
                     
                 except InvalidSearchStringError:
@@ -162,7 +163,7 @@ def search(request):
             
             
             return render(request, 'manuscript/search.html', {
-                "regex_query" : q,
+                "regex_query" : raw_query,
                 "big_search_form" : big_search_form,
                 "results_by_title" : results_by_title,
                 "num_results" : paragraph_matches.count()

@@ -83,6 +83,8 @@ def _parse_search(q):
 def _full_word_regex(word):
 	return r"\b%s\b" % word
 
+def clean_for_search_parser(q):
+    return q
 
 class Prioritizer:
     """This class effectively sorts displays information, sortable by 'priority' field."""
