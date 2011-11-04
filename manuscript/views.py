@@ -4,9 +4,16 @@ from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 
+import re
+
 from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
 from manuscript.models import compile_paragraphs
 
+from manuscript.utils import convert_to_regex_search, clean_for_search_parser
+from manuscript.utils import InvalidSearchStringError, is_near
+from manuscript.utils import flatten
+from manuscript.searchparser import SearchQueryParser
+from manuscript.forms import BigSearchForm
 
 def all_works(request):	
 	copy_text, created = SiteCopyText.objects.get_or_create_for('all_works')
@@ -164,3 +171,135 @@ def page(request, title, page):
 def recreate_paragraph_composites(request):
 	compile_paragraphs(flush=True)
 	return HttpResponse("Seems to have run ok.")
+
+
+def search(request):
+    raw_query = request.GET.get('q')
+
+    if raw_query:
+        big_search_form = BigSearchForm(request.GET)
+
+        if big_search_form.is_valid():
+            original_q = big_search_form.cleaned_data["q"]
+            cleaned_q = clean_for_search_parser(original_q)
+            titles = big_search_form.cleaned_data["titles"]
+
+            # This needs to be much better.
+            if cleaned_q.find(" NEAR ") != -1:
+                NEARs = cleaned_q.split(" NEAR ")
+                if len(NEARs) > 1:
+                    NEARs[0] = NEARs[0].strip()
+                    NEARs[1] = NEARs[1].strip()
+                    #matches1 = Paragraph.objects.filter(text__icontains=str(NEARs[0]))
+                    #matches2 = Paragraph.objects.filter(text__icontains=str(NEARs[1]))
+                    #
+                    #by_words = request.GET.get('nearprompt')
+                    #
+                    #q = r"\b(?:%s\W+(?:\w+\W+){1,%s}?%s|%s\W+(?:\w+\W+){1,%s}?%s)\b" % \
+                    #   (NEARs[0], by_words, NEARs[1], NEARs[1], by_words, NEARs[0])
+                    #regex = re.compile(q, re.IGNORECASE)
+                    #
+                    #paragraph_matches = Paragraph.objects.filter(text__iregex=q)
+
+                    by_words = request.GET.get('nearprompt')
+                    if by_words:
+                        paragraph_matches = is_near(NEARs[0] , NEARs[1], num_words=int(by_words))
+                    else:
+                        paragraph_matches = Paragraph.objects.none()                        
+                else:
+                    paragraph_matches = Paragraph.objects.none()
+
+                if titles:
+                    paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
+            else:
+                try:
+                    parse = SearchQueryParser().parser()
+
+                    # Load all paragraph data into RAM.
+                    # We could, alternatively, compile a __regex filter search,
+                    # but the syntax of __regex is database-backend dependent.
+                    # This is better because it runs regex search at the
+                    # python level.
+                    paragraphs = Paragraph.objects.all()
+
+                    def understand(o):
+                        numkeys = len(o.keys())
+
+                        result_ids = []
+
+                        unary_func = [
+                            "word", "quotes"
+                        ]
+                        binary_func = {
+                            "or" : "union",
+                            "and": "intersection",
+                        }
+
+                        def _django_query(o,operator):
+                            if operator == "word":
+                                matchme = o[0]
+                            elif operator == "quotes":
+                                elements = o.asList()
+                                matchme = " ".join(flatten(elements))
+
+                            matchme = matchme.lower()
+                            pattern = "\\b" + matchme + "\\b"
+
+                            for paragraph in paragraphs:
+                                if re.search(pattern, paragraph.text, re.IGNORECASE):
+                                    result_ids.append(paragraph.pk)
+                            result = set(result_ids)
+                            return result
+
+                        if numkeys == 0 and o.asDict() == {}:
+                            operator = o.getName()
+                            return _django_query(o,operator)
+                        elif numkeys == 1:
+                            #initial run.
+                            operator = o.keys().pop().lower()
+
+                            next = o[operator]
+
+                            if operator in binary_func:
+                                next1, next2 = next
+                                set1 = understand(next1)
+                                set2 = understand(next2)
+                                result = getattr(set1,binary_func[operator])(set2)
+                                return result
+                            elif operator in unary_func:
+                                return _django_query(next,operator)
+                            else:
+                                raise InvalidSearchStringError("Unknown operator %s" % operator)
+                        else:
+                            raise InvalidSearchStringError("Something went wrong with keys in pyparsing search.")
+
+                    id_matches = understand(parse(cleaned_q))
+                    paragraph_matches = paragraphs.filter(id__in=list(id_matches))
+
+                except InvalidSearchStringError:
+                    paragraph_matches = Paragraph.objects.none()
+                else:
+                    if titles:
+                        paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
+
+            # Sort paragraph_matches by title.
+            results_by_title = []
+            for title in Title.objects.all():
+                paragraphs_in_title = paragraph_matches.filter(page__title=title)
+                pair = title,paragraphs_in_title
+                if paragraphs_in_title.count() > 0:
+                    results_by_title.append(pair)
+
+
+            return render(request, 'manuscript/search.html', {
+                "regex_query" : raw_query,
+                "big_search_form" : big_search_form,
+                "results_by_title" : results_by_title,
+                "num_results" : paragraph_matches.count()
+            })
+    else:
+        big_search_form = BigSearchForm()
+
+    return render(request, 'manuscript/search.html', {
+        "big_search_form" : big_search_form,
+    })

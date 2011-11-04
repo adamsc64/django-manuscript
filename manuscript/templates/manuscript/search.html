@@ -44,7 +44,7 @@
 
 	<div id="search-tool">
 		<h2>Search Tool (experimental)</h2>
-		<form action="{% url 'wyclif.views.search' %}" method="GET">
+		<form action="{% url 'manuscript.views.search' %}" method="GET">
 			{{ big_search_form.non_field_errors }}
 			<div class="search-field-wrapper">
 		        {{ big_search_form.q.errors }}
