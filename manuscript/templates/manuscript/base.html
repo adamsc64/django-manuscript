@@ -1,0 +1,24 @@
+{% comment %}
+    Copyright (C) 2011 by Christopher Adams
+    Released under MIT License. See LICENSE.txt in the root of this
+    distribution for details. 
+{% endcomment %}
+
+{% comment %}
+    Note: This is just an empty base template. What you want to do
+    is to create a manuscript/ directory in your templates directory
+    and in that directory create a file called base.html. Django will
+    override this blank base template with your own customized
+    template. Experimental.
+{% endcomment %}
+
+<html>
+<head>
+</head>
+<body>
+{% block navbar %}
+{% endblock navbar %}
+
+{% block content %}
+{% endblock content %}
+</body>
