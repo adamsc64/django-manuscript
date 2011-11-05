@@ -218,43 +218,32 @@ class Page(BaseModel):
                 #self.convert_scan_to_display() # avoids infinite loop.
                 pass # do nothing for now until we figure out jpeg decoder on server.
     
-    
-    #def rename_scan_file(self, to):
-    #   old_scan_name = self.scan.name
-    #   if old_scan_name != to:
-    #       self.scan.save("pages/"+to, ContentFile(self.scan.read()), save=True)
-    #       os.remove(settings.MEDIA_ROOT + old_scan_name)
+	def get_normalized_jpg_filename(self):
+		return str(self.title.slug) + "_p" + str(self.number) + ".jpg"
+	
+	def convert_scan_to_display(self, commit=True):
+		if hasattr(self.scan,"path"): # If scan exists.
+			if not hasattr(self.display,"path"): # But display doesn't.
+				(width , height) = (self.scan.width , self.scan.height)
+		
+				target_width = settings.MANUSCRIPT_DEFAULT_WIDTH
+				if target_width > width:				
+    			    # Don't make it bigger. Only make it smaller.
+    			    target_width = width
+    			    target_height = height
+    			else:
+    				target_height = int(1.0 * target_width / width * height)
+    			    
+				target_size = (target_width , target_height)
+				target_path = settings.MEDIA_ROOT + "pages_to_display/" + self.get_normalized_jpg_filename()
+		
+				print "%s: Converting %s %s file to %s %s (new file)." % (str(self), str(self.scan.path), str((width,height)), str(target_path), str(target_size))
+				PIL.Image.open(self.scan.path).resize(target_size).save(target_path)
+		
+				self.display = "pages_to_display/" + self.get_normalized_jpg_filename()
+				if commit:
+					self.save()
 
-    #def normalize_scan_filename(self):
-    #   print "Normalizing page (%s)." % str(self)
-    #   print "-- old scan.name=%s" % str(self.scan.name)
-    #
-    #   to = "pages/" + self.get_normalized_filename()
-    #   self.rename_scan_file(to=to)
-    #
-    #   print "-- new scan.name=%s" % str(self.scan.name)
-    #   print
-    
-    def get_normalized_jpg_filename(self):
-        return str(self.title.slug) + "_p" + str(self.number) + ".jpg"
-    
-    def convert_scan_to_display(self, commit=True):
-        if hasattr(self.scan,"path"): # If scan exists.
-            if not hasattr(self.display,"path"): # But display doesn't.
-                (width , height) = (self.scan.width , self.scan.height)
-        
-                target_width = settings.MANUSCRIPT_DEFAULT_WIDTH
-                target_height = int(1.0 * target_width / width * height)
-                target_size = (target_width , target_height)
-                target_path = settings.MEDIA_ROOT + "pages_to_display/" + self.get_normalized_jpg_filename()
-        
-                print "%s: Converting %s %s file to %s %s (new file)." % (str(self), str(self.scan.path), str((width,height)), str(target_path), str(target_size))
-                PIL.Image.open(self.scan.path).resize(target_size).save(target_path)
-        
-                self.display = "pages_to_display/" + self.get_normalized_jpg_filename()
-                if commit:
-                    self.save()
-    
 
 class Paragraph(BaseModel):
     SPLIT_CHOICES = (
