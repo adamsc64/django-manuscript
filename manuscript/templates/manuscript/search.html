@@ -33,8 +33,14 @@
 			check_near_prompt();			
 			$main_search_input.keyup(check_near_prompt);
 
-		});
-		
+            var $search_help = $("#search_help");
+            var $search_instructions = $(".search-instructions-wrap")
+            $search_help.click(function(e) {
+                e.preventDefault();
+                $search_help.hide();
+                $search_instructions.slideDown(1000);
+            });
+        });
 	</script>
 {% endblock extra_head %}
 
@@ -46,18 +52,16 @@
 	{{ copy_text|safe|linebreaks }}
 
 	<div id="search-tool">
-		<h2>Search Tool (experimental)</h2>
 		<form action="{% url 'manuscript.views.search' %}" method="GET">
 			{{ big_search_form.non_field_errors }}
 			<div class="search-field-wrapper">
 		        {{ big_search_form.q.errors }}
-		        <p><label for="id_q">Enter your search query below:</label></p>
 				<div class="search-input-wrapper">
-		        	{{ big_search_form.q }}
+		        	<label for="id_q">Search for:</label></p>{{ big_search_form.q }}
 				</div>
+				<a href="#" id="search_help">help >></a>
 				<div id="near-prompt-wrap">
 					Near by how many words? {{ big_search_form.nearprompt }}
-			        
 				</div>
 				<div class="search-instructions-wrap">
 					<table class="search-instructions">
@@ -80,7 +84,7 @@
 		    </div>
 			<div class="search-field-wrapper">
 		        {{ big_search_form.titles.errors }}
-		        <p><label for="id_titles">Limit selection to certain works:</label></p>
+		        <p><label for="id_titles">In:</label></p>
 				<div class="search-input-wrapper">
 					<a href="javascript:void(0);" onclick="
 						$('select option:not(:selected)').attr('selected',true);
@@ -96,7 +100,7 @@
 		    
 			
 			
-		<div class="submit-button-wrap"><input type="submit" value="Search" /></div>
+		<div class="submit-button-wrap"><input type="submit" value="Go" /></div>
 		</form>
 	</div>
 
