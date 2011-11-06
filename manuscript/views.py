@@ -9,7 +9,7 @@ import re
 from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
 from manuscript.models import compile_paragraphs
 
-from manuscript.utils import convert_to_regex_search, clean_for_search_parser
+from manuscript.utils import convert_to_regex_search, clean_for_search_parser, make_wildcards_regex
 from manuscript.utils import InvalidSearchStringError, is_near
 from manuscript.utils import flatten
 from manuscript.searchparser import SearchQueryParser
@@ -242,6 +242,7 @@ def search(request):
                                 elements = o.asList()
                                 matchme = " ".join(flatten(elements))
 
+                            matchme = make_wildcards_regex(matchme)
                             matchme = matchme.lower()
                             pattern = "\\b" + matchme + "\\b"
 

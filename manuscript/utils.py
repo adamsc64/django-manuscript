@@ -83,8 +83,18 @@ def _parse_search(q):
 def _full_word_regex(word):
 	return r"\b%s\b" % word
 
+SEARCH_ENCODING = (
+    # (starting value, temporary value, regex equivalent)
+    ("*","WILDCARD","[A-Za-z0-9]*"),
+)
 def clean_for_search_parser(q):
+    for start, temp, regex in SEARCH_ENCODING:
+        q = q.replace(start,temp)
     return q
+def make_wildcards_regex(word):
+    for start, temp, regex in SEARCH_ENCODING:
+        word = word.replace(temp,regex)
+    return word
 
 class Prioritizer:
     """This class effectively sorts displays information, sortable by 'priority' field."""
