@@ -12,12 +12,15 @@
 {% block extra_head %}
 	<script type="text/javascript">
 		$(document).ready(function(){
+
+            // Enable functionality for nice looking multi-select.
+            
 			$("#search-tool select").chosen();
 
 			// todo: This needs to be made better!
-			$main_search_input = $("#id_q");
-			$near_prompt_wrap = $("#near-prompt-wrap");
-			$near_prompt = $("#id_nearprompt");
+			var $main_search_input = $("#id_q");
+			var $near_prompt_wrap = $("#near-prompt-wrap");
+			var $near_prompt = $("#id_nearprompt");
 			function check_near_prompt() {
 				var text = $main_search_input.val();
 				if (text.search("NEAR") > -1) {
@@ -33,6 +36,8 @@
 			check_near_prompt();			
 			$main_search_input.keyup(check_near_prompt);
 
+            // Enable search help link functionality
+
             var $search_help = $("#search-help-link");
             var $search_instructions = $(".search-instructions-wrap")
             $search_help.click(function(e) {
@@ -40,6 +45,21 @@
                 $search_help.hide();
                 $search_instructions.slideDown(1000);
             });
+            
+            // Limit search input to valid characters
+
+            $main_search_input.keypress(function(e) {
+                var code = (e.keyCode ? e.keyCode : e.which);
+                var key = String.fromCharCode(code);
+                var regex_invalid = /[^A-Za-z0-9\s\*]/;
+                if (key.match(regex_invalid)) {
+                    e.preventDefault();
+                }
+            });
+
+//        	q = re.sub(regex_invalid, "", q) # blow away all invalid characters.
+
+        	
         });
 	</script>
 {% endblock extra_head %}
