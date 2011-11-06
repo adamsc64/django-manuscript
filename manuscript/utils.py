@@ -85,7 +85,7 @@ def _full_word_regex(word):
 
 SEARCH_ENCODING = (
     # (starting value, temporary value, regex equivalent)
-    ("*","WILDCARD","[A-Za-z0-9]*"),
+    ("*","wildcard","[A-Za-z0-9]*"),
 )
 def clean_for_search_parser(q):
     for start, temp, regex in SEARCH_ENCODING:

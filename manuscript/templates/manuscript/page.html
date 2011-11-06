@@ -63,7 +63,7 @@
 					{% if paragraph.split == "top" or paragraph.split == "no" %}
 						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 					{% endif %}
-					<span id="{{ paragraph.pk }}">{{ paragraph.text|highlight:regex_query }} </span>
+					<span id="{{ paragraph.pk }}">{{ paragraph.text|highlight:highlight_words }} </span>
 					{% if paragraph.split == "top" or paragraph.split == "both" %}
 						{% if page_next %}<a href="{% url 'show-page' title=page_next.title.slug page=page_next.number %}">...</a>{% endif %}
 					{% endif %}

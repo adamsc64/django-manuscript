@@ -152,7 +152,7 @@ def page(request, title, page):
 	except Page.DoesNotExist:
 		page_next = None
 	
-	highlight = request.GET.get('highlight')
+	highlight_words = request.session.get('highlight_words', [])
 	
 	return render(request, 'manuscript/page.html', {
 		"copy_text" : copy_text,
@@ -164,7 +164,7 @@ def page(request, title, page):
 		"focus_chapter" : focus_chapter,
 		"focus_chapter_first_paragraph" : focus_chapter_first_paragraph,
 		"all_chapters" : all_chapters,
-		"regex_query" : highlight,
+		"highlight_words" : highlight_words,
 	})
 
 
@@ -222,7 +222,7 @@ def search(request):
                     # python level.
                     paragraphs = Paragraph.objects.all()
 
-                    def understand(o):
+                    def understand(o, patterns=None):
                         numkeys = len(o.keys())
 
                         result_ids = []
@@ -235,16 +235,18 @@ def search(request):
                             "and": "intersection",
                         }
 
-                        def _django_query(o,operator):
+                        def _django_query(o,operator,patterns=None):
                             if operator == "word":
                                 matchme = o[0]
                             elif operator == "quotes":
                                 elements = o.asList()
                                 matchme = " ".join(flatten(elements))
 
-                            matchme = make_wildcards_regex(matchme)
                             matchme = matchme.lower()
+                            matchme = make_wildcards_regex(matchme)
                             pattern = "\\b" + matchme + "\\b"
+                            if patterns != None:
+                                patterns.append(pattern)
 
                             for paragraph in paragraphs:
                                 if re.search(pattern, paragraph.text, re.IGNORECASE):
@@ -254,7 +256,7 @@ def search(request):
 
                         if numkeys == 0 and o.asDict() == {}:
                             operator = o.getName()
-                            return _django_query(o,operator)
+                            return _django_query(o,operator,patterns)
                         elif numkeys == 1:
                             #initial run.
                             operator = o.keys().pop().lower()
@@ -263,18 +265,19 @@ def search(request):
 
                             if operator in binary_func:
                                 next1, next2 = next
-                                set1 = understand(next1)
-                                set2 = understand(next2)
+                                set1 = understand(next1, patterns)
+                                set2 = understand(next2, patterns)
                                 result = getattr(set1,binary_func[operator])(set2)
                                 return result
                             elif operator in unary_func:
-                                return _django_query(next,operator)
+                                return _django_query(next,operator,patterns)
                             else:
                                 raise InvalidSearchStringError("Unknown operator %s" % operator)
                         else:
                             raise InvalidSearchStringError("Something went wrong with keys in pyparsing search.")
 
-                    id_matches = understand(parse(cleaned_q))
+                    highlight_words = []
+                    id_matches = understand(parse(cleaned_q), highlight_words)
                     paragraph_matches = paragraphs.filter(id__in=list(id_matches))
 
                 except InvalidSearchStringError:
@@ -291,9 +294,10 @@ def search(request):
                 if paragraphs_in_title.count() > 0:
                     results_by_title.append(pair)
 
+            request.session['highlight_words'] = highlight_words
 
             return render(request, 'manuscript/search.html', {
-                "regex_query" : raw_query,
+                "highlight_words" : highlight_words,
                 "big_search_form" : big_search_form,
                 "results_by_title" : results_by_title,
                 "num_results" : paragraph_matches.count()
