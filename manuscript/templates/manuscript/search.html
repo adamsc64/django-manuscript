@@ -33,7 +33,7 @@
 			check_near_prompt();			
 			$main_search_input.keyup(check_near_prompt);
 
-            var $search_help = $("#search_help");
+            var $search_help = $("#search-help-link");
             var $search_instructions = $(".search-instructions-wrap")
             $search_help.click(function(e) {
                 e.preventDefault();
@@ -57,9 +57,10 @@
 			<div class="search-field-wrapper">
 		        {{ big_search_form.q.errors }}
 				<div class="search-input-wrapper">
-		        	<label for="id_q">Search for:</label></p>{{ big_search_form.q }}
+		        	<label for="id_q">What are you looking for?</label>
+    				<a href="#" id="search-help-link">help >></a>
+		        	<p>{{ big_search_form.q }}</p>
 				</div>
-				<a href="#" id="search_help">help >></a>
 				<div id="near-prompt-wrap">
 					Near by how many words? {{ big_search_form.nearprompt }}
 				</div>
@@ -84,7 +85,7 @@
 		    </div>
 			<div class="search-field-wrapper">
 		        {{ big_search_form.titles.errors }}
-		        <p><label for="id_titles">In:</label></p>
+		        <label for="id_titles">Where are you looking for it?</label>
 				<div class="search-input-wrapper">
 					<a href="javascript:void(0);" onclick="
 						$('select option:not(:selected)').attr('selected',true);
