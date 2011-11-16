@@ -1,3 +1,5 @@
+from manuscript.searchparser import SearchQueryParser
+
 import re
 import time
 
@@ -16,15 +18,125 @@ class InvalidSearchStringError(Exception):
 	def __str__(self):
 		return repr(self.value)
 
-#def execute_search(expr):
-#	"""Master function to execute django-manuscript search on an expression.
-#	This, and child functions, are in rough shape and need a lot of work."""
-#
-#	if expr.find(" NEAR ") == -1:
-#		execute_near
-#
-#def execute_near_search(expr):
-#	"""Search function to handle NEAR searches."""
+def execute_search(cleaned_q, titles, near_by_words):
+    """
+    Master function to execute django-manuscript search on an expression.
+    This, and child functions, can still use some work.
+    """
+    
+    from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
+    
+    paragraph_matches = Paragraph.objects.none()
+    parse = SearchQueryParser().parser() # returns a callable.
+    near_by_words = int(near_by_words)
+    
+    is_near_search = near_by_words and re.findall("^(\w*)\snear\s(\w*)$", cleaned_q)
+
+    if is_near_search:
+        # If we have a valid "near" operation, treat it as an "and" initially:
+        cleaned_q = cleaned_q.replace(" near ", " and ")
+    try:
+        # Load all paragraph data into RAM.
+        # We could, alternatively, compile a __regex filter search,
+        # but the syntax of __regex is database-backend dependent.
+        # This is better because it runs regex search at the
+        # python level.
+        paragraphs = Paragraph.objects.all()
+
+        def understand(o, patterns=None):
+            numkeys = len(o.keys())
+
+            result_ids = []
+
+            unary_func = [
+                "word", "quotes"
+            ]
+            binary_func = {
+                "or" : "union",
+                "and": "intersection",
+            }
+
+            def _django_query(o,operator,patterns=None):
+                if operator == "word":
+                    matchme = o[0]
+                elif operator == "quotes":
+                    elements = o.asList()
+                    matchme = " ".join(flatten(elements))
+
+                matchme = matchme.lower()
+                matchme = make_wildcards_regex(matchme)
+                pattern = "\\b" + matchme + "\\b"
+                if patterns != None:
+                    patterns.append(pattern)
+
+                for paragraph in paragraphs:
+                    if re.search(pattern, paragraph.text, re.IGNORECASE):
+                        result_ids.append(paragraph.pk)
+                result = set(result_ids)
+                return result
+
+            if numkeys == 0 and o.asDict() == {}:
+                operator = o.getName()
+                return _django_query(o,operator,patterns)
+            elif numkeys == 1:
+                #initial run.
+                operator = o.keys().pop().lower()
+
+                next = o[operator]
+
+                if operator in binary_func:
+                    next1, next2 = next
+                    set1 = understand(next1, patterns)
+                    set2 = understand(next2, patterns)
+                    result = getattr(set1,binary_func[operator])(set2)
+                    return result
+                elif operator in unary_func:
+                    return _django_query(next,operator,patterns)
+                else:
+                    raise InvalidSearchStringError("Unknown operator %s" % operator)
+            else:
+                raise InvalidSearchStringError("Something went wrong with keys in pyparsing search.")
+
+        highlight_words = []
+        id_matches = understand(parse(cleaned_q), highlight_words)
+
+        if is_near_search:
+            # If we have a valid "near" operation, see if is true.
+            
+            id_matches_old = list(id_matches)
+            id_matches = []
+            
+            for id in id_matches_old:
+                paragraph = paragraphs.get(id=id)
+                words = re.findall(r"\b([A-Za-z0-9]+)\b", paragraph.text)
+                near1, near2 = is_near_search[0]
+                
+                near1count = words.count(near1)
+                near2count = words.count(near2)
+
+                for i in range(len(words)):
+                    if near1 == words[i]:
+                        import pdb
+                        pdb.set_trace()
+                        for j in range(1,near_by_words+1):
+                            if i+j < len(words) and near2 == words[i+j]:
+                                id_matches.append(id)
+                            if i-j >= 0 and near2 == words[i-j]:
+                                id_matches.append(id)
+
+            id_matches = set(id_matches)
+            
+        paragraph_matches = paragraphs.filter(id__in=list(id_matches))
+
+
+    except InvalidSearchStringError:
+        paragraph_matches = Paragraph.objects.none()
+    else:
+        if titles:
+            paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
+
+    return paragraph_matches, highlight_words
+
 
 def convert_to_regex_search(expr):
 	"""function to handle regular expression searches for AND and OR."""
@@ -43,6 +155,8 @@ def convert_to_regex_search(expr):
 		return result
 
 	return __finder(expr)
+
+
 
 def _parse_search(q):
 
