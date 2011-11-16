@@ -9,17 +9,19 @@
 		// todo: This needs to be made better!
 		var $main_search_input = $("#id_q");
 		var $near_prompt_wrap = $("#near-prompt-wrap");
-		var $near_prompt = $("#id_nearprompt");
 		function check_near_prompt() {
 			var text = $main_search_input.val();
-			if (text && text.search("NEAR") > -1) {
+			if (text && text.toLowerCase().search(/\snear\s/) > -1) {
+                $near_prompt_wrap.html($("#near-prompt-wrap-template").html());
+        		var $near_prompt = $("#id_nearprompt");
 				$near_prompt_wrap.fadeIn(500);
 				if ($near_prompt.val() == "") {
 					$near_prompt.val("5");
 				}
 			} else {
 				$near_prompt_wrap.fadeOut(500);
-				$near_prompt.val("");
+				$near_prompt_wrap.html("");
+                
 			}
 		}
 		check_near_prompt();			

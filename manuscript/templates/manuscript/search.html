@@ -11,10 +11,14 @@
 
 {% block extra_head %}
     <script type="text/javascript" src="{{ STATIC_URL }}manuscript/js/manuscript-search.js"></script>
+    <script type="text/template" id="near-prompt-wrap-template">
+		Near by how many words? {{ big_search_form.nearprompt }}
+    </script>
 {% endblock extra_head %}
 
 {% block navbar %}
 	<h3>Search Tool</h3>
+	<a href="{% url 'all-works' %}">Back to Home</a>
 {% endblock navbar %}
 
 {% block content %}
@@ -31,22 +35,21 @@
 		        	<p>{{ big_search_form.q }}</p>
 				</div>
 				<div id="near-prompt-wrap">
-					Near by how many words? {{ big_search_form.nearprompt }}
 				</div>
 				<div class="search-instructions-wrap">
 					<table class="search-instructions">
 						<tbody>
-							<tr><td class="search-instruction">
-								*</td><td>wildcard<br>(<b>habit*</b> returns "habitus", "habito")<br>								
+							<tr><td class="search-instruction search-code">
+								*</td><td>wildcard (<span class=" search-code">habit*</span> returns results with "habitus", "habito")								
 							</td></tr>
-							<tr><td class="search-instruction">
-								AND</td><td>conjunctive logical operator<br>(<b>epistola AND incipit</b> returns "epistola ... incipit")<br>
+							<tr><td class="search-instruction search-code">
+								and</td><td>exclusive search (e.g. <span class=" search-code">epistola and incipit</span>)
 							</td></tr>
-							<tr><td class="search-instruction">
-								OR</td><td>disjunctive logical operator<br>(<b>ipso OR sequitur</b> returns anything with either "ipso," or "sequitur," or both)<br>
+							<tr><td class="search-instruction search-code">
+								or</td><td>inclusive search (<span class=" search-code">ipso or sequitur</span> returns anything with either or both)
 							</td></tr>
-							<tr><td class="search-instruction">
-								NEAR</td><td>finds words near each other in the same paragraph<br>(<b>ipso NEAR sequitur</b> returns paragraphs with "ipso" or "sequitur" near each other; you will be prompted for number of words between.)<br>
+							<tr><td class="search-instruction search-code">
+								near</td><td>finds words near each other (<span class="search-code">ipso near sequitur</span>)
 							</td></tr>
 						</tbody>
 					</table>
