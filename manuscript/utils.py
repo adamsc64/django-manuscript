@@ -28,7 +28,7 @@ def execute_search(cleaned_q, titles, near_by_words):
     
     paragraph_matches = Paragraph.objects.none()
     parse = SearchQueryParser().parser() # returns a callable.
-    near_by_words = int(near_by_words)
+    near_by_words = int(near_by_words) if near_by_words else None
     
     is_near_search = near_by_words and re.findall("^(\w*)\snear\s(\w*)$", cleaned_q)
 
