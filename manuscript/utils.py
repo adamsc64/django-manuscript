@@ -64,7 +64,6 @@ def _parse_search(q):
 					if word2 == "" or word2 == "\w*":
 						raise InvalidSearchStringError(q)
 					if word1 != word2:
-						print word1, word2
 						conditions.append(_full_word_regex(word1 + ".*" + word2))
 						conditions.append(_full_word_regex(word2 + ".*" + word1))
 		else:
@@ -290,16 +289,16 @@ def is_near(word1, word2, num_words):
 	words = []
 	
 	for p in paragraphs_for1:
-		print "Searching paragraph %s" % p.pk
+		#print "Searching paragraph %s" % p.pk
 		words.extend(p.get_words_for(word1))
-		print " found %s in paragraph %s" % (word1, p.pk)
+		#print " found %s in paragraph %s" % (word1, p.pk)
 
 	result = []
 	
 	for result_word1 in words:
 		for nearby in result_word1.get_nearby(distance=num_words):
 			if unicode(nearby) == unicode(word2):
-				print "%s is near %s" % (nearby, result_word1)
+				#print "%s is near %s" % (nearby, result_word1)
 				result.append(nearby._paragraph.pk)
 				result.append(result_word1._paragraph.pk)
 			
