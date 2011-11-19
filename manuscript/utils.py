@@ -37,15 +37,17 @@ def execute_search(cleaned_q, titles, near_by_words):
         cleaned_q = cleaned_q.replace(" near ", " and ")
     try:
         # Load all paragraph data into RAM.
+        # Limit search by title, if applicable.
+
+        paragraphs = Paragraph.objects.all()      
+        if titles:
+            paragraphs = paragraphs.filter(chapter__title__in=titles)
+        paragraph_values = paragraphs.values()
+
         # We could, alternatively, compile a __regex filter search,
         # but the syntax of __regex is database-backend dependent.
         # This is better because it runs regex search at the
         # python level.
-        paragraphs = Paragraph.objects.all()
-        
-        # Limit search by title, if applicable.
-        if titles:
-            paragraphs = paragraphs.filter(chapter__title__in=titles)
 
         def understand(o, patterns=None):
             numkeys = len(o.keys())
@@ -73,9 +75,9 @@ def execute_search(cleaned_q, titles, near_by_words):
                 if patterns != None:
                     patterns.append(pattern)
 
-                for paragraph in paragraphs:
-                    if re.search(pattern, paragraph.text, re.IGNORECASE):
-                        result_ids.append(paragraph.pk)
+                for paragraph in paragraph_values:
+                    if re.search(pattern, paragraph['text'], re.IGNORECASE):
+                        result_ids.append(paragraph['id'])
                 result = set(result_ids)
                 return result
 
@@ -110,40 +112,44 @@ def execute_search(cleaned_q, titles, near_by_words):
             id_matches_old = list(id_matches)
             id_matches = []
             
-            for id in id_matches_old:
-                paragraph = paragraphs.get(id=id)
-                words = re.findall(r"\b([A-Za-z0-9]+)\b", paragraph.text)
-                near1, near2 = is_near_search[0]
+            for paragraph in paragraph_values:
+                if paragraph['id'] in id_matches_old:
+                    words = re.findall(r"\b([A-Za-z0-9]+)\b", paragraph.text)
+                    near1, near2 = is_near_search[0]
                 
-                near1count = words.count(near1)
-                near2count = words.count(near2)
+                    near1count = words.count(near1)
+                    near2count = words.count(near2)
 
-                for i in range(len(words)):
-                    if near1 == words[i]:
-                        import pdb
-                        pdb.set_trace()
-                        for j in range(1,near_by_words+1):
-                            if i+j < len(words) and near2 == words[i+j]:
-                                id_matches.append(id)
-                            if i-j >= 0 and near2 == words[i-j]:
-                                id_matches.append(id)
+                    for i in range(len(words)):
+                        if near1 == words[i]:
+                            import pdb
+                            pdb.set_trace()
+                            for j in range(1,near_by_words+1):
+                                if i+j < len(words) and near2 == words[i+j]:
+                                    id_matches.append(paragraph['id'])
+                                if i-j >= 0 and near2 == words[i-j]:
+                                    id_matches.append(paragraph['id'])
 
             id_matches = set(id_matches)
             
-        paragraph_matches = paragraphs.filter(id__in=list(id_matches))
+        results_by_title = dict()
+
+        title_ids_in_paragraphs = dict(paragraphs.values_list('id','page__title'))
+        titles_by_id = dict([(title.id, title) for title in Title.objects.all()])
+
+        for paragraph in paragraphs:
+            title = titles_by_id[title_ids_in_paragraphs[paragraph.id]]
+            if paragraph.id in id_matches:
+                if not title in results_by_title:
+                    results_by_title[title] = []
+                results_by_title[title].append(paragraph)
+        results_by_title = results_by_title.items()
+                
+        num_results = paragraph_matches.count()
 
     except InvalidSearchStringError:
-        paragraph_matches = Paragraph.objects.none()
-
-    # Group paragraph_matches by title.
-    results_by_title = []
-    for title in Title.objects.all():
-        paragraphs_in_title = paragraph_matches.filter(page__title=title)
-        pair = title,paragraphs_in_title
-        if paragraphs_in_title.count() > 0:
-            results_by_title.append(pair)
-
-    num_results = paragraph_matches.count()
+        results_by_title = []
+        num_results = 0
 
     return results_by_title, num_results, highlight_words
 
