@@ -42,6 +42,10 @@ def execute_search(cleaned_q, titles, near_by_words):
         # This is better because it runs regex search at the
         # python level.
         paragraphs = Paragraph.objects.all()
+        
+        # Limit search by title, if applicable.
+        if titles:
+            paragraphs = paragraphs.filter(chapter__title__in=titles)
 
         def understand(o, patterns=None):
             numkeys = len(o.keys())
@@ -128,12 +132,8 @@ def execute_search(cleaned_q, titles, near_by_words):
             
         paragraph_matches = paragraphs.filter(id__in=list(id_matches))
 
-
     except InvalidSearchStringError:
         paragraph_matches = Paragraph.objects.none()
-    else:
-        if titles:
-            paragraph_matches = paragraph_matches.filter(chapter__title__in=titles)
 
     return paragraph_matches, highlight_words
 
