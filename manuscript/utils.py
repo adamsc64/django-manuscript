@@ -26,7 +26,6 @@ def execute_search(cleaned_q, titles, near_by_words):
     
     from manuscript.models import Paragraph, Title
     
-    paragraph_matches = Paragraph.objects.none()
     parse = SearchQueryParser().parser() # returns a callable.
     near_by_words = int(near_by_words) if near_by_words else None
     
@@ -137,15 +136,15 @@ def execute_search(cleaned_q, titles, near_by_words):
         title_ids_in_paragraphs = dict(paragraphs.values_list('id','page__title'))
         titles_by_id = dict([(title.id, title) for title in Title.objects.all()])
 
+        num_results = 0
         for paragraph in paragraphs:
             title = titles_by_id[title_ids_in_paragraphs[paragraph.id]]
             if paragraph.id in id_matches:
                 if not title in results_by_title:
                     results_by_title[title] = []
                 results_by_title[title].append(paragraph)
+                num_results += 1
         results_by_title = results_by_title.items()
-                
-        num_results = paragraph_matches.count()
 
     except InvalidSearchStringError:
         results_by_title = []

@@ -83,12 +83,12 @@
 				<div>
 					<ul>
 					{% for title, paragraph_matches in results_by_title %}
-						<li><a href="#{{ title.slug }}">{{ title.text }}</a> ({{ paragraph_matches.count }} result{{ num_results|pluralize }})
+						<li><a href="#{{ title.slug }}">{{ title.text }}</a> ({{ paragraph_matches|length }} result{{ num_results|pluralize }})
 					{% endfor %}
 					</ul>
 				</div>
 				{% for title, paragraph_matches in results_by_title %}
-					<h3 id="{{ title.slug }}">{{ title.text }} ({{ paragraph_matches.count }} result{{ num_results|pluralize }})</h3>
+					<h3 id="{{ title.slug }}">{{ title.text }} ({{ paragraph_matches|length }} result{{ num_results|pluralize }})</h3>
 					<ul>
 					{% for paragraph in paragraph_matches %}
 						<li class="matched-result wyclif-paragraph-text">
