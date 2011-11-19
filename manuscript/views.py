@@ -186,23 +186,15 @@ def search(request):
             titles = big_search_form.cleaned_data["titles"]
             near_by_words = request.GET.get("nearprompt", None)
 
-            paragraph_matches, highlight_words = execute_search(cleaned_q, titles, near_by_words)
+            results_by_title, num_results, highlight_words = execute_search(cleaned_q, titles, near_by_words)
             
-            # Sort paragraph_matches by title.
-            results_by_title = []
-            for title in Title.objects.all():
-                paragraphs_in_title = paragraph_matches.filter(page__title=title)
-                pair = title,paragraphs_in_title
-                if paragraphs_in_title.count() > 0:
-                    results_by_title.append(pair)
-
             request.session['highlight_words'] = highlight_words
 
             return render(request, 'manuscript/search.html', {
                 "highlight_words" : highlight_words,
                 "big_search_form" : big_search_form,
                 "results_by_title" : results_by_title,
-                "num_results" : paragraph_matches.count()
+                "num_results" : num_results
             })
     else:
         big_search_form = BigSearchForm()

@@ -24,7 +24,7 @@ def execute_search(cleaned_q, titles, near_by_words):
     This, and child functions, can still use some work.
     """
     
-    from manuscript.models import Author, Title, Chapter, Page, Paragraph, SiteCopyText
+    from manuscript.models import Paragraph, Title
     
     paragraph_matches = Paragraph.objects.none()
     parse = SearchQueryParser().parser() # returns a callable.
@@ -135,7 +135,17 @@ def execute_search(cleaned_q, titles, near_by_words):
     except InvalidSearchStringError:
         paragraph_matches = Paragraph.objects.none()
 
-    return paragraph_matches, highlight_words
+    # Group paragraph_matches by title.
+    results_by_title = []
+    for title in Title.objects.all():
+        paragraphs_in_title = paragraph_matches.filter(page__title=title)
+        pair = title,paragraphs_in_title
+        if paragraphs_in_title.count() > 0:
+            results_by_title.append(pair)
+
+    num_results = paragraph_matches.count()
+
+    return results_by_title, num_results, highlight_words
 
 
 def convert_to_regex_search(expr):
