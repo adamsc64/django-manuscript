@@ -16,6 +16,7 @@ from manuscript.forms import BigSearchForm
 
 def all_works(request):	
 	copy_text, created = SiteCopyText.objects.get_or_create_for('all_works')
+	copy_text_after_list, created_post = SiteCopyText.objects.get_or_create_for('all_works_after_list')
 
 	works_by_author = []
 
@@ -34,6 +35,7 @@ def all_works(request):
 	return render(request, 'manuscript/all-titles.html', {
 		"works_by_author" : works_by_author,
 		"copy_text" : copy_text,
+		"copy_text_after_list" : copy_text_after_list,
 	})
 
 def whole_work(request, title):

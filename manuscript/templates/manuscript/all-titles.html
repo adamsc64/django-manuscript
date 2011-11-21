@@ -19,7 +19,7 @@
 {% endblock navbar %}
 
 {% block content %}
-	{{ copy_text|safe|linebreaks }}
+	<div>{{ copy_text|safe|linebreaks }}</div>
 
 	{% for dataobj in works_by_author %}
 		<ul>
@@ -27,6 +27,8 @@
 			<li><a href="{% url 'show-chapters' title=title.slug %}">{{ title.text }}</a> (v. {{ title.volume }}{% if title.num_volumes %} out of {{ title.num_volumes }} volumes{% endif %}, ed. {{ title.editor }}, pub. {{ title.publisher }} in {{ title.place_of_publication }} in {{ title.publication_year }}, {{ title.pages }} pages total) {% if title.title_page %}<a href="{% url 'show-page' title=title.slug page=title.title_page.number %}">Title page</a>.{% endif %}{% if title.copyright_page %}<a href="{% url 'show-page' title.slug title.copyright_page.number %}">Copyright page</a>.{% endif %}
 		{% endfor %}
 		</ul>
-		
 	{% endfor %}
+    
+    <div>{{ copy_text_after_list|safe|linebreaks }}</div>
+	
 {% endblock content %}
