@@ -40,4 +40,3 @@ that there may be non-backwards compatible changes that come in version releases
 for the moment. I'll put a notification up here when it becomes more stable.
 """
 )
- 
