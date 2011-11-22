@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='django-manuscript',
-      version='0.3',
+      version='0.3.1',
       packages=['manuscript'],
       description='Django application for managing rare book scanning/OCR projects',
       author='Christopher Adams',
